@@ -1,76 +1,71 @@
-# Publish thanushpatlolla.com with GitHub Pages
+# Publish thanushpatlolla.com with Cloudflare Pages
 
-The site is plain HTML and CSS. There is no install or build step.
+The site is plain HTML and CSS. GitHub stores the source; Cloudflare Pages hosts
+the website, deploys each update, manages the domain, and provides HTTPS.
 
-## 1. Put the site on GitHub
+Repository: `git@github.com:thanushpatlolla/personal-website.git`
 
-Create a public repository named `website` at:
+## 1. Push the current site to GitHub
 
-https://github.com/new
-
-Then, from this folder, run:
+From this folder:
 
 ```bash
-git init
 git add .
-git commit -m "Build personal website"
-git branch -M main
-git remote add origin https://github.com/thanushpatlolla/website.git
-git push -u origin main
+git commit -m "Configure Cloudflare Pages hosting"
+git push
 ```
 
-Any repository name works. `website` is only a suggestion.
+The GitHub Pages-specific `CNAME` file is intentionally not used with
+Cloudflare Pages.
 
-## 2. Turn on GitHub Pages
+## 2. Create the Cloudflare Pages project
 
-1. Open the repository on GitHub.
-2. Go to **Settings → Pages**.
-3. Under **Build and deployment**, choose **Deploy from a branch**.
-4. Select branch **main**, folder **/ (root)**, then click **Save**.
-5. Under **Custom domain**, enter `thanushpatlolla.com` and click **Save**.
+1. Sign in to the Cloudflare dashboard.
+2. Open **Workers & Pages**.
+3. Select **Create application → Pages → Import an existing Git repository**.
+4. Connect GitHub when prompted and choose
+   `thanushpatlolla/personal-website`.
+5. Use these deployment settings:
 
-The repository already includes a `CNAME` file containing the same domain.
-GitHub recommends adding the custom domain in Pages settings before changing DNS.
+| Setting | Value |
+| --- | --- |
+| Project name | `thanushpatlolla` |
+| Production branch | `main` |
+| Framework preset | `None` |
+| Build command | `exit 0` |
+| Build output directory | `.` |
+| Root directory | Leave blank |
 
-Optional but recommended: in your personal GitHub **Settings → Pages**, verify
-`thanushpatlolla.com`. GitHub will show a TXT record to add in Cloudflare. This
-prevents another GitHub account from claiming a site beneath your domain.
+6. Select **Save and Deploy**.
 
-## 3. Point Cloudflare DNS at GitHub Pages
+Cloudflare will first publish the site at a URL similar to
+`thanushpatlolla.pages.dev`. Every later push to `main` will automatically
+create a new production deployment.
 
-In the Cloudflare dashboard, open **thanushpatlolla.com → DNS → Records**. Remove
-any parking records for `@` or `www`, then add these records:
+## 3. Connect thanushpatlolla.com
 
-| Type | Name | Content | Proxy status | TTL |
-| --- | --- | --- | --- | --- |
-| A | @ | 185.199.108.153 | DNS only | Auto |
-| A | @ | 185.199.109.153 | DNS only | Auto |
-| A | @ | 185.199.110.153 | DNS only | Auto |
-| A | @ | 185.199.111.153 | DNS only | Auto |
-| CNAME | www | thanushpatlolla.github.io | DNS only | Auto |
+After the first deployment succeeds:
 
-Use the gray-cloud **DNS only** setting while GitHub provisions the certificate.
-The `www` target must not include `/website`.
+1. Open the Pages project in Cloudflare.
+2. Select **Custom domains → Set up a domain**.
+3. Enter `thanushpatlolla.com` and continue.
+4. Confirm the DNS record Cloudflare proposes.
+5. Repeat the process for `www.thanushpatlolla.com` if you want the `www`
+   address to work too.
 
-GitHub will serve `thanushpatlolla.com` and redirect
-`www.thanushpatlolla.com` to it. DNS changes can take up to 24 hours, although
-they are often visible sooner.
+Because the domain is registered and managed in the same Cloudflare account,
+Cloudflare can create the required DNS records automatically. Associate the
+domain through the Pages project's **Custom domains** screen instead of adding
+a record manually first.
 
-## 4. Turn on HTTPS
+If you previously added GitHub Pages DNS records, remove the four GitHub
+`185.199.*` A records and the `www → thanushpatlolla.github.io` CNAME before
+connecting the Pages domain. Do not remove unrelated email-verification, MX,
+TXT, or registrar records.
 
-Return to **GitHub repository → Settings → Pages**. Once GitHub reports that the
-DNS check succeeded and the certificate is ready, enable **Enforce HTTPS**.
-Certificate provisioning can take up to 24 hours.
-
-## 5. Check the records
-
-```bash
-dig thanushpatlolla.com +noall +answer -t A
-dig www.thanushpatlolla.com +noall +answer -t CNAME
-```
-
-The first command should return the four GitHub Pages IP addresses; the second
-should show `thanushpatlolla.github.io`.
+Cloudflare provisions HTTPS automatically. Wait until the custom domain status
+shows **Active**, then open both the apex and `www` addresses to confirm they
+load.
 
 ## Preview locally
 
@@ -82,9 +77,18 @@ python3 -m http.server 8000
 
 Then open http://localhost:8000.
 
+## Publish future changes
+
+```bash
+git add .
+git commit -m "Update website"
+git push
+```
+
+Cloudflare Pages will deploy the pushed commit automatically.
+
 ## Add a blog post later
 
 1. Copy `blog/hello-world.html` to a new file in `blog/` and replace its title,
    date, description, canonical URL, and article body.
 2. Add one new `<li>` row to the writing list in `index.html`.
-
