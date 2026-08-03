@@ -171,16 +171,6 @@ a:focus-visible {
   text-decoration-color: var(--accent);
 }
 
-footer {
-  margin-top: 6rem;
-  color: var(--muted);
-  font-size: 0.78rem;
-}
-
-footer p {
-  margin: 0;
-}
-
 .home-link {
   display: inline-block;
   margin-bottom: 3rem;
@@ -288,9 +278,6 @@ figcaption {
     gap: 0.75rem;
   }
 
-  footer {
-    margin-top: 4rem;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
