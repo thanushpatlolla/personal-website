@@ -1,5 +1,5 @@
 :root {
-  --bg: #0b0b0c;
+  --bg: #000000;
   --text: #e8e6e1;
   --muted: #8a877f;
   --accent: #d9c8a0;
@@ -52,8 +52,8 @@ h3 {
 
 h1 {
   margin: 0 0 1.45rem;
-  font-size: clamp(2rem, 5vw, 2.7rem);
-  line-height: 1.12;
+  font-size: 1.5rem;
+  line-height: 2rem;
 }
 
 h2 {
@@ -267,10 +267,6 @@ figcaption {
 
   body {
     font-size: 1rem;
-  }
-
-  h1 {
-    font-size: 2rem;
   }
 
   .post-list li {
