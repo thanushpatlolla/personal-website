@@ -89,7 +89,7 @@ Cloudflare Pages will deploy the pushed commit automatically.
 
 ## Add a blog post later
 
-1. Copy `blog/hello-world.html` to a new file in `blog/` and replace its title,
-   date, description, canonical URL, and article body.
+1. Create a new standalone HTML file in `blog/` with its title, date,
+   description, canonical URL, and article body.
 2. Uncomment the Writing section in `index.html`, then replace its placeholder
    date, link, and title. For later posts, add another `<li>` row to that list.
