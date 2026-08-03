@@ -91,4 +91,5 @@ Cloudflare Pages will deploy the pushed commit automatically.
 
 1. Copy `blog/hello-world.html` to a new file in `blog/` and replace its title,
    date, description, canonical URL, and article body.
-2. Add one new `<li>` row to the writing list in `index.html`.
+2. Uncomment the Writing section in `index.html`, then replace its placeholder
+   date, link, and title. For later posts, add another `<li>` row to that list.
