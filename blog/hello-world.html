@@ -1,0 +1,72 @@
+<!--
+  Reference template for future posts.
+  Copy this file, replace the title/date/body, and add one row to index.html.
+-->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Hello, world — the first post on Thanush Patlolla's website.">
+    <meta name="theme-color" content="#0b0b0c">
+    <link rel="canonical" href="https://thanushpatlolla.com/blog/hello-world.html">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400..600&amp;display=swap">
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}], throwOnError: false});"></script>
+    <title>Hello, world — Thanush Patlolla</title>
+  </head>
+  <body>
+    <main class="post-shell">
+      <a class="home-link" href="/">&larr; home</a>
+
+      <header class="post-header">
+        <h1>Hello, world</h1>
+        <time class="post-date" datetime="2026-08-03">2026-08-03</time>
+      </header>
+
+      <article>
+        <p>
+          This site exists. I&rsquo;ll use it to write about hardware, machine learning,
+          and the useful details that tend to disappear between the two.
+        </p>
+
+        <h2>A section heading</h2>
+        <p>
+          This sample post is also the template for future writing. It demonstrates
+          ordinary paragraphs, <a href="https://example.com/">links</a>, inline
+          <code>code</code>, figures, and math.
+        </p>
+
+        <blockquote>
+          <p>A quiet interface leaves more room for the ideas.</p>
+        </blockquote>
+
+        <h3>Code</h3>
+        <p>A small code block should remain readable without syntax highlighting:</p>
+        <pre><code>def arithmetic_intensity(flops, bytes_moved):
+    return flops / bytes_moved</code></pre>
+
+        <h3>A figure</h3>
+        <figure>
+          <pre class="figure-placeholder" role="img" aria-label="A conceptual pipeline from model through compiler to hardware">model  &rarr;  compiler  &rarr;  hardware</pre>
+          <figcaption>Figure 1. A deliberately simple placeholder for a future diagram.</figcaption>
+        </figure>
+
+        <h3>Math</h3>
+        <p>
+          KaTeX renders inline expressions such as $y = Wx + b$ and display equations:
+        </p>
+        <p>$$\operatorname{AI} = \frac{\text{operations}}{\text{bytes moved}}.$$</p>
+      </article>
+
+      <footer>
+        <p>&copy; 2026 Thanush Patlolla</p>
+      </footer>
+    </main>
+  </body>
+</html>
