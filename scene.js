@@ -17,7 +17,11 @@
   function ratchetStep(direction=1){
     windingOffset-=direction*92;
     handTime=localClockSeconds()+windingOffset;
-    charge=Math.min(1,charge+Math.abs(direction)*CHARGE_PER_DETENT*windingGain);
+    // Quadratic ease-out: stronger early restoration, gently tapering near clear.
+    // Invert the curve before adding turn progress, preserving the total turns.
+    const wound=1-Math.sqrt(Math.max(0,1-charge));
+    const next=Math.min(1,wound+Math.abs(direction)*CHARGE_PER_DETENT*windingGain);
+    charge=next>=1-1e-10?1:1-(1-next)**2;
     turn=Math.max(-.55,Math.min(.55,turn+direction*.035));
     recoil=direction*.018;
   }

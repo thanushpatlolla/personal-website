@@ -681,3 +681,5 @@ Release121: User requests slightly slower initial melt-in during production rele
 Release122: User requests full restoration in2 clock turns. Desktop winding gain1.2→1.5,96 detents from empty; touch stays3 (48 detents). Includes slower startup release121.
 
 Release123: User requests clock photograph frame color from supplied swatch and production push. Frame/border/caret changed to mean RGB #9da4a8. All current design changes approved.
+
+Revision124 (DESIGN ONLY): User requests stronger early unmelting while turning clock. Ratchet charge now uses quadratic ease-out1-(1-turnProgress)^2, inverting current charge before each increment to preserve continuity and total turns. From empty: half desktop turn43.75%, one turn75%, two turns100%; mobile one turn total. Hold charging and post-release decay unchanged. Production remains123.
