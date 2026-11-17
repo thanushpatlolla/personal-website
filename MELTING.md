@@ -171,3 +171,7 @@ visible text. Its deformation is attenuated86% locally to keep it away from
 corner and easier to catch. Original clock and warm default preserved.
 Browser checked latest screenshot, no warnings/errors. Pending full-track audio
 file/start42sec remains outstanding. Continue on design/melting-landscape.
+
+Revision19: Added three quieter localized pulls in previously less-deformed
+upper-right, middle-left, and lower-right portions of the copy block, at user
+request. Existing strongest patches and block-edge falloff remain unchanged.

@@ -80,6 +80,8 @@
           const patch=(cx,cy,rx,ry)=>Math.exp(-(((q-cx)/rx)**2+((r-cy)/ry)**2));
           textX+=weight*edge*(19*patch(.30,.22,.15,.19)-16*patch(.70,.64,.16,.23));
           textX+=weight*edge*12*patch(.40,.84,.18,.12);
+          textX+=weight*edge*(8*patch(.77,.25,.13,.13)-7*patch(.22,.53,.12,.15));
+          textY+=weight*edge*(10*patch(.76,.30,.14,.13)+9*patch(.25,.55,.14,.13)-7*patch(.76,.86,.12,.10))*o.gravity;
           textY+=weight*edge*16*patch(.43,.82,.18,.12)*o.gravity;
           textY+=weight*edge*(23*patch(.33,.25,.18,.16)-16*patch(.65,.68,.19,.18))*o.gravity;
         }
