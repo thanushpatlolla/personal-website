@@ -667,3 +667,5 @@ Revision114 (DESIGN ONLY): User corrects113 reduction to10%, not one-third. Rest
 Revision115 (DESIGN ONLY): Mouse wave propagation speed increased20%,95→114px/s. Amplitude, damping, lifetime and ambient mountain motion unchanged. Production remains102.
 
 Revision116 (DESIGN ONLY): Reduce perceived wave onset delay. Fresh gestures after180ms idle bypass emission cooldown; travel threshold24→6px, ongoing spacing650→300ms, minimum pulse strength.4. Fade-in time constant500→83ms. Propagation remains114px/s; maximum amplitude/lifetime unchanged. Production remains102.
+
+Revision117 (DESIGN ONLY): Slow pause-time unmelting transition from2.2 to3 seconds (~27% slower). Clock winding and normal melt rate unchanged. Production remains102.

@@ -602,7 +602,7 @@
     const dt=Math.min(.15,(now-(last||now))/1000);last=now;
     if(!paused)handTime=localClockSeconds()+((holding||keyWinding)?windingOffset:0);
     if(pauseTween){
-      pauseTween.progress=Math.min(1,pauseTween.progress+dt/2.2);geometryDirty=true;
+      pauseTween.progress=Math.min(1,pauseTween.progress+dt/3);geometryDirty=true;
       if(pauseTween.progress===1){pauseTween=null;charge=energy=1;resetFluid();resetAmbient();}
     }
     if(!paused){
