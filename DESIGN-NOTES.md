@@ -477,3 +477,6 @@ reward fires after audio.play resolves, clue hides then. Clock bounds exported
 from mapped watch geometry so cue/card follow clock movement. Image copied
 unchanged from user attachment to assets/congratulations.png. Syntax checked;
 user continues visual testing. Saved design branch, not deployed.
+
+Revision63: Bottom lake/time? popup frame and caret deepened from slate
+#28333b to blue#182b42. Other photo frames unchanged.
