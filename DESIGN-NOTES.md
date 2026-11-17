@@ -350,3 +350,10 @@ but not integrated in this change. Guard canvas capture while artwork loads.
 Verified lake playback readyState4/currentTime advancing, painted clock restores
 Sweet Trip, lake reselect starts at0, popup frame and console without warnings.
 No production deployment. Preview lake-radiohead-v37.jpg in chat outputs.
+
+Revision38–39: Lake hover/keyboard focus now shows a small off-white question
+mark and downward text caret, anchored at UV(.343,.847) with shoreline motion.
+Pointer-transparent/decorative; fades in180ms, no transition for reduced motion.
+User tightened spacing: question baseline-25px/caret-16px above anchor
+(previous-24/-8); caret lifted8px and gap reduced. Visually verified real hover.
+Preview lake-hint-v39.jpg in outputs.

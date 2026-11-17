@@ -117,3 +117,7 @@ body:not([data-clock="original"]) #clock>img{filter:sepia(.12) saturate(.94);}
 
 #peak-photo{background:#eee8d9;border-color:#eee8d9;box-shadow:0 6px 18px #0003;}
 #peak-photo .hill-caret{background:#eee8d9;border-color:#eee8d9;}
+
+.lake-hint{fill:#eee8d9;font:15px Georgia,serif;pointer-events:none;opacity:0;transition:opacity .18s ease;}
+.lake-hint text:last-child{font-size:16px;}
+@media(prefers-reduced-motion:reduce){.lake-hint{transition:none;}}

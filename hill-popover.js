@@ -9,6 +9,15 @@
   if(config.action)target.setAttribute('aria-pressed','false');else{target.setAttribute('aria-expanded','false');target.setAttribute('aria-controls',config.id);}
   const outline=document.createElementNS(ns,'path');outline.classList.add('hill-outline');
   layer.append(target,outline);document.body.append(layer);
+  let hint;
+  if(config.hint){
+    hint=document.createElementNS(ns,'g');hint.classList.add('lake-hint');hint.setAttribute('aria-hidden','true');
+    for(const [text,y] of [['?',-25],['⌄',-16]]){
+      const label=document.createElementNS(ns,'text');label.textContent=text;
+      label.setAttribute('y',y);label.setAttribute('text-anchor','middle');hint.append(label);
+    }
+    layer.append(hint);
+  }
   const card=document.createElement('aside');card.id=config.id;card.className='hill-ui hill-photo';card.hidden=true;
   card.setAttribute('role','dialog');card.setAttribute('aria-label',config.label);
   if(!config.action)card.innerHTML=`<button class="hill-close" aria-label="Close photograph" type="button">×</button><img src="${config.src}" alt="${config.alt}"><span class="hill-caret" aria-hidden="true"></span>`;
@@ -38,6 +47,11 @@
     for(let j=0;j<face.length-1;j++)for(let i=0;i<=6;i++){const t=i/6,a=face[j],b=face[j+1];facePoints.push(map([a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t]));}
     const facePath=facePoints.map((p,i)=>(i?'L':'M')+p[0]+','+p[1]).join(' ');
     outline.setAttribute('d',path+' '+facePath);outline.style.opacity=hover||focused||open?'1':'0';
+    if(hint){
+      const a=map(config.hint);
+      hint.setAttribute('transform',`translate(${a[0]},${a[1]})`);
+      hint.style.opacity=hover||focused?'1':'0';
+    }
     if(open&&!config.action){
       const a=map(config.anchor),cw=card.offsetWidth,ch=card.offsetHeight;
       const left=Math.max(12,Math.min(w-cw-12,a[0]-cw/2));
@@ -47,7 +61,7 @@
   }
   function tick(){if(!document.hidden)update();requestAnimationFrame(tick);}tick();
   }
-  landmark({id:'lake-song',label:'Play Weird Fishes / Arpeggi by Radiohead from the beginning',action:()=>window.playLakeSong(),
+  landmark({id:'lake-song',hint:[.343,.847],label:'Play Weird Fishes / Arpeggi by Radiohead from the beginning',action:()=>window.playLakeSong(),
     ridge:[[.300,.866],[.310,.860],[.322,.856],[.332,.850],[.343,.847],[.349,.852],[.359,.855],[.369,.862],[.380,.865]],
     bottom:[[.380,.886],[.300,.887]]});
   landmark({id:'hill-photo',label:'hiking photograph',src:'/assets/hill-memory.jpg',alt:'Hikers following a trail through a green mountain valley',
