@@ -172,3 +172,17 @@ both CSS and canvas. No border/box. Verified focused label + outline:none,
 390x844 full text/no horizontal overflow/reading ends534.5/music starts752;
 keyboard clock interaction resumes flow, no warnings/errors. Final preview image
 supplied-clock-v8.jpg. Direct music remains30-second preview pending full audio.
+
+## Revision 9: anonymous corner / left-banked clock
+Removed visible name and opening “Currently studying EECS and physics at MIT.”
+sentence at user's request. Retained all subsequent original wording.
+Increased shared left margin44→56px desktop,24→32px mobile. Time control's
+right margin preserved44/24px. Music bottom margin48→60px desktop,40→52px mobile;
+art48→56px; title12→13px, artist11→12px.
+Clock banked60 degrees counterclockwise (TOP POINTS LEFT per user's correction),
+with cross-axis foreshortening. Original image stays untouched, both hands and
+face share transformation and sky flow. CSS fallback matches leftward bank.
+Verified390px mobile: no overflow, reading ends510.5/music begins735.8,
+left margins32px, bottom gap52px. No console warnings/errors. Screenshot
+sky-clock-left-v9.jpg in chat outputs. Production unchanged; preview audio still
+30 seconds pending full-track asset/source.

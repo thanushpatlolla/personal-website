@@ -254,8 +254,11 @@
     const lower=smooth(.34,.96,v);
     let x=u+m*(.035*lower*lower-.020*gauss(v,.51,.22));
     let y=v+m*.10*lower;
-    const tilt=-.08+turn*.12+recoil;
-    const px=x-.5,py=y-.5;
+    // Bank across the sky: a shallow, slightly receding plane rather than
+    // an upright hanging dial. Shared world flow still bends the whole face.
+    const tilt=-1.047+turn*.12+recoil;
+    const perspective=.93+.14*v;
+    const px=(x-.5)*.82*perspective,py=(y-.5)*perspective;
     x=.5+px*Math.cos(tilt)-py*Math.sin(tilt);
     y=.5+px*Math.sin(tilt)+py*Math.cos(tilt);
     const world=flow(clockBox.x+x*clockBox.size,clockBox.y+y*clockBox.size,m);

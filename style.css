@@ -1,4 +1,4 @@
-:root{color-scheme:dark;--ink:#eee8d9;--melt:0;--night:0;--side:44px;}
+:root{color-scheme:dark;--ink:#eee8d9;--melt:0;--night:0;--side:56px;}
 *{box-sizing:border-box;}
 html{background:#14292d;}
 body{margin:0;min-height:100svh;color:var(--ink);font-family:Georgia,'Times New Roman',serif;-webkit-font-smoothing:antialiased;}
@@ -14,7 +14,7 @@ button:focus-visible,a:focus-visible{outline:1px solid #fff1c9;outline-offset:7p
 .night{background:linear-gradient(#111c35 0%,#102b42 48%,#061a20 100%);mix-blend-mode:multiply;opacity:calc(.15 + var(--night) * .7);}
 .dusk{background:linear-gradient(180deg,#5a506a00 0%,#efac7833 40%,#9b635700 67%);opacity:calc(1 - var(--night));mix-blend-mode:soft-light;}
 .vignette{background:linear-gradient(180deg,#0c1f2538,transparent 48%,#041b2580),radial-gradient(ellipse at 55% 40%,transparent 30%,#071f2733 100%);}
-.masthead{position:relative;display:flex;justify-content:space-between;align-items:center;padding:35px var(--side);}
+.masthead{position:relative;display:flex;justify-content:flex-end;align-items:center;padding:35px 44px;}
 h1{font-size:16px;font-weight:normal;margin:0;letter-spacing:.015em;text-shadow:0 1px 12px #12212988;}
 #still{border:0;padding:8px 0 8px 12px;background:none;font-size:13px;cursor:pointer;opacity:.7;}
 #still:hover{opacity:1;}
@@ -34,31 +34,31 @@ p{margin:0 0 .75em;}
 .clock-area{position:absolute;width:250px;height:290px;top:9.5%;right:16%;text-align:center;}
 #clock{display:block;width:100%;height:290px;border:0;background:none;padding:0;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;}
 #clock:active{cursor:grabbing;}
-#clock>img{width:100%;height:100%;object-fit:contain;}
+#clock>img{width:100%;height:100%;object-fit:contain;transform:rotate(-60deg) scaleX(.82);}
 /* The native document supplies semantics and layout for the painted surface. */
 #liquid-surface{position:absolute;left:0;top:0;width:100%;z-index:5;pointer-events:none;display:none;}
 .liquid-ready #liquid-surface{display:block;}
 .liquid-ready .masthead,.liquid-ready main,.liquid-ready .landscape{opacity:0;}
 /* Audio remains a small native control, independent of the material surface. */
-.music{position:fixed;z-index:6;left:var(--side);bottom:48px;width:320px;max-width:calc(100vw - 2 * var(--side));}
+.music{position:fixed;z-index:6;left:var(--side);bottom:60px;width:360px;max-width:calc(100vw - 2 * var(--side));}
 #music-toggle{display:flex;align-items:center;gap:10px;border:0;padding:0;background:none;text-align:left;cursor:pointer;width:100%;}
-.record-cover{position:relative;display:block;flex:0 0 48px;width:48px;height:48px;}
+.record-cover{position:relative;display:block;flex:0 0 56px;width:56px;height:56px;}
 .record-cover img{display:block;width:100%;height:100%;object-fit:cover;opacity:.85;filter:saturate(.6);}
 .record-play{position:absolute;inset:0;display:grid;place-items:center;color:#fff;font:13px Georgia,serif;text-shadow:0 1px 5px #000;background:#06182028;}
-.music-caption{font-size:12px;line-height:1.4;text-shadow:0 1px 7px #061820;}
+.music-caption{font-size:13px;line-height:1.4;text-shadow:0 1px 7px #061820;}
 .music-title{display:block;opacity:.85;}
-.music-artist{display:block;font-size:11px;margin-top:3px;opacity:.6;}
+.music-artist{display:block;font-size:12px;margin-top:3px;opacity:.6;}
 .music noscript a{color:inherit;font-size:11px;}
 @media(min-width:1600px){.clock-area{top:12%;right:21%;}}
 @media(max-width:760px){
-  :root{--side:24px;}
-  body{position:relative;min-height:max(100svh,700px);padding-bottom:145px;}
-  .masthead{padding:24px var(--side);}
+  :root{--side:32px;}
+  body{position:relative;min-height:max(100svh,700px);padding-bottom:170px;}
+  .masthead{padding:24px;}
   .intro{margin-top:175px;}
   #still{font-size:12px;}
   .clock-area{top:85px;right:28px;width:180px;height:180px;}
   #clock{height:180px;}
-  .music{position:absolute;bottom:40px;}
+  .music{position:absolute;bottom:52px;}
 }
 @media(max-height:560px) and (min-width:761px){
   body{position:relative;min-height:570px;padding-bottom:100px;}
