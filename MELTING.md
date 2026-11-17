@@ -295,3 +295,7 @@ scaling artifacts and tabs were closed during checks; don't claim full mobile
 visual verification for this revision. Earlier revisions had mobile checks.
 User asked “shall we push?” alongside favicon design; production main push has
 not been explicitly confirmed. Keep design branch, ask concrete release approval.
+
+Revision45: User requested Sweet Trip start46.5 seconds and will test changes
+themselves. Updated first play, replay and clock return to46.5; no browser
+testing performed. Continue saving to design branch; no production push.
