@@ -36,11 +36,9 @@ Local server: `python3 -m http.server 8765` from this directory.
 
 ## Current published version
 
-User approved revision102 on 2026-11-17. The loss landscape? label has no click
-or song action. Touch winding gain is3x desktop (one full turn restores the scene;
-hold charging is also faster). Includes all previous clock, pause, mountain,
-playback and Snoopy changes. The scene starts10% melted and immediately melts in using normal charge decay.
-Photos can be discovered in any order; only lake unlocks clock.
-Design revision103 adds a temporary gradient-descent trail and peaks and…? caption.
-Production remains102. Subsequent design pushes remain
-isolated because preview-branch builds are disabled.
+User approved all current design changes through revision120 on 2026-11-17.
+Includes 30% starting melt, faster desktop winding, tuned mountain/ambient motion,
+propagating mouse waves with immediate onset, 3-second pause restoration,
+free photo discovery with lake unlocking clock, and sampled photo-frame colors.
+Gradient experiment and preview controls are removed. Preview-branch builds
+remain disabled. Verify live revision120 after the production push.

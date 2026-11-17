@@ -673,3 +673,5 @@ Revision117 (DESIGN ONLY): Slow pause-time unmelting transition from2.2 to3 seco
 Revision118 (DESIGN ONLY): Sampled supplied swatches by mean RGB. Lake frame/border/caret #1d2e3c; peak frame/border/caret #c0b49c. Production remains102.
 
 Revision119 (DESIGN ONLY): Replace peak/top frame, border and caret with new supplied swatch mean RGB #b8b3a5. Lake unchanged. Production remains102.
+
+Revision120 / release120: User approves all current design changes for production, latest top-frame swatch #b6b4a9, and further reduced wave delay. Wave trigger1px, ongoing emission spacing150ms, fade-in29ms. Includes accumulated revisions103–119 in their final form (gradient idea removed, preview controls removed).

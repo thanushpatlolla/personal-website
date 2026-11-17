@@ -342,7 +342,7 @@
     lastWaveInput=waveTime;
     if(freshGesture){waveDistance=0;lastWaveTime=-1;}
     waveDistance+=distance;
-    if(waveTime-lastWaveTime<.3||waveDistance<6||distance===0)return;
+    if(waveTime-lastWaveTime<.15||waveDistance<1||distance===0)return;
     mouseWaves.push({x,y,dx:dx/distance,dy:dy/distance,born:waveTime,strength:Math.max(.4,Math.min(1,waveDistance/65))});
     waveDistance=0;
     if(mouseWaves.length>5)mouseWaves.shift();lastWaveTime=waveTime;
@@ -383,7 +383,7 @@
         const age=waveTime-wave.born,rx=u*W-wave.x,ry=v*H-wave.y,r=Math.hypot(rx,ry);
         const width=Math.max(65,Math.min(W,H)*.085),front=age*114;
         const q=(r-front)/width;
-        const pulse=16*wave.strength*(1-Math.exp(-age*12))*Math.exp(-age*.10)*(1-smooth(12,16,age))*Math.exp(-q*q*1.5)*Math.cos(q*2);
+        const pulse=16*wave.strength*(1-Math.exp(-age*35))*Math.exp(-age*.10)*(1-smooth(12,16,age))*Math.exp(-q*q*1.5)*Math.cos(q*2);
         rippleX+=pulse*(wave.dx*.2+(r?rx/r:0)*.8);
         rippleY+=pulse*(wave.dy*.2+(r?ry/r:0)*.8);
       }
