@@ -386,6 +386,13 @@
       for(const b of easterRegions)protection=Math.max(protection,Math.exp(-(((x-b.x)/b.rx)**2+((y-b.y)/b.ry)**2)));
       p[0]=beforeX+(p[0]-beforeX)*(1-.85*protection);
       p[1]=beforeY+(p[1]-beforeY)*(1-.85*protection);
+      // Protect this control from mouse pulls, while letting ambient waves pass.
+      if(timeBounds){
+        const b=timeBounds;
+        const weight=smooth(b.left-65,b.left-12,x)*(1-smooth(b.right+12,b.right+65,x))*smooth(b.top-60,b.top-10,y)*(1-smooth(b.bottom+10,b.bottom+60,y));
+        p[0]=beforeX+(p[0]-beforeX)*(1-.86*weight);
+        p[1]=beforeY+(p[1]-beforeY)*(1-.86*weight);
+      }
     }
     if(manualMelt===null&&(!paused||pauseTween)&&ambientBlend>0){
       const u=p[0]/W,v=p[1]/H;
@@ -395,11 +402,6 @@
     if(lakeRegion){
       const b=lakeRegion,weight=Math.exp(-(((x-b.x)/b.rx)**2+((y-b.y)/b.ry)**2));
       p[0]=x+(p[0]-x)*(1-.75*weight);p[1]=y+(p[1]-y)*(1-.75*weight);
-    }
-    if(timeBounds){
-      const b=timeBounds;
-      const weight=smooth(b.left-65,b.left-12,x)*(1-smooth(b.right+12,b.right+65,x))*smooth(b.top-60,b.top-10,y)*(1-smooth(b.bottom+10,b.bottom+60,y));
-      p[0]=x+(p[0]-x)*(1-.86*weight);p[1]=y+(p[1]-y)*(1-.86*weight);
     }
     return p;
   }

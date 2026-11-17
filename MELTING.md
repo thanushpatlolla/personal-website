@@ -358,3 +358,7 @@ Release after gaining charge gives1s windRest before charge decay, ambient,
 fluid and clock ticking resume. Keyboard ratchet renews1s timer per step.
 Energy still settles smoothly to earned charge; release recoil settles.
 Mouse painting ignored during rest; time toggle clears rest timer.
+
+Revision58: Time control now follows ambient waves/full base geometry;86%
+local protection applies only to mouse displacement. Padded warped hitbox
+retained. Included in ongoing authorized production update with1s winding rest.
