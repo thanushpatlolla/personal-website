@@ -36,9 +36,9 @@ Local server: `python3 -m http.server 8765` from this directory.
 
 ## Current published version
 
-User approved all current design changes through revision120 on 2026-11-17.
-Includes 30% starting melt, faster desktop winding, tuned mountain/ambient motion,
+User approved all current design changes through revision121 on 2026-11-17.
+Includes 30% starting melt with gentler initial decay, faster desktop winding, tuned mountain/ambient motion,
 propagating mouse waves with immediate onset, 3-second pause restoration,
 free photo discovery with lake unlocking clock, and sampled photo-frame colors.
 Gradient experiment and preview controls are removed. Preview-branch builds
-remain disabled. Verify live revision120 after the production push.
+remain disabled. Verify live revision121 after the production push.

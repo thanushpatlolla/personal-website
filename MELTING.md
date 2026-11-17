@@ -581,3 +581,5 @@ Revision118 (DESIGN ONLY): Sampled supplied swatches by mean RGB. Lake frame/bor
 Revision119 (DESIGN ONLY): Replace peak/top frame, border and caret with new supplied swatch mean RGB #b8b3a5. Lake unchanged. Production remains102.
 
 Revision120 / release120: User approves all current design changes for production, latest top-frame swatch #b6b4a9, and further reduced wave delay. Wave trigger1px, ongoing emission spacing150ms, fade-in29ms. Includes accumulated revisions103–119 in their final form (gradient idea removed, preview controls removed).
+
+Release121: User requests slightly slower initial melt-in during production release. Initial decay denominator8s vs6.5s (~19% slower); starting30% melted now reaches full melt in5.6s vs4.55s plus smoothing. Clock/time-button interaction exits startup rate; subsequent melt unchanged. Production publication authorized in ongoing release request.

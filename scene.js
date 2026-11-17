@@ -8,6 +8,7 @@
   const motion = matchMedia('(prefers-reduced-motion: reduce)');
   // Start 30% melted; normal charge decay begins immediately when ready.
   let paused = motion.matches, energy = .7, charge = .7, holding = false, angle = null;
+  let initialMelt=true;
   let heldFor=0, ratchet=0, turn=0, recoil=0, lastKey=0, gestureCenter=null, gestureTurned=false;
   let windingOffset=0,keyWinding=false;
   const DETENT=Math.PI/24; // 48 detents/revolution. Desktop: 2.5 full turns; touch: one.
@@ -610,7 +611,8 @@
       if(motionDt>0&&advanceFluid(motionDt))geometryDirty=true;
       if(motionDt>0&&advanceAmbient(motionDt)&&currentMelt()>.001)geometryDirty=true;
       heldFor=holding?heldFor+dt:0;
-      charge=Math.max(0,Math.min(1,charge+(holding?(heldFor>.7&&!gestureTurned?dt*windingGain/18:0):-motionDt/6.5)));
+      charge=Math.max(0,Math.min(1,charge+(holding?(heldFor>.7&&!gestureTurned?dt*windingGain/18:0):-motionDt/(initialMelt?8:6.5))));
+      if(charge===0)initialMelt=false;
       energy+=(charge-energy)*(1-Math.exp(-dt*16));
       recoil*=Math.exp(-dt*19);
       if(!holding){turn*=Math.exp(-dt*10);}
@@ -742,6 +744,7 @@
     }
   });
   function useClock(){
+    initialMelt=false;
     if(manualMelt!==null){charge=energy=1-manualMelt;manualMelt=null;}
   }
   window.melting={
@@ -788,7 +791,7 @@
     },
     defaults:{...MeltField.defaults},limits:MeltField.limits
   };
-  function toggleTime(){document.dispatchEvent(new Event('restoresweet'));setPaused(!paused);}
+  function toggleTime(){initialMelt=false;document.dispatchEvent(new Event('restoresweet'));setPaused(!paused);}
   still.addEventListener('click',toggleTime);
   motion.addEventListener('change', event => setPaused(event.matches));
   document.addEventListener('visibilitychange', () => {
