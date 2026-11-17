@@ -451,3 +451,5 @@ Revision76: Valley in the Ocean starts at3.2 seconds,0.2 seconds later at user r
 Revision77: Valley in the Ocean starts at3.3 seconds, another0.1 seconds later at user request. Continuing production updates.
 
 Revision78: Valley in the Ocean starts at3.4 seconds, another0.1 seconds later at user request. Continuing production updates.
+
+Revision79: Shortened post-winding rest before melting resumes from1 second to0.2 seconds for both pointer release and keyboard ratchet steps. User requested shorter delay; continuing production updates.

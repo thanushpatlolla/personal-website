@@ -12,7 +12,7 @@
   const DETENT=Math.PI/24; // 48 detents/revolution. Three full turns from empty.
   const CHARGE_PER_DETENT=1/(48*3);
   function ratchetStep(direction=1){
-    windRest=1;
+    windRest=.2;
     charge=Math.min(1,charge+Math.abs(direction)*CHARGE_PER_DETENT);
     handTime-=direction*92;
     turn=Math.max(-.55,Math.min(.55,turn+direction*.035));
@@ -581,7 +581,7 @@
     holding = true;heldFor=0;gestureTurned=false;
     note.textContent = 'turning back time';
   }
-  function release() { if(holding&&charge>windStartCharge)windRest=1;clockHintDismissed=true;windHint.style.display='none';holding = false; angle = null; gestureCenter=null; note.textContent = paused ? 'a moment, held' : 'time is passing'; }
+  function release() { if(holding&&charge>windStartCharge)windRest=.2;clockHintDismissed=true;windHint.style.display='none';holding = false; angle = null; gestureCenter=null; note.textContent = paused ? 'a moment, held' : 'time is passing'; }
   function pointerAngle(event) {
     const center=gestureCenter||watchPoint(.5,.5,currentMelt());
     return Math.atan2(event.clientY+scrollY-center[1],event.clientX-center[0]);
