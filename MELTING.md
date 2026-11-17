@@ -242,3 +242,9 @@ Retained copy multiplier1.1. Peak popup alone now uses warm off-white#eee8d9
 frame/caret with#d1c8b7 border; original hill frame and beveled X unchanged.
 Browser visually checked popup/outline alignment and no console warnings/errors;
 scene syntax validated. Preview white-peak-frame-v34.jpg in chat outputs.
+
+Revision35: User likes text distortion except enlarged region near social icons.
+Added smooth65% attenuation centered at reversed copy r=.40 with radius.17,
+reducing local pulls around icons/lower bio while retaining remaining distortion
+and global waves. Geometry suite passed; browser visually checked normal-sized
+icons with ongoing deformation. Preview softer-icons-v35.jpg in outputs.
