@@ -73,7 +73,7 @@
   }
   function tick(){if(!document.hidden)update();requestAnimationFrame(tick);}tick();
   }
-  landmark({id:'valley-hint',info:true,action:()=>window.playSweetTrip(),label:'loss landscape?',hintLabel:'loss landscape?',hint:[.770,.558],
+  landmark({id:'valley-hint',info:true,action:()=>window.playStardust(),label:'loss landscape?',hintLabel:'loss landscape?',hint:[.770,.558],
     ridge:[[.697,.547],[.717,.551],[.738,.556],[.756,.559],[.770,.558],[.786,.554],[.802,.547],[.817,.538],[.833,.528]],
     bottom:[[.825,.588],[.713,.590]]});
   landmark({id:'lake-song',hitPadding:72,hint:[.343,.847],anchor:[.343,.847],caption:'time?',src:'/assets/lake-time.jpg',alt:'Vintage computers, game consoles and controllers scattered across a room',label:'time photograph and play Weird Fishes',action:()=>window.playLakeSong(),

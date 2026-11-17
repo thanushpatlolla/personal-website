@@ -3,6 +3,7 @@
   const button=document.querySelector('#music-toggle'),audio=document.querySelector('#song');
   const status=document.querySelector('#music-status'),icon=document.querySelector('.record-play');
   const tracks={
+    stardust:{title:'Music Sounds Better With You',artist:'Stardust',src:'music-sounds-better-with-you.opus',cover:'stardust-cover.jpg',alt:'Music Sounds Better With You cover',start:0},
     sweet:{title:'To All the Dancers of the World, a Round Form of Fantasy',artist:'Sweet Trip',src:'sweet-trip.opus',cover:'sweet-trip-cover.jpg',alt:'Velocity: Design: Comfort. album cover',start:46},
     peak:{title:'The Girl From Ipanema',artist:'Oscar Peterson Trio',src:'girl-from-ipanema.opus',cover:'we-get-requests-cover.jpg',alt:'We Get Requests album cover',start:0},
     valley:{title:'Valley in the Ocean',artist:'Bruno Pernadas',src:'valley-in-the-ocean.opus',cover:'bruno-cover.jpg',alt:'Those Who Throw Objects at the Crocodiles Will Be Asked to Retrieve Them album cover',start:3},
@@ -30,6 +31,7 @@
     catch{if(ticket===request){sync();status.textContent='· retry playback';}return false;}
   }
   window.playPeakSong=()=>select('peak');
+  window.playStardust=()=>select('stardust');
   window.playSweetTrip=()=>select('sweet');
   document.addEventListener('restoresweet',window.playSweetTrip);
   window.playValleySong=()=>select('valley');
