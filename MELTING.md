@@ -426,3 +426,6 @@ replacing+5px vertical offset. Browser tested real peak→valley→lake sequence
 clock hover clue visible above/right of rim, leaving hover opacity0, no logs.
 Screenshot clock-cue-above-right-v66.jpg in outputs. Publishing correction
 to prior authorized production cue update.
+
+Revision67: Top photo caption changed from “peaks and...?” to “forest?”
+at user request during ongoing production update.
