@@ -683,3 +683,5 @@ Release122: User requests full restoration in2 clock turns. Desktop winding gain
 Release123: User requests clock photograph frame color from supplied swatch and production push. Frame/border/caret changed to mean RGB #9da4a8. All current design changes approved.
 
 Revision124 (DESIGN ONLY): User requests stronger early unmelting while turning clock. Ratchet charge now uses quadratic ease-out1-(1-turnProgress)^2, inverting current charge before each increment to preserve continuity and total turns. From empty: half desktop turn43.75%, one turn75%, two turns100%; mobile one turn total. Hold charging and post-release decay unchanged. Production remains123.
+
+Revision125 (DESIGN ONLY): Lighten peak and clock photo frame/background/border/caret12% toward white, preserving hue. Lake unchanged. Production remains123; includes design124 winding curve.
