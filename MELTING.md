@@ -133,3 +133,14 @@ Pending: user requested full song playback starting at 0:42 and said they will
 provide the audio file. Current Apple preview is only 30 seconds; official
 Bandcamp page exposes no playable stream (`file:null`). Do not pretend seeking
 to 42 works on the preview. Integrate supplied full audio when it arrives.
+
+
+Revision 12: Warm sky remains default. Original PNG remains untouched. Added
+subtle contrast reduction and atmospheric color mixing to warm modes. Ridge
+clock is smaller, drapes down one side rather than forming a hammock, and uses
+the terrain flow exactly (no independent spindle anchor). Lower face receives
+restrained slope shading. Ambient field now28/38px amplitudes and .18 time rate
+(previously8/12 and.075). Full-melt sample moved9.56px in2.5sec without mouse;
+render submission2.8ms on this host. Manual slider still freezes ambient motion.
+45 geometry/18 clock cases passed before final shading-only change. This is
+a manually composed 2D terrain illusion, not depth reconstruction.

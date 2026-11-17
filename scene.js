@@ -48,6 +48,9 @@
         c.rgb=mix(vec3(l),c.rgb,.85);
         c.rgb=mix(c.rgb,vec3(.51,.53,.50),.09);
         c.rgb*=mix(vec3(1.),vec3(1.10,1.025,.88),clockWarm);
+        // Warm variants share the photograph's subdued contrast and air color.
+        c.rgb=mix(c.rgb,(c.rgb-.5)*.86+.5,clockWarm);
+        c.rgb=mix(c.rgb,vec3(.55,.54,.45),clockWarm*.17);
       }
       c.rgb=mix(c.rgb,c.rgb*vec3(.65,.75,.88),night);
       gl_FragColor=c;}`));
@@ -177,7 +180,7 @@
       const cover=Math.max(W/photo.naturalWidth,H/photo.naturalHeight);
       const peakX=(W-photo.naturalWidth*cover)/2+photo.naturalWidth*.586*cover;
       const peakY=(H-photo.naturalHeight*cover)/2+photo.naturalHeight*.527*cover;
-      const ridgeSize=W<761?Math.min(235,W*.60):Math.min(420,W*.34);
+      const ridgeSize=W<761?Math.min(235,W*.60):Math.min(350,W*.30);
       clockBox={x:Math.max(8,Math.min(W-ridgeSize-8,peakX-ridgeSize*.23)),y:peakY-ridgeSize*.48,size:ridgeSize};
       Object.assign(area.style,{left:clockBox.x+'px',top:clockBox.y+'px',right:'auto',width:ridgeSize+'px',height:ridgeSize+'px'});
       clock.style.height=ridgeSize+'px';
@@ -255,15 +258,15 @@
   function advanceAmbient(dt){
     if(manualMelt!==null){ambientBlend=0;return false;}
     ambientTime+=dt;ambientBlend+=(1-ambientBlend)*(1-Math.exp(-dt*2));
-    const time=ambientTime*.075;
+    const time=ambientTime*.18;
     const copy=document.querySelector('.intro').getBoundingClientRect();
     for(let y=0;y<ambientH;y++)for(let x=0;x<AMBIENT_N;x++){
       const u=x/(AMBIENT_N-1),v=y/(ambientH-1),i=y*AMBIENT_N+x;
       const edge=smooth(0,.10,u)*smooth(0,.10,1-u)*smooth(0,.07,v)*smooth(0,.08,1-v);
       const protection=1-.82*smooth(copy.left-60,copy.left,u*W)*(1-smooth(copy.right,copy.right+60,u*W))*smooth(copy.top+scrollY-60,copy.top+scrollY,v*H)*(1-smooth(copy.bottom+scrollY,copy.bottom+scrollY+60,v*H));
       const strength=ambientBlend*edge*protection*(.18+.82*smooth(.08,.5,v))*material.options.intensity;
-      ambientX[i]=8*(material.noise(u*2.3+9.1+time,v*1.7+32.5+time*.37)-material.noise(u*2.3+9.1,v*1.7+32.5))*strength;
-      ambientY[i]=12*(material.noise(u*2.4+71.3-time*.24,v*2.1+6.8+time)-material.noise(u*2.4+71.3,v*2.1+6.8))*strength;
+      ambientX[i]=28*(material.noise(u*2.3+9.1+time,v*1.7+32.5+time*.37)-material.noise(u*2.3+9.1,v*1.7+32.5))*strength;
+      ambientY[i]=38*(material.noise(u*2.4+71.3-time*.24,v*2.1+6.8+time)-material.noise(u*2.4+71.3,v*2.1+6.8))*strength;
     }
     return true;
   }
@@ -352,18 +355,21 @@
     y=.5+bankY/depth+softness*.065*material.options.gravity*lower*lower;
     if(clockStyle==='ridge'){
       // Lay the same painted dial over a shoulder, sagging between supports.
-      x=.5+bankX*1.08;
-      y=.49+bankY*.67+(.16+softness*.04)*gauss(bankX,.04,.29);
+      x=.5+bankX*.98;
+      // Shoulder rests on the ridge; the far end spills down its slope.
+      // A one-sided drape avoids a suspended hammock silhouette.
+      y=.49+bankY*.83+(.07+softness*.035)*gauss(bankX,.04,.29)
+        +.13*smooth(-.20,.43,bankX);
     }
     const originalX=clockBox.x+x*clockBox.size,originalY=clockBox.y+y*clockBox.size;
     const world=flow(originalX,originalY,m);
     if(!centerCache||centerCache.m!==m)centerCache={m,p:flow(clockBox.x+clockBox.size*.5,clockBox.y+clockBox.size*.5,m)};
     const center=centerCache.p;
     // Freeze the spindle relative to the case while letting its perimeter soften.
-    const rigid=material.options.anchoring*.75*Math.exp(-((u-.5)**2+(v-.5)**2)/.038);
+    const rigid=(clockStyle==='ridge'?0:material.options.anchoring*.75)*Math.exp(-((u-.5)**2+(v-.5)**2)/.038);
     const anchorX=originalX+center[0]-(clockBox.x+clockBox.size*.5);
     const anchorY=originalY+center[1]-(clockBox.y+clockBox.size*.5);
-    return [world[0]*(1-rigid)+anchorX*rigid,world[1]*(1-rigid)+anchorY*rigid,1-softness*.045*gauss(v,.72,.14)];
+    return [world[0]*(1-rigid)+anchorX*rigid,world[1]*(1-rigid)+anchorY*rigid,(clockStyle==='ridge'?.97-.13*smooth(.30,.95,v):1)-softness*.045*gauss(v,.72,.14)];
   }
   function createGrid(nx,ny){
     const vertices=new Float32Array((nx+1)*(ny+1)*5),indices=new Uint16Array(nx*ny*6);

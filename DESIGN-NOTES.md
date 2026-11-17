@@ -203,3 +203,14 @@ restored in the tuning selector or with ?clock=original. Mountain option applies
 a draped geometry to that same original asset. User is supplying full-track audio
 for requested start at42sec; preview remains30sec until then.
 No production deployment is authorized. Continue on design/melting-landscape.
+
+
+Revision 12: Warm sky remains default. Original PNG remains untouched. Added
+subtle contrast reduction and atmospheric color mixing to warm modes. Ridge
+clock is smaller, drapes down one side rather than forming a hammock, and uses
+the terrain flow exactly (no independent spindle anchor). Lower face receives
+restrained slope shading. Ambient field now28/38px amplitudes and .18 time rate
+(previously8/12 and.075). Full-melt sample moved9.56px in2.5sec without mouse;
+render submission2.8ms on this host. Manual slider still freezes ambient motion.
+45 geometry/18 clock cases passed before final shading-only change. This is
+a manually composed 2D terrain illusion, not depth reconstruction.
