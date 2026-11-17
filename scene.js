@@ -7,12 +7,10 @@
   const note = document.querySelector('#time-note');
   const motion = matchMedia('(prefers-reduced-motion: reduce)');
   let paused = motion.matches, energy = 0, charge = 0, holding = false, angle = null;
-  let windRest=0,windStartCharge=0;
   let heldFor=0, ratchet=0, turn=0, recoil=0, lastKey=0, gestureCenter=null, gestureTurned=false;
   const DETENT=Math.PI/24; // 48 detents/revolution. Three full turns from empty.
   const CHARGE_PER_DETENT=1/(48*3);
   function ratchetStep(direction=1){
-    windRest=.2;
     charge=Math.min(1,charge+Math.abs(direction)*CHARGE_PER_DETENT);
     handTime-=direction*92;
     turn=Math.max(-.55,Math.min(.55,turn+direction*.035));
@@ -452,7 +450,7 @@
     return p;
   }
   document.addEventListener('pointermove',event=>{
-    if(!ready||holding||windRest>0||paused||event.pointerType==='touch'||event.target.closest('.melt-ui,.hill-ui')){previousPointer=null;return;}
+    if(!ready||holding||paused||event.pointerType==='touch'||event.target.closest('.melt-ui,.hill-ui')){previousPointer=null;return;}
     const x=event.clientX,y=event.clientY+scrollY;
     if(previousPointer){
       const dx=x-previousPointer.x,dy=y-previousPointer.y,distance=Math.hypot(dx,dy);
@@ -565,9 +563,7 @@
       if(pauseTween.progress===1){pauseTween=null;charge=energy=1;resetFluid();resetAmbient();}
     }
     if(!paused){
-      const resting=!holding&&windRest>0;
-      const motionDt=resting?Math.max(0,dt-windRest):dt;
-      if(!holding)windRest=Math.max(0,windRest-dt);
+      const motionDt=dt;
       if(motionDt>0&&advanceFluid(motionDt))geometryDirty=true;
       if(motionDt>0&&advanceAmbient(motionDt)&&currentMelt()>.001)geometryDirty=true;
       heldFor=holding?heldFor+dt:0;
@@ -592,7 +588,7 @@
     pauseTween=null;
     if(!value&&wasTransitioning)charge=energy=1-from;
     manualMelt=null;
-    paused = value;windRest=0;
+    paused = value;
     holding = false;
     angle = null;
     document.body.classList.toggle('paused', paused);
@@ -612,11 +608,10 @@
     document.dispatchEvent(new Event('clockwind'));
     useClock();
     if (paused) setPaused(false);
-    windStartCharge=charge;windRest=0;
     holding = true;heldFor=0;gestureTurned=false;
     note.textContent = 'turning back time';
   }
-  function release() { if(holding&&charge>windStartCharge)windRest=.2;clockHintDismissed=true;windHint.style.display='none';holding = false; angle = null; gestureCenter=null; note.textContent = paused ? 'a moment, held' : 'time is passing'; }
+  function release() { clockHintDismissed=true;windHint.style.display='none';holding = false; angle = null; gestureCenter=null; note.textContent = paused ? 'a moment, held' : 'time is passing'; }
   function pointerAngle(event) {
     const center=gestureCenter||watchPoint(.5,.5,currentMelt());
     return Math.atan2(event.clientY+scrollY-center[1],event.clientX-center[0]);
