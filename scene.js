@@ -333,7 +333,7 @@
   }
   function advanceAmbient(dt){
     if(manualMelt!==null){ambientBlend=0;return false;}
-    ambientTime+=dt*1.21;ambientBlend+=(1-ambientBlend)*(1-Math.exp(-dt*2));
+    ambientTime+=dt*1.331;ambientBlend+=(1-ambientBlend)*(1-Math.exp(-dt*2));
 
     const copy=document.querySelector('.intro').getBoundingClientRect();
     for(let y=0;y<ambientH;y++)for(let x=0;x<AMBIENT_N;x++){

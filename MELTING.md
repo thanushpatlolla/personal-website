@@ -505,3 +505,5 @@ Revision88: Slightly stronger mountain bentness: up to20% more sideways base dis
 Revision89 (DESIGN ONLY): User wants visibly unnatural mountains, closer to the text distortion. Increased mountain sideways gain from20% to65% and interior vertical gain15% to35%, plus gentle opposing signed curls (1.2% photo-height lateral,0.6% vertical), feathered to terrain. Retains skyline drift protection and ambient speed; no text-specific changes.
 
 Revision90 (DESIGN ONLY): Ambient speed increased another10%, from1.10x to1.21x original rate. Current mountain bends/amplitudes unchanged.
+
+Revision91 (DESIGN ONLY): Increased shared ambient speed another10%,1.21x to1.331x original. Both text fastTime and landscape time/swell use ambientTime, so text and all scene regions accelerate together. Deformation amplitudes unchanged.
