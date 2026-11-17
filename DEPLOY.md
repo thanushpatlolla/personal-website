@@ -33,4 +33,4 @@ Local server: `python3 -m http.server 8765` from this directory.
 
 Production approved through revision83 (`fad905e`): gentle terrain stretch and
 music selection that preserves paused/playing state.
-Design revision84 adds a tiny original-image Snoopy while music plays.
+Design revision85 adds a tiny original-image Snoopy while music plays, painted into the terrain so he melts with it.

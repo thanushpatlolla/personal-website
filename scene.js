@@ -111,6 +111,8 @@
   const ctx=scene.getContext('2d'), brush=paint.getContext('2d');
   paint.width=paint.height=700;
   const photo=document.querySelector('#mountain-photo');
+  const snoopy=new Image();snoopy.src='/assets/snoopy-headphones.png';
+  const song=document.querySelector('#song');
   const clockModes=['original','warm','ridge'];
   let clockStyle=new URLSearchParams(location.search).get('clock')||'warm';
   if(!clockModes.includes(clockStyle))clockStyle='warm';
@@ -172,6 +174,14 @@
     ctx.filter='saturate(1.08)';
     ctx.drawImage(photo,(W-photo.naturalWidth*scale)/2,(H-photo.naturalHeight*scale)/2,photo.naturalWidth*scale,photo.naturalHeight*scale);
     ctx.filter='none';
+    if(!song.paused&&!song.ended&&snoopy.complete&&snoopy.naturalWidth){
+      // Seat the original cutout on this small ridge shoulder, in photo space.
+      // Painting into the scene makes every pixel share the mountain's melt.
+      const height=30,width=height*snoopy.naturalWidth/snoopy.naturalHeight;
+      const seatX=(W-photo.naturalWidth*scale)/2+photo.naturalWidth*.435*scale;
+      const seatY=(H-photo.naturalHeight*scale)/2+photo.naturalHeight*.549*scale;
+      ctx.drawImage(snoopy,seatX-width*.62,seatY-height*.97,width,height);
+    }
     const veil=ctx.createLinearGradient(0,0,0,H);veil.addColorStop(0,'#12212a30');veil.addColorStop(.5,'#10233318');veil.addColorStop(1,'#03151e85');
     ctx.fillStyle=veil;ctx.fillRect(0,0,W,H);
     if(clockStyle==='ridge'&&clockBox){
@@ -736,6 +746,7 @@
   Promise.all([loaded(photo),loaded(originalWatch),loaded(warmWatch),loaded(album),prepareIcons()]).then(()=>{
     ready=true;resize();document.body.classList.add('liquid-ready');setPaused(paused);
   }).catch(error=>{console.warn('Painting unavailable; readable HTML retained.',error);document.querySelector('.clock-area').hidden=true;still.hidden=true;});
+  snoopy.addEventListener('load',()=>{if(ready){captureScene();render(currentMelt());}});
   window.addEventListener('resize',resize);
   document.addEventListener('musicchange',()=>{if(ready){captureScene();render(currentMelt());}});
   document.addEventListener('focusin',()=>{if(ready){captureScene();render(currentMelt());}});
