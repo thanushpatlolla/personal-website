@@ -18,6 +18,10 @@
   }
   let last = 0, elapsed = 0, handTime = 36540, frame;
   let W = 1, H = 1, clockBox, ready = false, rebuilding = false;
+  const material=new MeltField();
+  let manualMelt=null,fluidActive=false,geometryDirty=true;
+  const currentMelt=()=>manualMelt===null?(paused?0:1-energy):manualMelt;
+  const timing={frameMs:0,frames:0};
   const surface = document.createElement('canvas');
   surface.id = 'liquid-surface'; surface.setAttribute('aria-hidden','true');
   document.body.append(surface);
@@ -36,13 +40,14 @@
     void main(){gl_Position=vec4(position,0.,1.);tex=uv;light=shade;}`));
   gl.attachShader(program, shader(gl.FRAGMENT_SHADER, `
     precision mediump float; varying vec2 tex; varying float light;
-    uniform sampler2D image; uniform float night; uniform float isClock;
+    uniform sampler2D image; uniform float night; uniform float isClock; uniform float clockWarm;
     void main(){vec4 c=texture2D(image,tex);if(c.a<.005)discard;
       c.rgb*=light;
       if(isClock>.5){
         float l=dot(c.rgb,vec3(.2126,.7152,.0722));
         c.rgb=mix(vec3(l),c.rgb,.85);
         c.rgb=mix(c.rgb,vec3(.51,.53,.50),.09);
+        c.rgb*=mix(vec3(1.),vec3(1.10,1.025,.88),clockWarm);
       }
       c.rgb=mix(c.rgb,c.rgb*vec3(.65,.75,.88),night);
       gl_FragColor=c;}`));
@@ -52,11 +57,7 @@
   const pos = gl.getAttribLocation(program,'position'), uv = gl.getAttribLocation(program,'uv');
   const shade = gl.getAttribLocation(program,'shade');
   const night = gl.getUniformLocation(program,'night'), isClock = gl.getUniformLocation(program,'isClock');
-  const vb = gl.createBuffer(), ib = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER,vb);
-  for (const [loc,size,offset] of [[pos,2,0],[uv,2,8],[shade,1,16]]) {
-    gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc,size,gl.FLOAT,false,20,offset);
-  }
+  const clockWarm=gl.getUniformLocation(program,'clockWarm');
   gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);
   function texture() {
     const t=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,t);
@@ -70,7 +71,16 @@
   const ctx=scene.getContext('2d'), brush=paint.getContext('2d');
   paint.width=paint.height=700;
   const photo=document.querySelector('#mountain-photo');
-  const watch=new Image(); watch.src='/assets/user-crash-clock.png';
+  const clockModes=['original','warm','ridge'];
+  let clockStyle=new URLSearchParams(location.search).get('clock')||'warm';
+  if(!clockModes.includes(clockStyle))clockStyle='warm';
+  const originalWatch=new Image();originalWatch.src='/assets/user-crash-clock.png';
+  // Both warm treatments use the exact original pixels; only shader color changes.
+  const warmWatch=originalWatch;
+  const album=document.querySelector('.record-cover img');
+  let watch=clockStyle==='original'?originalWatch:warmWatch;
+  document.body.dataset.clock=clockStyle;
+  clock.querySelector('img').src=watch.src;
   function loaded(img){return img.complete&&img.naturalWidth?Promise.resolve():new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=reject;});}
   const icons=[];
   async function prepareIcons(){
@@ -88,7 +98,7 @@
     let n;
     while((n=walker.nextNode())){
       const el=n.parentElement;
-      if(!n.textContent.trim()||el.closest('script,style,svg,.landscape,#clock,.visually-hidden,.music')||el.namespaceURI!=='http://www.w3.org/1999/xhtml')continue;
+      if(!n.textContent.trim()||el.closest('script,style,svg,.landscape,#clock,.visually-hidden,.melt-ui')||el.namespaceURI!=='http://www.w3.org/1999/xhtml')continue;
       const style=getComputedStyle(el);if(style.display==='none'||style.visibility==='hidden')continue;
       const range=document.createRange();let line='',left=0,top=0,height=0;
       ctx.font=`${style.fontStyle} ${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
@@ -107,13 +117,26 @@
   function captureScene(){
     ctx.clearRect(0,0,W,H);
     const scale=Math.max(W/photo.naturalWidth,H/photo.naturalHeight);
+    ctx.filter='saturate(1.08)';
     ctx.drawImage(photo,(W-photo.naturalWidth*scale)/2,(H-photo.naturalHeight*scale)/2,photo.naturalWidth*scale,photo.naturalHeight*scale);
+    ctx.filter='none';
     const veil=ctx.createLinearGradient(0,0,0,H);veil.addColorStop(0,'#12212a30');veil.addColorStop(.5,'#10233318');veil.addColorStop(1,'#03151e85');
     ctx.fillStyle=veil;ctx.fillRect(0,0,W,H);
+    if(clockStyle==='ridge'&&clockBox){
+      // Soft contact shadow follows the same terrain mesh as the watch.
+      ctx.save();ctx.translate(clockBox.x+clockBox.size*.52,clockBox.y+clockBox.size*.67);
+      ctx.scale(clockBox.size*.49,clockBox.size*.075);
+      const shadow=ctx.createRadialGradient(0,0,0,0,0,1);
+      shadow.addColorStop(0,'#12201d66');shadow.addColorStop(1,'#12201d00');
+      ctx.fillStyle=shadow;ctx.fillRect(-1,-1,2,2);ctx.restore();
+    }
+    const cover=album.getBoundingClientRect();
+    ctx.save();ctx.globalAlpha=.85;ctx.filter='saturate(.6)';
+    ctx.drawImage(album,cover.left,cover.top+scrollY,cover.width,cover.height);ctx.restore();
     paintText();
     for(const {svg,img} of icons){const b=svg.getBoundingClientRect();ctx.drawImage(img,b.left,b.top+scrollY,b.width,b.height);}
     const focus=document.activeElement;
-    if(focus&&!focus.closest('.music')&&focus.matches('a:focus-visible,#still:focus-visible')){
+    if(focus&&!focus.closest('.melt-ui')&&focus.matches('a:focus-visible,#still:focus-visible,#music-toggle:focus-visible')){
       const b=focus.getBoundingClientRect();ctx.strokeStyle='#fff1c9';ctx.lineWidth=1;
       if(focus===still){
         ctx.beginPath();ctx.moveTo(b.left+12,b.bottom+scrollY-3);
@@ -145,149 +168,244 @@
     surface.width=Math.round(W*dpr);surface.height=Math.round(H*dpr);
     surface.style.height=H+'px';scene.width=Math.round(W*dpr);scene.height=Math.round(H*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);
     gl.viewport(0,0,surface.width,surface.height);
+    const area=document.querySelector('.clock-area');
+    area.removeAttribute('style');clock.style.height='';
     const b=clock.getBoundingClientRect();
     const size=Math.min(b.width,b.height)*(W<761?.90:1.05);
     clockBox={x:b.left+(b.width-size)/2,y:b.top+scrollY-12,size};
-    resetWater();captureScene();paintWatch();rebuilding=false;render(paused?0:1-energy);
+    if(clockStyle==='ridge'){
+      const cover=Math.max(W/photo.naturalWidth,H/photo.naturalHeight);
+      const peakX=(W-photo.naturalWidth*cover)/2+photo.naturalWidth*.586*cover;
+      const peakY=(H-photo.naturalHeight*cover)/2+photo.naturalHeight*.527*cover;
+      const ridgeSize=W<761?Math.min(235,W*.60):Math.min(420,W*.34);
+      clockBox={x:Math.max(8,Math.min(W-ridgeSize-8,peakX-ridgeSize*.23)),y:peakY-ridgeSize*.48,size:ridgeSize};
+      Object.assign(area.style,{left:clockBox.x+'px',top:clockBox.y+'px',right:'auto',width:ridgeSize+'px',height:ridgeSize+'px'});
+      clock.style.height=ridgeSize+'px';
+    }
+    material.resize(W,H);
+    const masks=[['.intro',.82],['.music',.70],['#still',.94]].map(([selector,strength])=>{
+      const b=document.querySelector(selector).getBoundingClientRect();
+      return [(b.left-12)/W,(b.top+scrollY-12)/H,(b.right+12)/W,(b.bottom+scrollY+12)/H,strength,65/W,65/H];
+    });
+    material.setMasks(masks);
+    resetFluid();resetAmbient();geometryDirty=true;captureScene();paintWatch();rebuilding=false;render(currentMelt());
   }
   const smooth=(a,b,x)=>{let t=Math.min(1,Math.max(0,(x-a)/(b-a)));return t*t*(3-2*t);};
   const gauss=(x,c,w)=>Math.exp(-(((x-c)/w)**2));
-  // Seeded smooth random fields at several scales, domain-warped into each
-  // other. No repeating sine-wave bands, no per-word movement, no frame noise.
-  let randomSeed=0x55a1c;
-  const lattice=new Float32Array(256*256);
-  for(let i=0;i<lattice.length;i++){
-    randomSeed=(Math.imul(randomSeed,1664525)+1013904223)|0;
-    lattice[i]=(randomSeed>>>0)/2147483648-1;
+  // Viscous vector displacement: mouse motion deposits directional momentum.
+  // Diffusion carries nearby paint along; friction stops motion without ripples.
+  const FLUID_N=80;
+  let fluidH=80, dragX,dragY,velX,velY,nextX,nextY,nextVX,nextVY;
+  let fluidTime=0, previousPointer=null;
+  function resetFluid(){
+    fluidH=Math.max(40,Math.min(180,Math.round(FLUID_N*H/W)));
+    [dragX,dragY,velX,velY,nextX,nextY,nextVX,nextVY]=Array.from({length:8},()=>new Float32Array(FLUID_N*fluidH));
+    previousPointer=null;fluidTime=0;fluidActive=false;
   }
-  const fade=t=>t*t*t*(t*(t*6-15)+10);
-  function noise(x,y){
-    const ix=Math.floor(x),iy=Math.floor(y),fx=fade(x-ix),fy=fade(y-iy);
-    const a=lattice[(iy&255)*256+(ix&255)],b=lattice[(iy&255)*256+((ix+1)&255)];
-    const c=lattice[((iy+1)&255)*256+(ix&255)],d=lattice[((iy+1)&255)*256+((ix+1)&255)];
-    return (a+(b-a)*fx)*(1-fy)+(c+(d-c)*fx)*fy;
-  }
-  let dreamTime=0;
-  // A damped wave equation: input disturbs the surface, then travels freely.
-  const WATER_N=88;
-  let waterH=88, water=new Float32Array(WATER_N*waterH), waterV=new Float32Array(WATER_N*waterH);
-  let waterTime=0, previousPointer=null;
-  function resetWater(){
-    waterH=Math.max(40,Math.min(180,Math.round(WATER_N*H/W)));
-    water=new Float32Array(WATER_N*waterH);waterV=new Float32Array(water.length);previousPointer=null;
-  }
-  function disturb(u,v,strength){
-    const cx=u*(WATER_N-1),cy=v*(waterH-1);
-    for(let y=Math.max(1,Math.floor(cy-4));y<Math.min(waterH-1,cy+4);y++)
-      for(let x=Math.max(1,Math.floor(cx-4));x<Math.min(WATER_N-1,cx+4);x++){
-        const weight=Math.exp(-((x-cx)**2+(y-cy)**2)/3.2);
-        waterV[y*WATER_N+x]-=strength*weight;
+  function dragPaint(px,py,dx,dy){
+    const radius=Math.min(110,Math.max(70,W*.085));
+    const cx=px/W*(FLUID_N-1),cy=py/H*(fluidH-1);
+    const rx=radius/W*(FLUID_N-1),ry=radius/H*(fluidH-1);
+    for(let y=Math.max(1,Math.floor(cy-ry));y<Math.min(fluidH-1,cy+ry);y++)
+      for(let x=Math.max(1,Math.floor(cx-rx));x<Math.min(FLUID_N-1,cx+rx);x++){
+        const r=((x-cx)/rx)**2+((y-cy)/ry)**2;
+        if(r>1)continue;
+        const weight=Math.exp(-r*3)*(1-r),i=y*FLUID_N+x;
+        velX[i]+=dx*material.options.drag*weight;velY[i]+=dy*material.options.drag*weight;
+        fluidActive=true;
       }
   }
-  function advanceWater(dt){
-    waterTime+=dt;
-    while(waterTime>=1/60){
-      for(let y=1;y<waterH-1;y++)for(let x=1;x<WATER_N-1;x++){
-        const i=y*WATER_N+x;
-        const lap=water[i-1]+water[i+1]+water[i-WATER_N]+water[i+WATER_N]-4*water[i];
-        waterV[i]=(waterV[i]+lap*.23)*.979;
+  function advanceFluid(dt){
+    if(!fluidActive)return false;
+    fluidTime+=dt;
+    const viscosity=material.options.viscosity,damping=Math.exp(-material.options.damping/60);
+    while(fluidTime>=1/60){
+      let activity=0;
+      for(let y=1;y<fluidH-1;y++)for(let x=1;x<FLUID_N-1;x++){
+        const i=y*FLUID_N+x;
+        const lap=a=>a[i-1]+a[i+1]+a[i-FLUID_N]+a[i+FLUID_N]-4*a[i];
+        nextVX[i]=(velX[i]+lap(velX)*viscosity)*damping;
+        nextVY[i]=(velY[i]+lap(velY)*viscosity)*damping;
+        nextX[i]=(dragX[i]+nextVX[i]/60+lap(dragX)*viscosity*.3235)*.994;
+        // Disturbed pigment continues a small downward creep as momentum dies.
+        nextY[i]=(dragY[i]+nextVY[i]/60+lap(dragY)*viscosity*.3235+Math.hypot(dragX[i],dragY[i])*.0006)*.994;
+        activity=Math.max(activity,Math.abs(nextX[i]),Math.abs(nextY[i]),Math.abs(nextVX[i])*.1,Math.abs(nextVY[i])*.1);
       }
-      for(let i=0;i<water.length;i++)water[i]+=waterV[i];
-      waterTime-=1/60;
+      [velX,nextVX]=[nextVX,velX];[velY,nextVY]=[nextVY,velY];
+      [dragX,nextX]=[nextX,dragX];[dragY,nextY]=[nextY,dragY];
+      fluidTime-=1/60;
+      if(activity<.015){resetFluid();break;}
     }
+    return true;
   }
-  function waterAt(u,v){
-    const x=Math.max(0,Math.min(WATER_N-1.001,u*(WATER_N-1)));
-    const y=Math.max(0,Math.min(waterH-1.001,v*(waterH-1)));
-    const ix=Math.floor(x),iy=Math.floor(y),fx=x-ix,fy=y-iy,i=iy*WATER_N+ix;
-    return (water[i]*(1-fx)+water[i+1]*fx)*(1-fy)+(water[i+WATER_N]*(1-fx)+water[i+WATER_N+1]*fx)*fy;
+  function fluidAt(field,u,v){
+    const x=Math.max(0,Math.min(FLUID_N-1.001,u*(FLUID_N-1)));
+    const y=Math.max(0,Math.min(fluidH-1.001,v*(fluidH-1)));
+    const ix=Math.floor(x),iy=Math.floor(y),fx=x-ix,fy=y-iy,i=iy*FLUID_N+ix;
+    return (field[i]*(1-fx)+field[i+1]*fx)*(1-fy)+(field[i+FLUID_N]*(1-fx)+field[i+FLUID_N+1]*fx)*fy;
   }
-  function velocity(x,y){
+  // Slow, deterministic ambient creep. Manual progress holds a still reference
+  // shape; normal clock mode breathes without requiring pointer movement.
+  const AMBIENT_N=32;
+  let ambientH=32,ambientX,ambientY,ambientTime=0,ambientBlend=0;
+  function resetAmbient(){
+    ambientH=Math.max(24,Math.min(90,Math.round(AMBIENT_N*H/W)));
+    ambientX=new Float32Array(AMBIENT_N*ambientH);ambientY=new Float32Array(ambientX.length);ambientBlend=0;
+  }
+  function advanceAmbient(dt){
+    if(manualMelt!==null){ambientBlend=0;return false;}
+    ambientTime+=dt;ambientBlend+=(1-ambientBlend)*(1-Math.exp(-dt*2));
+    const time=ambientTime*.075;
+    const copy=document.querySelector('.intro').getBoundingClientRect();
+    for(let y=0;y<ambientH;y++)for(let x=0;x<AMBIENT_N;x++){
+      const u=x/(AMBIENT_N-1),v=y/(ambientH-1),i=y*AMBIENT_N+x;
+      const edge=smooth(0,.10,u)*smooth(0,.10,1-u)*smooth(0,.07,v)*smooth(0,.08,1-v);
+      const protection=1-.82*smooth(copy.left-60,copy.left,u*W)*(1-smooth(copy.right,copy.right+60,u*W))*smooth(copy.top+scrollY-60,copy.top+scrollY,v*H)*(1-smooth(copy.bottom+scrollY,copy.bottom+scrollY+60,v*H));
+      const strength=ambientBlend*edge*protection*(.18+.82*smooth(.08,.5,v))*material.options.intensity;
+      ambientX[i]=8*(material.noise(u*2.3+9.1+time,v*1.7+32.5+time*.37)-material.noise(u*2.3+9.1,v*1.7+32.5))*strength;
+      ambientY[i]=12*(material.noise(u*2.4+71.3-time*.24,v*2.1+6.8+time)-material.noise(u*2.4+71.3,v*2.1+6.8))*strength;
+    }
+    return true;
+  }
+  function ambientAt(field,u,v){
+    const x=Math.max(0,Math.min(AMBIENT_N-1.001,u*(AMBIENT_N-1))),y=Math.max(0,Math.min(ambientH-1.001,v*(ambientH-1)));
+    const ix=Math.floor(x),iy=Math.floor(y),fx=x-ix,fy=y-iy,i=iy*AMBIENT_N+ix;
+    return (field[i]*(1-fx)+field[i+1]*fx)*(1-fy)+(field[i+AMBIENT_N]*(1-fx)+field[i+AMBIENT_N+1]*fx)*fy;
+  }
+  function interaction(x,y,out=[0,0]){
     const u=x/W,v=y/H;
-    const unit=Math.min(W,H),px=x/unit,py=y/unit;
-    const time=dreamTime*.025;
-    const wx=noise(px*2.3+11.7,py*2.3+3.8+time);
-    const wy=noise(px*2.3+37.1+time*.63,py*2.3+18.2);
-    const qx=px+wx*.21,qy=py+wy*.21;
-    const broadX=noise(qx*2.4+4.1,qy*2.4+9.6+time*.7);
-    const broadY=noise(qx*2.4+22.3+time*.8,qy*2.4+31.7);
-    const middleX=noise(qx*5.8+51.8,qy*5.8+8.3+time*.42);
-    const middleY=noise(qx*5.8+12.9+time*.35,qy*5.8+61.2);
-    const fineX=noise(qx*11.9+91.3,qy*11.9+4.9+time*.22);
-    const fineY=noise(qx*11.9+6.8+time*.28,qy*11.9+79.4);
-    // Viscous downward flow stretches longer painted contours; slow lateral
-    // refraction bends them without the previous fine-grained crumpling.
-    const pigment=.5+.5*noise(qx*6.2+18.4,qy*.85+54.1+time*.18);
-    const gravity=90*Math.pow(pigment,2.3)*Math.pow(Math.max(0,Math.sin(Math.PI*v)),.7);
-    let dx=36*broadX+11*middleX+2*fineX;
-    let dy=34*broadY+13*middleY+3*fineY+gravity;
-    // Refraction follows surface slopes. Nothing tracks or sticks to the cursor.
-    dx+=(waterAt(u+1/WATER_N,v)-waterAt(u-1/WATER_N,v))*15;
-    dy+=(waterAt(u,v+1/waterH)-waterAt(u,v-1/waterH))*15;
     const edge=smooth(0,.055,u)*smooth(0,.055,1-u)*smooth(0,.035,v)*smooth(0,.035,1-v);
     const scale=Math.max(.60,Math.min(1,W/980));
-    return [dx*edge*scale,dy*edge*scale];
+    out[0]=65*Math.tanh(fluidAt(dragX,u,v)/65)*edge*scale;out[1]=65*Math.tanh(fluidAt(dragY,u,v)/65)*edge*scale;
+    return out;
+  }
+  // Cache the expensive static material map separately from the moving paint.
+  // Ambient motion must not force reintegration of 20,000 unchanged base points.
+  let baseMap=null;
+  const dragA=new Float64Array(2),dragB=new Float64Array(2);
+  function prepareBase(m){
+    if(baseMap&&baseMap.m===m&&baseMap.version===material.version)return;
+    const nx=96,ny=Math.max(48,Math.min(144,Math.round(96*H/W)));
+    const data=new Float32Array((nx+1)*(ny+1)*2);
+    for(let y=0;y<=ny;y++)for(let x=0;x<=nx;x++){
+      const px=x*W/nx,py=y*H/ny,p=material.map(px,py,m),i=(y*(nx+1)+x)*2;
+      data[i]=p[0]-px;data[i+1]=p[1]-py;
+    }
+    baseMap={nx,ny,data,m,version:material.version};
+  }
+  function basePoint(x,y){
+    const {nx,ny,data:a}=baseMap;
+    const gx=Math.max(0,Math.min(nx-1e-6,x/W*nx)),gy=Math.max(0,Math.min(ny-1e-6,y/H*ny));
+    const ix=Math.floor(gx),iy=Math.floor(gy),fx=gx-ix,fy=gy-iy,i=(iy*(nx+1)+ix)*2,stride=(nx+1)*2;
+    return [x+(a[i]*(1-fx)+a[i+2]*fx)*(1-fy)+(a[i+stride]*(1-fx)+a[i+stride+2]*fx)*fy,
+      y+(a[i+1]*(1-fx)+a[i+3]*fx)*(1-fy)+(a[i+stride+1]*(1-fx)+a[i+stride+3]*fx)*fy,1];
   }
   function flow(x,y,m){
-    // Advect through several small steps rather than folding a displacement
-    // grid over itself. This keeps continuous strokes instead of clipped shards.
-    if(m<.0001)return [x,y,1];
-    const step=m/4;
-    for(let i=0;i<4;i++){
-      const d=velocity(x,y);x+=d[0]*step;y+=d[1]*step;
+    if(m===0)return [x,y,1];
+    prepareBase(m);const p=basePoint(x,y);
+    if(fluidActive){
+      const step=m/4;
+      for(let i=0;i<4;i++){
+        interaction(p[0],p[1],dragA);
+        interaction(p[0]+dragA[0]*step*.5,p[1]+dragA[1]*step*.5,dragB);
+        p[0]+=dragB[0]*step;p[1]+=dragB[1]*step;
+      }
     }
-    return [x,y,1];
+    if(manualMelt===null&&!paused&&ambientBlend>0){
+      const u=p[0]/W,v=p[1]/H;
+      p[0]+=ambientAt(ambientX,u,v)*m;p[1]+=ambientAt(ambientY,u,v)*m;
+    }
+    return p;
   }
   document.addEventListener('pointermove',event=>{
-    if(holding||paused||event.pointerType==='touch')return;
-    const u=event.clientX/W,v=(event.clientY+scrollY)/H;
+    if(!ready||holding||paused||event.pointerType==='touch'||event.target.closest('.melt-ui')){previousPointer=null;return;}
+    const x=event.clientX,y=event.clientY+scrollY;
     if(previousPointer){
-      const distance=Math.hypot((u-previousPointer.u)*W,(v-previousPointer.v)*H);
-      if(distance>1)disturb(u,v,Math.min(.30,distance*.006));
+      const dx=x-previousPointer.x,dy=y-previousPointer.y,distance=Math.hypot(dx,dy);
+      if(distance>0&&distance<250){
+        const steps=Math.max(1,Math.ceil(distance/16));
+        for(let i=1;i<=steps;i++)dragPaint(previousPointer.x+dx*i/steps,previousPointer.y+dy*i/steps,dx/steps,dy/steps);
+      }
     }
-    previousPointer={u,v};
+    previousPointer={x,y};
   },{passive:true});
   document.addEventListener('pointerleave',()=>{previousPointer=null;});
+  let centerCache=null;
   function watchPoint(u,v,m){
     // A restrained painted Crash is the resting shape. The watch then enters
     // precisely the same world-space paint/water field as the mountain and type.
-    const lower=smooth(.34,.96,v);
-    let x=u+m*(.035*lower*lower-.020*gauss(v,.51,.22));
-    let y=v+m*.10*lower;
+    const softness=m*material.options.intensity;
+    const lower=smooth(.48,.98,v);
+    // A stable spindle, a soft waist, and a heavier, slightly swollen trailing end.
+    const width=1+softness*(.10*gauss(v,.84,.13)-.07*gauss(v,.66,.12));
+    let x=.5+(u-.5)*width+softness*.028*lower*lower;
+    let y=v+softness*.09*lower*lower;
     // Bank across the sky: a shallow, slightly receding plane rather than
     // an upright hanging dial. Shared world flow still bends the whole face.
-    const tilt=-1.047+turn*.12+recoil;
-    const perspective=.93+.14*v;
-    const px=(x-.5)*.82*perspective,py=(y-.5)*perspective;
-    x=.5+px*Math.cos(tilt)-py*Math.sin(tilt);
-    y=.5+px*Math.sin(tilt)+py*Math.cos(tilt);
-    const world=flow(clockBox.x+x*clockBox.size,clockBox.y+y*clockBox.size,m);
-    return [world[0],world[1],1-m*.06*gauss(v,.60,.15)];
-  }
-  function mesh(tex,m,watchLayer){
-    const nx=watchLayer?60:120,ny=watchLayer?70:100;
-    const vertices=new Float32Array((nx+1)*(ny+1)*5),indices=new Uint16Array(nx*ny*6);
-    let k=0;
-    for(let j=0;j<=ny;j++)for(let i=0;i<=nx;i++){
-      const u=i/nx,v=j/ny;
-      const p=watchLayer?watchPoint(u,v,m):flow(u*W,v*H,m);
-      vertices[k++]=p[0]/W*2-1;vertices[k++]=1-p[1]/H*2;vertices[k++]=u;vertices[k++]=v;vertices[k++]=p[2];
+    const tilt=(clockStyle==='ridge'?-1.37:-1.047)+turn*.12+recoil;
+    const px=(x-.5)*.82,py=y-.5;
+    const bankX=px*Math.cos(tilt)-py*Math.sin(tilt);
+    const bankY=px*Math.sin(tilt)+py*Math.cos(tilt);
+    // Yaw AFTER banking: the screen-right edge recedes and becomes smaller.
+    const yaw=.60,depth=1+bankX*Math.sin(yaw)*.85;
+    x=.5+bankX*Math.cos(yaw)/depth;
+    y=.5+bankY/depth+softness*.065*material.options.gravity*lower*lower;
+    if(clockStyle==='ridge'){
+      // Lay the same painted dial over a shoulder, sagging between supports.
+      x=.5+bankX*1.08;
+      y=.49+bankY*.67+(.16+softness*.04)*gauss(bankX,.04,.29);
     }
-    k=0;for(let j=0;j<ny;j++)for(let i=0;i<nx;i++){
+    const originalX=clockBox.x+x*clockBox.size,originalY=clockBox.y+y*clockBox.size;
+    const world=flow(originalX,originalY,m);
+    if(!centerCache||centerCache.m!==m)centerCache={m,p:flow(clockBox.x+clockBox.size*.5,clockBox.y+clockBox.size*.5,m)};
+    const center=centerCache.p;
+    // Freeze the spindle relative to the case while letting its perimeter soften.
+    const rigid=material.options.anchoring*.75*Math.exp(-((u-.5)**2+(v-.5)**2)/.038);
+    const anchorX=originalX+center[0]-(clockBox.x+clockBox.size*.5);
+    const anchorY=originalY+center[1]-(clockBox.y+clockBox.size*.5);
+    return [world[0]*(1-rigid)+anchorX*rigid,world[1]*(1-rigid)+anchorY*rigid,1-softness*.045*gauss(v,.72,.14)];
+  }
+  function createGrid(nx,ny){
+    const vertices=new Float32Array((nx+1)*(ny+1)*5),indices=new Uint16Array(nx*ny*6);
+    let k=0;for(let j=0;j<ny;j++)for(let i=0;i<nx;i++){
       const a=j*(nx+1)+i,b=a+nx+1;
       for(const n of [a,b,a+1,a+1,b,b+1])indices[k++]=n;
     }
-    gl.bindTexture(gl.TEXTURE_2D,tex);gl.uniform1f(isClock,watchLayer?1:0);
-    gl.bindBuffer(gl.ARRAY_BUFFER,vb);gl.bufferData(gl.ARRAY_BUFFER,vertices,gl.DYNAMIC_DRAW);
+    const vb=gl.createBuffer(),ib=gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER,vb);gl.bufferData(gl.ARRAY_BUFFER,vertices.byteLength,gl.DYNAMIC_DRAW);
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,ib);gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,indices,gl.STATIC_DRAW);
-    gl.drawElements(gl.TRIANGLES,indices.length,gl.UNSIGNED_SHORT,0);
+    return {nx,ny,vertices,vb,ib,count:indices.length};
+  }
+  const sceneGrid=createGrid(128,112),watchGrid=createGrid(64,80);
+  let lastGeometryMelt=-1,lastTurn=-1,lastRecoil=-1;
+  function mesh(tex,m,watchLayer,dirty){
+    const grid=watchLayer?watchGrid:sceneGrid,{nx,ny,vertices}=grid;
+    gl.bindBuffer(gl.ARRAY_BUFFER,grid.vb);
+    if(dirty){
+      let k=0;for(let j=0;j<=ny;j++)for(let i=0;i<=nx;i++){
+        const u=i/nx,v=j/ny,p=watchLayer?watchPoint(u,v,m):flow(u*W,v*H,m);
+        vertices[k++]=p[0]/W*2-1;vertices[k++]=1-p[1]/H*2;vertices[k++]=u;vertices[k++]=v;vertices[k++]=p[2];
+      }
+      gl.bufferSubData(gl.ARRAY_BUFFER,0,vertices);
+    }
+    for(const [loc,size,offset] of [[pos,2,0],[uv,2,8],[shade,1,16]]){
+      gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,size,gl.FLOAT,false,20,offset);
+    }
+    gl.bindTexture(gl.TEXTURE_2D,tex);gl.uniform1f(isClock,watchLayer?1:0);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,grid.ib);
+    gl.drawElements(gl.TRIANGLES,grid.count,gl.UNSIGNED_SHORT,0);
   }
   function render(melt){
     root.style.setProperty('--melt',melt.toFixed(3));
     if(!ready||!clockBox)return;
+    const started=performance.now();centerCache=null;
+    const dirty=geometryDirty||melt!==lastGeometryMelt;
     gl.clearColor(.035,.075,.09,1);gl.clear(gl.COLOR_BUFFER_BIT);
-    gl.uniform1f(night,melt*.12);
-    mesh(sceneTexture,melt,false);mesh(watchTexture,melt,true);
+    gl.uniform1f(night,melt*.12);gl.uniform1f(clockWarm,clockStyle==='original'?0:.45);
+    mesh(sceneTexture,melt,false,dirty);
+    mesh(watchTexture,melt,true,dirty||turn!==lastTurn||recoil!==lastRecoil);
+    lastGeometryMelt=melt;lastTurn=turn;lastRecoil=recoil;geometryDirty=false;
+    timing.frameMs=performance.now()-started;timing.frames++;
   }
   // A slightly fast, unreliable escapement: uneven waits, an occasional
   // skipped tooth, and brief double ticks. Independent of the landscape flow.
@@ -305,8 +423,8 @@
   function update(now){
     const dt=Math.min(.15,(now-(last||now))/1000);last=now;
     if(!paused){
-      dreamTime+=dt;
-      advanceWater(dt);
+      if(advanceFluid(dt))geometryDirty=true;
+      if(advanceAmbient(dt)&&currentMelt()>.001)geometryDirty=true;
       heldFor=holding?heldFor+dt:0;
       charge=Math.max(0,Math.min(1,charge+(holding?(heldFor>.7&&!gestureTurned?1/18:0):-1/6.5)*dt));
       energy+=(charge-energy)*(1-Math.exp(-dt*16));
@@ -314,17 +432,18 @@
       if(!holding){advanceClock(dt);turn*=Math.exp(-dt*10);}
       elapsed+=dt;
     }
-    if(elapsed>1/40||paused||holding){
-      const melt=paused?0:1-energy;
+    { // Render active deformation on every animation frame; idle geometry is cached.
+      const melt=currentMelt();
       const tick=Math.floor(handTime)!==lastSecond;
       if(ready&&(holding||tick)){paintWatch();lastSecond=Math.floor(handTime);}
-      if(melt>.001||tick||Math.abs(previousMelt-melt)>.0001||Math.abs(turn)>.0001||Math.abs(recoil)>.0001||paused){render(melt);previousMelt=melt;}
+      if(geometryDirty||tick||Math.abs(previousMelt-melt)>.0001||Math.abs(turn)>.0001||Math.abs(recoil)>.0001||paused){render(melt);previousMelt=melt;}
       elapsed=0;
     }
     if(!paused)frame=requestAnimationFrame(update);
   }
   function start() { cancelAnimationFrame(frame); last = 0; frame = requestAnimationFrame(update); }
   function setPaused(value) {
+    manualMelt=null;
     paused = value;
     holding = false;
     angle = null;
@@ -332,19 +451,20 @@
     still.textContent = paused ? 'let time pass' : 'time is passing';
     still.setAttribute('aria-pressed', String(paused));
     note.textContent = paused ? 'a moment, held' : 'time is passing';
-    if (paused) charge = energy = 1;
-    render(paused ? 0 : 1 - energy);
+    if (paused) {charge = energy = 1;resetFluid();resetAmbient();geometryDirty=true;}
+    render(currentMelt());
     if(ready)captureScene();
     start();
   }
   function wind() {
+    useClock();
     if (paused) setPaused(false);
     holding = true;heldFor=0;gestureTurned=false;
     note.textContent = 'turning back time';
   }
   function release() { holding = false; angle = null; gestureCenter=null; note.textContent = paused ? 'a moment, held' : 'time is passing'; }
   function pointerAngle(event) {
-    const center=gestureCenter||watchPoint(.5,.5,paused?0:1-energy);
+    const center=gestureCenter||watchPoint(.5,.5,currentMelt());
     return Math.atan2(event.clientY+scrollY-center[1],event.clientX-center[0]);
   }
   function contains(polygon,x,y){
@@ -364,8 +484,8 @@
     return points;
   }
   document.addEventListener('pointerdown',event=>{
-    if(!ready||!event.isPrimary||event.button!==0||event.target.closest('.music'))return;
-    const m=paused?0:1-energy;
+    if(!ready||!event.isPrimary||event.button!==0||event.target.closest('.melt-ui'))return;
+    const m=currentMelt();
     const outline=boundary((u,v)=>watchPoint(u,v,m),.09,.01,.91,.99);
     if(!contains(outline,event.clientX,event.clientY+scrollY))return;
     event.preventDefault();clock.focus({preventScroll:true});
@@ -373,14 +493,14 @@
   });
   // Hit-test the painted link/control outlines, not their unmelted DOM boxes.
   document.addEventListener('click',event=>{
-    if(!ready||event.detail===0||event.target.closest('.music'))return;
+    if(!ready||event.detail===0||event.target.closest('.melt-ui'))return;
     event.preventDefault();event.stopPropagation();
-    const m=paused?0:1-energy;
-    for(const el of document.querySelectorAll('a:not(.music a),#still')){
+    const m=currentMelt();
+    for(const el of document.querySelectorAll('a:not(.music a):not(.melt-ui a),#still,#music-toggle')){
       const b=el.getBoundingClientRect();
       const shape=boundary((x,y)=>flow(x,y,m),b.left,b.top+scrollY,b.right,b.bottom+scrollY);
       if(contains(shape,event.clientX,event.clientY+scrollY)){
-        if(el===still)setPaused(!paused);else window.location.assign(el.href);
+        if(el===still)setPaused(!paused);else if(el.id==='music-toggle')el.click();else window.location.assign(el.href);
         return;
       }
     }
@@ -402,7 +522,7 @@
   clock.addEventListener('keydown', event => {
     lastKey=performance.now();
     if(['ArrowRight','ArrowUp','ArrowLeft','ArrowDown'].includes(event.key)){
-      event.preventDefault();if(paused)setPaused(false);const d=['ArrowLeft','ArrowDown'].includes(event.key)?-1:1;ratchetStep(d);ratchetStep(d);
+      event.preventDefault();useClock();if(paused)setPaused(false);const d=['ArrowLeft','ArrowDown'].includes(event.key)?-1:1;ratchetStep(d);ratchetStep(d);
     }
     if (event.key === ' ' || event.key === 'Enter') {
       event.preventDefault();if(!holding)wind();
@@ -413,9 +533,32 @@
   });
   clock.addEventListener('click', event => {
     if(event.detail===0&&!holding&&performance.now()-lastKey>500){
-      if(paused)setPaused(false);for(let i=0;i<4;i++)ratchetStep();
+      useClock();if(paused)setPaused(false);for(let i=0;i<4;i++)ratchetStep();
     }
   });
+  function useClock(){
+    if(manualMelt!==null){charge=energy=1-manualMelt;manualMelt=null;}
+  }
+  window.melting={
+    setClockStyle(value){
+      if(!clockModes.includes(value))return;
+      release();clockStyle=value;watch=value==='original'?originalWatch:warmWatch;
+      document.body.dataset.clock=value;clock.querySelector('img').src=watch.src;
+      centerCache=null;if(ready)resize();
+    },
+    configure(values){material.configure(values);geometryDirty=true;render(currentMelt());return {...material.options};},
+    setMeltProgress(value){
+      if(!Number.isFinite(Number(value)))return;
+      manualMelt=Math.max(0,Math.min(1,Number(value)));resetFluid();ambientBlend=0;geometryDirty=true;render(currentMelt());
+    },
+    useClock(){useClock();if(paused)setPaused(false);start();},
+    resetInteraction(){resetFluid();geometryDirty=true;render(currentMelt());},
+    setRegions(regions){material.setRegions(regions);geometryDirty=true;render(currentMelt());},
+    getState(){return {ready,clockStyle,meltProgress:currentMelt(),manual:manualMelt!==null,options:{...material.options},fluidActive,ambientTime,ambientActive:manualMelt===null&&!paused,renderMs:timing.frameMs};},
+    mapPoint(x,y,progress=currentMelt()){return material.map(x,y,progress);},
+    samplePoint(x,y){return flow(x,y,currentMelt());},
+    defaults:{...MeltField.defaults},limits:MeltField.limits
+  };
   still.addEventListener('click', () => setPaused(!paused));
   motion.addEventListener('change', event => setPaused(event.matches));
   document.addEventListener('visibilitychange', () => {
@@ -424,11 +567,12 @@
   });
   document.querySelector('.clock-area').hidden = false;
   still.hidden = false;
-  Promise.all([loaded(photo),loaded(watch),prepareIcons()]).then(()=>{
+  Promise.all([loaded(photo),loaded(originalWatch),loaded(warmWatch),loaded(album),prepareIcons()]).then(()=>{
     ready=true;resize();document.body.classList.add('liquid-ready');setPaused(paused);
   }).catch(error=>{console.warn('Painting unavailable; readable HTML retained.',error);document.querySelector('.clock-area').hidden=true;still.hidden=true;});
   window.addEventListener('resize',resize);
-  document.addEventListener('focusin',()=>{if(ready){captureScene();render(paused?0:1-energy);}});
+  document.addEventListener('musicchange',()=>{if(ready){captureScene();render(currentMelt());}});
+  document.addEventListener('focusin',()=>{if(ready){captureScene();render(currentMelt());}});
   surface.addEventListener('webglcontextlost',event=>{
     event.preventDefault();cancelAnimationFrame(frame);ready=false;
     document.body.classList.remove('liquid-ready');

@@ -6,12 +6,14 @@
   const icon = document.querySelector('.record-play');
   const title = 'To All the Dancers of the World, a Round Form of Fantasy by Sweet Trip';
   let pending = false;
+  const notify=()=>document.dispatchEvent(new Event('musicchange'));
   function sync() {
     const playing = !audio.paused && !audio.ended;
     button.setAttribute('aria-pressed', String(playing));
     button.setAttribute('aria-label', `${playing ? 'Pause' : 'Play'} preview of ${title}`);
-    status.textContent = playing ? '· playing preview' : '· play preview';
+    status.textContent = '';
     icon.textContent = playing ? 'Ⅱ' : '▶';
+    notify();
   }
   button.addEventListener('click', async () => {
     if (pending) return;

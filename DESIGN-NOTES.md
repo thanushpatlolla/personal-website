@@ -186,3 +186,20 @@ Verified390px mobile: no overflow, reading ends510.5/music begins735.8,
 left margins32px, bottom gap52px. No console warnings/errors. Screenshot
 sky-clock-left-v9.jpg in chat outputs. Production unchanged; preview audio still
 30 seconds pending full-track asset/source.
+
+
+## Revision 10–11: deterministic melting, typography, clock variants
+See MELTING.md for current architecture, tuning API, validation and pending audio.
+Replaced ripple field with seeded localized material integration; retained the
+viscous mouse painting that the user explicitly liked. Added controllable
+meltProgress, configurable gravity/anchors/noise/viscosity/damping, optional
+Melt studio (?tune=1 or Shift+M), restrained copy sag and persistent ambient creep.
+Preserve exact latest bio in index.html. Music text13/12px; bio16px. Preview labels
+removed from visible text. Time button bottom right, bottom aligned with music.
+Music art/text now captured into the same mesh and hit-tested at warped positions.
+Clock variants all use untouched original PNG with optional subtle shader warmth;
+regenerated alternatives were rejected and are not used. Original clock can be
+restored in the tuning selector or with ?clock=original. Mountain option applies
+a draped geometry to that same original asset. User is supplying full-track audio
+for requested start at42sec; preview remains30sec until then.
+No production deployment is authorized. Continue on design/melting-landscape.

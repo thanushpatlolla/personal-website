@@ -20,7 +20,7 @@
     <link rel="canonical" href="https://thanushpatlolla.com/">
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <link rel="preload" href="/assets/mountains.jpg" as="image">
-    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/style.css?v=11">
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -68,8 +68,7 @@
     <main>
       <section class="intro" aria-label="About Thanush">
         <div class="bio">
-          <p>I think deep learning is cool, and am excited about connections in robotics, science, and cognition.</p>
-          <p>I also like building guitar electronics, climbing, hiking, and collecting vinyls.</p>
+          <p>I think deep learning is cool, especially its connections to physics, compute, robotics, and how we think. I also like guitar electronics, climbing, old Nintendo games, bookstores, and collecting vinyl.</p>
         </div>
         <nav class="social-links" aria-label="Contact and social links">
           <a href="mailto:thanush@mit.edu" aria-label="Email Thanush" title="Email">
@@ -112,13 +111,15 @@
     <span id="time-note" class="visually-hidden" aria-hidden="true">time is passing</span>
     <aside class="music" aria-label="Music">
       <button id="music-toggle" aria-pressed="false" aria-label="Play preview of To All the Dancers of the World, a Round Form of Fantasy by Sweet Trip">
-        <span class="record-cover"><img src="https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e022aa34d5906e01231eff70f82" width="56" height="56" alt="Velocity: Design: Comfort. album cover"><span class="record-play" aria-hidden="true">▶</span></span>
-        <span class="music-caption"><span class="music-title">To All the Dancers of the World,<br>a Round Form of Fantasy</span><span class="music-artist">Sweet Trip <span id="music-status">· play preview</span></span></span>
+        <span class="record-cover"><img src="/assets/sweet-trip-cover.jpg" width="60" height="60" alt="Velocity: Design: Comfort. album cover"><span class="record-play" aria-hidden="true">▶</span></span>
+        <span class="music-caption"><span class="music-title">To All the Dancers of the World,<br>a Round Form of Fantasy</span><span class="music-artist">Sweet Trip <span id="music-status" class="visually-hidden" role="status"></span></span></span>
       </button>
       <audio id="song" preload="none" src="https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/8e/73/e0/8e73e0c9-70e9-fa32-8ae7-b8be1f45e94c/mzaf_11498733055042504170.plus.aac.p.m4a"></audio>
       <noscript><a href="https://music.apple.com/us/song/299710497">Listen on Apple Music ↗</a></noscript>
     </aside>
-    <script src="/scene.js" defer></script>
-    <script src="/music.js" defer></script>
+    <script src="/melt-field.js?v=11" defer></script>
+    <script src="/scene.js?v=11" defer></script>
+    <script src="/melt-controls.js?v=11" defer></script>
+    <script src="/music.js?v=11" defer></script>
   </body>
 </html>
