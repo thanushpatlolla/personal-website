@@ -25,10 +25,10 @@ remaining unchanged. This was discovered and corrected on 2026-11-17.
   approved commit. Do not include unapproved later design commits.
 - Verify the actual live HTML/script revision, not only the Git branch.
 - A successful Git push is not deployment confirmation. On 2026-11-17,
-  revision97 was on main but production still served94; no build checks existed
-  for the later commits. For releases push the new commit to main first, then
-  design after confirming a production build was created. Investigate/retry
-  from Cloudflare if the build does not appear.
+  revision97 was on main while production still served94. The dashboard later
+  showed the clock deployment completing and the label build in progress:
+  deployment lag, not a timezone bug. GitHub check runs can lag or be absent;
+  use Cloudflare's deployment history and verify served HTML/script versions.
 - When changing hosting configuration, verify branch builds cannot overwrite
   production before resuming design pushes.
 
