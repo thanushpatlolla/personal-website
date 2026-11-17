@@ -138,3 +138,6 @@ body:not([data-clock="original"]) #clock>img{filter:sepia(.12) saturate(.94);}
 @media(max-width:760px){#clock-reward{width:180px;}}
 
 .clock-clue .lake-hint{fill:#eee8d9;}
+
+.ridge-snoopy{position:absolute;z-index:7;height:30px;width:auto;max-width:none;pointer-events:none;user-select:none;transform:translate(-50%,-100%);}
+.ridge-snoopy[hidden]{display:none;}

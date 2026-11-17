@@ -478,3 +478,18 @@ viewport/progress combinations; visually reviewed localhost. Paused song selecti
 from v81 retained. Production remains revision80; do not deploy without request.
 
 Revision83 (DESIGN ONLY): User found v82 too strong and preferred v81 with a small touch of vertical stretch. Blend85% v81 gentle terrain balance with15% v82 separated stretch. Playback-state behavior retained. Production unchanged.
+
+Revision84: Tiny30px Snoopy from user's original attachment (not generated).
+Background/notes removed using a pixel mask from connected bright outlines,
+with dilation/fill/erosion preserving original interior pixels. Asset:
+assets/snoopy-headphones.png. snoopy.js follows photo UV(.49,.553) through the
+shared map, visible only while audio is playing; no clicks intercepted. Browser
+verified play shows and pause hides. Screenshot outputs/tiny-snoopy-v84.jpg.
+
+DEPLOYMENT CORRECTION: Production was unexpectedly serving design revision83.
+Git main was still5563507, but Cloudflare Workers non-production builds ran
+`npx wrangler deploy` too. Disabled Builds for non-production branches in the
+Cloudflare dashboard; refreshed UI shows Builds for Preview branches OFF and
+no unsaved changes. User approved publishing the stretch/playback changes and
+requested separation. Pushed only fad905e (revision83) to main. Snoopy stays
+design-only. DEPLOY.md now describes actual Worker setup rather than Pages.
