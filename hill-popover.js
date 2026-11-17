@@ -61,7 +61,7 @@
   }
   function tick(){if(!document.hidden)update();requestAnimationFrame(tick);}tick();
   }
-  landmark({id:'lake-song',hint:[.343,.847],label:'Play Weird Fishes / Arpeggi by Radiohead from the beginning',action:()=>window.playLakeSong(),
+  landmark({id:'lake-song',hint:[.343,.847],label:'Play Weird Fishes / Arpeggi by Radiohead from 7 seconds',action:()=>window.playLakeSong(),
     ridge:[[.300,.866],[.310,.860],[.322,.856],[.332,.850],[.343,.847],[.349,.852],[.359,.855],[.369,.862],[.380,.865]],
     bottom:[[.380,.886],[.300,.887]]});
   landmark({id:'hill-photo',label:'hiking photograph',src:'/assets/hill-memory.jpg',alt:'Hikers following a trail through a green mountain valley',

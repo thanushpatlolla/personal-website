@@ -51,7 +51,7 @@
     cover.src = '/assets/in-rainbows-cover.jpg';
     cover.alt = 'In Rainbows album cover';
     if (!audio.src.endsWith('/assets/weird-fishes.opus')) audio.src = '/assets/weird-fishes.opus';
-    audio.currentTime = 0;
+    audio.currentTime = 7;
     sync();
     try { await audio.play(); }
     catch { sync(); status.textContent = '· retry playback'; }
@@ -62,7 +62,7 @@
     pending = true;
     status.textContent = '· loading';
     try {
-      if (audio.ended) audio.currentTime = 0;
+      if (audio.ended) audio.currentTime = preview ? 0 : 7;
       await audio.play();
     } catch {
       sync();

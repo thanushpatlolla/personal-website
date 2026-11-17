@@ -357,3 +357,7 @@ Pointer-transparent/decorative; fades in180ms, no transition for reduced motion.
 User tightened spacing: question baseline-25px/caret-16px above anchor
 (previous-24/-8); caret lifted8px and gap reduced. Visually verified real hover.
 Preview lake-hint-v39.jpg in outputs.
+
+Revision40: Weird Fishes now starts/restarts at7 seconds, including replay
+after ending. Lake accessible label updated. Verified actual playback7.02s,
+readyState4 and paused=false immediately after lake click.
