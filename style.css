@@ -138,3 +138,5 @@ body:not([data-clock="original"]) #clock>img{filter:sepia(.12) saturate(.94);}
 @media(max-width:760px){#clock-reward{width:180px;}}
 
 .clock-clue .lake-hint{fill:#eee8d9;}
+
+.gradient-trail{fill:none;stroke:#eee8d9;stroke-width:1.2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none;opacity:0;}
