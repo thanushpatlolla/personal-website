@@ -64,7 +64,7 @@
       <div class="stars"></div>
       <div class="vignette"></div>
     </div>
-    <header class="masthead"><h1>Thanush Patlolla</h1><button id="still" aria-pressed="false" hidden>pause time</button></header>
+    <header class="masthead"><h1>Thanush Patlolla</h1><button id="still" aria-pressed="false" hidden>time is passing</button></header>
     <main>
       <section class="intro" aria-label="About Thanush">
         <div class="bio">
@@ -109,7 +109,21 @@
         </button>
       </div>
     </main>
-    <footer><span>somewhere, for a little while.</span><span id="time-note" aria-hidden="true">time is passing</span></footer>
+    <footer><span>somewhere, for a little while.</span></footer>
+    <span id="time-note" class="visually-hidden" aria-hidden="true">time is passing</span>
+    <aside class="music" aria-label="Music">
+      <div id="music-panel" hidden>
+        <button id="music-close" aria-label="Stop music and close player">close ×</button>
+        <iframe id="music-frame" title="Sweet Trip — To All the Dancers of the World, a Round Form of Fantasy" width="320" height="200" allow="autoplay; encrypted-media; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        <a class="music-source" href="https://www.youtube.com/watch?v=FseYuqzoLSQ" target="_blank" rel="noopener">listen on YouTube ↗</a>
+      </div>
+      <button id="music-toggle" aria-expanded="false" aria-controls="music-panel" aria-label="Play To All the Dancers of the World, a Round Form of Fantasy by Sweet Trip">
+        <span class="record-cover"><img src="https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e022aa34d5906e01231eff70f82" width="52" height="52" alt="Velocity: Design: Comfort. album cover"><span class="record-play" aria-hidden="true">▶</span></span>
+        <span class="music-caption"><span class="music-title">To All the Dancers of the World,<br>a Round Form of Fantasy</span><span class="music-artist">Sweet Trip <span id="music-status">· play</span></span></span>
+      </button>
+      <noscript><a href="https://www.youtube.com/watch?v=FseYuqzoLSQ">Listen on YouTube ↗</a></noscript>
+    </aside>
     <script src="/scene.js" defer></script>
+    <script src="/music.js" defer></script>
   </body>
 </html>

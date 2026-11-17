@@ -88,7 +88,7 @@
     let n;
     while((n=walker.nextNode())){
       const el=n.parentElement;
-      if(!n.textContent.trim()||el.closest('script,style,svg,.landscape,#clock,.visually-hidden')||el.namespaceURI!=='http://www.w3.org/1999/xhtml')continue;
+      if(!n.textContent.trim()||el.closest('script,style,svg,.landscape,#clock,.visually-hidden,.music')||el.namespaceURI!=='http://www.w3.org/1999/xhtml')continue;
       const style=getComputedStyle(el);if(style.display==='none'||style.visibility==='hidden')continue;
       const range=document.createRange();let line='',left=0,top=0,height=0;
       ctx.font=`${style.fontStyle} ${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
@@ -113,7 +113,7 @@
     paintText();
     for(const {svg,img} of icons){const b=svg.getBoundingClientRect();ctx.drawImage(img,b.left,b.top+scrollY,b.width,b.height);}
     const focus=document.activeElement;
-    if(focus&&focus.matches('a:focus-visible,#still:focus-visible')){
+    if(focus&&!focus.closest('.music')&&focus.matches('a:focus-visible,#still:focus-visible')){
       const b=focus.getBoundingClientRect();ctx.strokeStyle='#fff1c9';ctx.lineWidth=1;
       ctx.strokeRect(b.left-4,b.top+scrollY-3,b.width+8,b.height+6);
     }
@@ -305,7 +305,7 @@
     holding = false;
     angle = null;
     document.body.classList.toggle('paused', paused);
-    still.textContent = paused ? 'let time pass' : 'pause time';
+    still.textContent = paused ? 'let time pass' : 'time is passing';
     still.setAttribute('aria-pressed', String(paused));
     note.textContent = paused ? 'a moment, held' : 'time is passing';
     if (paused) charge = energy = 1;
@@ -340,7 +340,7 @@
     return points;
   }
   document.addEventListener('pointerdown',event=>{
-    if(!ready||!event.isPrimary||event.button!==0)return;
+    if(!ready||!event.isPrimary||event.button!==0||event.target.closest('.music'))return;
     const m=paused?0:1-energy;
     const outline=boundary((u,v)=>watchPoint(u,v,m),.09,.01,.91,.99);
     if(!contains(outline,event.clientX,event.clientY+scrollY))return;
@@ -349,10 +349,10 @@
   });
   // Hit-test the painted link/control outlines, not their unmelted DOM boxes.
   document.addEventListener('click',event=>{
-    if(!ready||event.detail===0)return;
+    if(!ready||event.detail===0||event.target.closest('.music'))return;
     event.preventDefault();event.stopPropagation();
     const m=paused?0:1-energy;
-    for(const el of document.querySelectorAll('a,#still')){
+    for(const el of document.querySelectorAll('a:not(.music a),#still')){
       const b=el.getBoundingClientRect();
       const shape=boundary((x,y)=>flow(x,y,m),b.left,b.top+scrollY,b.right,b.bottom+scrollY);
       if(contains(shape,event.clientX,event.clientY+scrollY)){

@@ -119,3 +119,20 @@ Next user steering: add Sweet Trip “To All the Dancers of the World, a Round F
 of Fantasy” playing with album icon bottom left. Replace pause time label with
 time is passing / let time pass as button. Move “somewhere, for a little while”
 to bottom right; user uncertain about phrase and wants to consider alternatives.
+
+## Revision 6: music and corner copy
+Added bottom-left album art/title button for Sweet Trip's “To All the Dancers of
+the World, a Round Form of Fantasy”. Opens a 320x200 official YouTube player
+(FseYuqzoLSQ); a user click starts full-track playback. No page-load autoplay.
+Closing removes iframe src, stopping audio. Native iframe remains visible during
+playback; widget is outside the WebGL capture/hit testing. Artwork is hotlinked
+from Spotify's oEmbed thumbnail. Bandcamp stream was unavailable; Spotify embed
+was preview-only. No audio downloaded or redistributed.
+Changed time toggle to “time is passing” / “let time pass”. Moved “somewhere, for
+a little while.” to bottom right pending user's choice; suggested “nothing to do
+but stay a while”, shorter “stay a while”, or leaving the corner empty.
+Verified embedded YouTube playback: Pause video button, advancing elapsed time,
+6:19 duration. Verified close removes source, keyboard time toggle resets melt
+to 0, 390x844 mobile placement without horizontal overflow, no runtime errors.
+JS parsed/executed in Chromium; node unavailable on shell PATH. Screenshot saved
+in chat outputs as music-landscape-v6.jpg. No production deployment authorized.

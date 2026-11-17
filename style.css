@@ -70,3 +70,29 @@ body.paused .word { transform:none !important; }
   .clock-area{position:absolute;top:85px;right:28px;bottom:auto;margin:0;width:180px;height:180px;}
   #clock{height:180px;}
 }
+/* A small record in the lower left, with the full official player on demand. */
+footer{justify-content:flex-end;pointer-events:none;}
+.music{position:fixed;z-index:6;left:44px;bottom:26px;width:320px;max-width:calc(100vw - 48px);}
+#music-toggle{display:flex;align-items:center;gap:12px;border:0;padding:0;background:none;text-align:left;cursor:pointer;width:100%;}
+.record-cover{position:relative;display:block;flex:0 0 52px;width:52px;height:52px;}
+.record-cover img{display:block;width:100%;height:100%;object-fit:cover;opacity:.85;filter:saturate(.6);}
+.record-play{position:absolute;inset:0;display:grid;place-items:center;color:#fff;font:16px Georgia,serif;text-shadow:0 1px 5px #000;background:#06182028;}
+.music-caption{font-size:12px;line-height:1.45;text-shadow:0 1px 7px #061820;}
+.music-title{display:block;opacity:.85;}
+.music-artist{display:block;font-size:10px;margin-top:4px;opacity:.6;}
+#music-panel{position:absolute;bottom:66px;left:0;width:320px;max-width:100%;background:#14292df5;padding-top:26px;box-shadow:0 8px 30px #06182040;}
+#music-frame{display:block;width:100%;height:200px;border:0;}
+#music-close{position:absolute;right:9px;top:4px;border:0;background:none;font-size:11px;cursor:pointer;padding:2px;}
+.music-source{display:block;padding:7px 10px;color:inherit;font-size:10px;opacity:.75;text-decoration:none;}
+.music noscript a{color:inherit;font-size:11px;}
+@media(max-width:760px){
+  body{position:relative;min-height:max(100svh,850px);padding-bottom:155px;}
+  .music{position:absolute;left:24px;bottom:58px;}
+  footer{position:absolute;left:24px;right:24px;bottom:22px;}
+  #still{font-size:12px;}
+}
+@media(max-height:650px) and (min-width:761px){
+  body{position:relative;min-height:680px;padding-bottom:130px;}
+  .music{position:absolute;}
+  footer{position:absolute;}
+}
