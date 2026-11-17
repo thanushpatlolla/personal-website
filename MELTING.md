@@ -605,3 +605,5 @@ Release130: User approves clock frame40% toward white (#c4c8cb), plus current15%
 Revision131 (DESIGN ONLY): User requests matching peak/clock frames with midpoint tone and50% white. Average original swatches#b6b4a9 and#9da4a8, then blend50% toward white →#d4d6d4; applied to both backgrounds,borders,carets. Production remains130.
 
 Revision132 (DESIGN ONLY): congratulations! caption links to user-supplied YouTube video oyFQVZ2h0V8 in new tab; classic blue underline with navy selection/white text on hover or keyboard focus. Current shared frame tone retained. Production remains130.
+
+Revision133 (DESIGN ONLY): Center close-button × glyph with grid place-items:center and explicit border-box sizing; remove active-state padding shift. Applies to all photo boxes. Production remains130.
