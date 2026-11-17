@@ -71,3 +71,32 @@ behavior supersedes previous rates and shape notes:
   hold slowly, and no longer accidentally instant-wind through a synthetic click.
 - Validation: 1.8 s hold from full melt left melt=.955. One clockwise circular
   gesture brought it to .029. Real pointer events, not direct state injection.
+
+## Revision 4: moving refractive dream / painted Crash
+Latest user direction supersedes revision 3's restrained legibility target:
+- Harder-to-read melted text and bent photo, built from seeded multi-scale 2D
+  value noise with domain warping. Four small advection steps avoid folded-over
+  triangles cutting letters into shards. No periodic bands. Very slow autonomous
+  field drift; exact original scene restored by winding.
+- Mouse motion initially used a trailing lens; user explicitly rejected sticky
+  following. Final version injects disturbances into an 88-column damped wave
+  grid. Surface slopes refract the scene. Waves propagate and decay independently
+  after movement stops. No static cursor attraction. No input while winding.
+- New generated painted-crash.png uses the two user-supplied visual references:
+  oil-painted pale blue/ivory/gold, permanently asymmetric Crash silhouette.
+  Winding relaxes some of its waist and length, never makes it circular. More
+  pronounced droop at full melt; animated hands remain in the same texture.
+- Three turns: CHARGE_PER_DETENT=1/(48*3). Turning suppresses hold auto-charge;
+  stationary hold remains slow. Removed angular speed clipping. Verified real
+  pointer revolutions: remaining melt .681, .352, .015 after turns 1, 2, 3.
+- Removed visible clock instructions and Reading heading. Loss-surfaces anchor
+  now displays arxiv.org/abs/1412.0233. Added The Hardware Lottery titled link;
+  kept After Work title and all social links.
+- Chromium pacing sample (90 rAFs): average 16.67 ms, max 17.2 ms on current host.
+  Not a cross-device performance guarantee. No runtime errors observed.
+Final water revision QA: verified 390×844 via direct page capture (browser preview
+thumbnail scaling differed during emulation); page fits with no horizontal
+overflow and clock remains in view. Cleared device override. Exercised mouse
+sweep and confirmed continuing scene motion, no application console errors.
+Updated deformation opens the clock's concave waist slightly at full wind and
+adds more hanging length at melt, preserving the approved painted design.

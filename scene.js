@@ -7,10 +7,11 @@
   const note = document.querySelector('#time-note');
   const motion = matchMedia('(prefers-reduced-motion: reduce)');
   let paused = motion.matches, energy = .94, charge = .94, holding = false, angle = null;
-  let heldFor=0, ratchet=0, turn=0, recoil=0, lastKey=0, gestureCenter=null;
-  const DETENT=Math.PI/24; // 7.5-degree mechanical steps; about one turn to wind.
+  let heldFor=0, ratchet=0, turn=0, recoil=0, lastKey=0, gestureCenter=null, gestureTurned=false;
+  const DETENT=Math.PI/24; // 48 detents/revolution. Three full turns from empty.
+  const CHARGE_PER_DETENT=1/(48*3);
   function ratchetStep(direction=1){
-    charge=Math.min(1,charge+Math.max(0,direction)*.021);
+    charge=Math.min(1,charge+Math.max(0,direction)*CHARGE_PER_DETENT);
     handTime-=direction*92;
     turn=Math.max(-.55,Math.min(.55,turn+direction*.035));
     recoil=direction*.018;
@@ -63,7 +64,7 @@
   const ctx=scene.getContext('2d'), brush=paint.getContext('2d');
   paint.width=paint.height=700;
   const photo=document.querySelector('#mountain-photo');
-  const watch=new Image(); watch.src='/assets/painted-watch.png';
+  const watch=new Image(); watch.src='/assets/painted-crash.png';
   function loaded(img){return img.complete&&img.naturalWidth?Promise.resolve():new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=reject;});}
   const icons=[];
   async function prepareIcons(){
@@ -115,8 +116,8 @@
   function paintWatch(){
     brush.clearRect(0,0,700,700);brush.drawImage(watch,0,0,700,700);
     // Hands are painted into the same texture, so numerals AND hands fold with it.
-    brush.save();brush.translate(350,390);
-    for(const [a,len,width,color] of [[handTime/43200*2*Math.PI,120,9,'#28333b'],[handTime/3600*2*Math.PI,175,5,'#27323a'],[Math.floor(handTime)/60*2*Math.PI,187,2,'#7c422c']]){
+    brush.save();brush.translate(350,350);
+    for(const [a,len,width,color] of [[handTime/43200*2*Math.PI,105,7,'#28333b'],[handTime/3600*2*Math.PI,155,4,'#27323a'],[Math.floor(handTime)/60*2*Math.PI,168,1.5,'#7c422c']]){
       brush.save();brush.rotate(a);brush.strokeStyle=color;brush.lineWidth=width;brush.lineCap='round';brush.beginPath();brush.moveTo(0,17);brush.lineTo(0,-len);brush.stroke();brush.restore();
     }
     brush.fillStyle='#ac783d';brush.beginPath();brush.arc(0,0,8,0,7);brush.fill();brush.restore();
@@ -132,50 +133,118 @@
     const b=clock.getBoundingClientRect();
     const size=Math.min(b.width,b.height)*(W<761?.90:1.05);
     clockBox={x:b.left+(b.width-size)/2,y:b.top+scrollY-12,size};
-    captureScene();paintWatch();rebuilding=false;render(paused?0:1-energy);
+    resetWater();captureScene();paintWatch();rebuilding=false;render(paused?0:1-energy);
   }
   const smooth=(a,b,x)=>{let t=Math.min(1,Math.max(0,(x-a)/(b-a)));return t*t*(3-2*t);};
   const gauss=(x,c,w)=>Math.exp(-(((x-c)/w)**2));
-  // Fixed, irregular material weaknesses, not repeating waves or frame noise.
-  // Displacement is local in BOTH dimensions so the horizon stays recognizable.
-  const softSpots=[
-    [.205,.255,.125,.115, -4,31],
-    [.413,.402,.061,.079,  5,18],
-    [.122,.575,.092,.140, -3,12],
-    [.557,.618,.147,.110, -9,37],
-    [.803,.447,.111,.073,  6,21],
-    [.906,.783,.068,.122, -5,28],
-    [.326,.855,.171,.091,  8,13]
-  ];
-  function flow(x,y,m){
-    const u=x/W,v=y/H;
-    let dx=0,dy=0;
-    for(const [cx,cy,rx,ry,sx,sy] of softSpots){
-      const weight=gauss(u,cx,rx)*gauss(v,cy,ry);
-      dx+=sx*weight;dy+=sy*weight;
-    }
-    const edge=smooth(0,.06,u)*smooth(0,.06,1-u)*smooth(0,.04,v)*smooth(0,.04,1-v);
-    const scale=Math.max(.55,Math.min(1,W/980));
-    return [x+dx*m*edge*scale,y+dy*m*edge*scale,1];
+  // Seeded smooth random fields at several scales, domain-warped into each
+  // other. No repeating sine-wave bands, no per-word movement, no frame noise.
+  let randomSeed=0x55a1c;
+  const lattice=new Float32Array(256*256);
+  for(let i=0;i<lattice.length;i++){
+    randomSeed=(Math.imul(randomSeed,1664525)+1013904223)|0;
+    lattice[i]=(randomSeed>>>0)/2147483648-1;
   }
+  const fade=t=>t*t*t*(t*(t*6-15)+10);
+  function noise(x,y){
+    const ix=Math.floor(x),iy=Math.floor(y),fx=fade(x-ix),fy=fade(y-iy);
+    const a=lattice[(iy&255)*256+(ix&255)],b=lattice[(iy&255)*256+((ix+1)&255)];
+    const c=lattice[((iy+1)&255)*256+(ix&255)],d=lattice[((iy+1)&255)*256+((ix+1)&255)];
+    return (a+(b-a)*fx)*(1-fy)+(c+(d-c)*fx)*fy;
+  }
+  let dreamTime=0;
+  // A damped wave equation: input disturbs the surface, then travels freely.
+  const WATER_N=88;
+  let waterH=88, water=new Float32Array(WATER_N*waterH), waterV=new Float32Array(WATER_N*waterH);
+  let waterTime=0, previousPointer=null;
+  function resetWater(){
+    waterH=Math.max(40,Math.min(180,Math.round(WATER_N*H/W)));
+    water=new Float32Array(WATER_N*waterH);waterV=new Float32Array(water.length);previousPointer=null;
+  }
+  function disturb(u,v,strength){
+    const cx=u*(WATER_N-1),cy=v*(waterH-1);
+    for(let y=Math.max(1,Math.floor(cy-4));y<Math.min(waterH-1,cy+4);y++)
+      for(let x=Math.max(1,Math.floor(cx-4));x<Math.min(WATER_N-1,cx+4);x++){
+        const weight=Math.exp(-((x-cx)**2+(y-cy)**2)/3.2);
+        waterV[y*WATER_N+x]-=strength*weight;
+      }
+  }
+  function advanceWater(dt){
+    waterTime+=dt;
+    while(waterTime>=1/60){
+      for(let y=1;y<waterH-1;y++)for(let x=1;x<WATER_N-1;x++){
+        const i=y*WATER_N+x;
+        const lap=water[i-1]+water[i+1]+water[i-WATER_N]+water[i+WATER_N]-4*water[i];
+        waterV[i]=(waterV[i]+lap*.23)*.979;
+      }
+      for(let i=0;i<water.length;i++)water[i]+=waterV[i];
+      waterTime-=1/60;
+    }
+  }
+  function waterAt(u,v){
+    const x=Math.max(0,Math.min(WATER_N-1.001,u*(WATER_N-1)));
+    const y=Math.max(0,Math.min(waterH-1.001,v*(waterH-1)));
+    const ix=Math.floor(x),iy=Math.floor(y),fx=x-ix,fy=y-iy,i=iy*WATER_N+ix;
+    return (water[i]*(1-fx)+water[i+1]*fx)*(1-fy)+(water[i+WATER_N]*(1-fx)+water[i+WATER_N+1]*fx)*fy;
+  }
+  function velocity(x,y){
+    const u=x/W,v=y/H;
+    const unit=Math.min(W,H),px=x/unit,py=y/unit;
+    const time=dreamTime*.025;
+    const wx=noise(px*2.3+11.7,py*2.3+3.8+time);
+    const wy=noise(px*2.3+37.1+time*.63,py*2.3+18.2);
+    const qx=px+wx*.21,qy=py+wy*.21;
+    const broadX=noise(qx*3.1+4.1,qy*3.1+9.6+time*.7);
+    const broadY=noise(qx*3.1+22.3+time*.8,qy*3.1+31.7);
+    const middleX=noise(qx*9.7+51.8,qy*9.7+8.3+time*.42);
+    const middleY=noise(qx*9.7+12.9+time*.35,qy*9.7+61.2);
+    const fineX=noise(qx*23.4+91.3,qy*23.4+4.9+time*.22);
+    const fineY=noise(qx*23.4+6.8+time*.28,qy*23.4+79.4);
+    let dx=54*broadX+21*middleX+6*fineX;
+    let dy=66*broadY+24*middleY+7*fineY;
+    // Refraction follows surface slopes. Nothing tracks or sticks to the cursor.
+    dx+=(waterAt(u+1/WATER_N,v)-waterAt(u-1/WATER_N,v))*15;
+    dy+=(waterAt(u,v+1/waterH)-waterAt(u,v-1/waterH))*15;
+    const edge=smooth(0,.055,u)*smooth(0,.055,1-u)*smooth(0,.035,v)*smooth(0,.035,1-v);
+    const scale=Math.max(.60,Math.min(1,W/980));
+    return [dx*edge*scale,dy*edge*scale];
+  }
+  function flow(x,y,m){
+    // Advect through several small steps rather than folding a displacement
+    // grid over itself. This keeps continuous strokes instead of clipped shards.
+    if(m<.0001)return [x,y,1];
+    const step=m/4;
+    for(let i=0;i<4;i++){
+      const d=velocity(x,y);x+=d[0]*step;y+=d[1]*step;
+    }
+    return [x,y,1];
+  }
+  document.addEventListener('pointermove',event=>{
+    if(holding||paused||event.pointerType==='touch')return;
+    const u=event.clientX/W,v=(event.clientY+scrollY)/H;
+    if(previousPointer){
+      const distance=Math.hypot((u-previousPointer.u)*W,(v-previousPointer.v)*H);
+      if(distance>1)disturb(u,v,Math.min(.30,distance*.006));
+    }
+    previousPointer={u,v};
+  },{passive:true});
+  document.addEventListener('pointerleave',()=>{previousPointer=null;});
   function watchPoint(u,v,m){
-    // The watch is already soft when the landscape is restored. Its enamel
-    // bends as one broad sheet; it never pinches into an hourglass or a knot.
-    const softness=.43+.37*m;
-    const lower=smooth(.31,.94,v);
-    const center=.5+softness*(.17*Math.sin(v*5.7)-.075+.12*lower*lower);
-    const width=.96-softness*(.34*gauss(v,.62,.24)+.07*lower);
-    let x=center+(u-.5)*width;
-    let y=v*.91+softness*(.23*lower+.07*Math.sin(u*4.2+v)*Math.sin(Math.PI*v));
-    const tilt=-.27+turn*.14+recoil;
-    const px=x-.5,py=y-.52;
+    // The painted asset already has a Crash silhouette at m=0; motion merely
+    // loosens the enamel further, never tries to make a round face look melted.
+    const lower=smooth(.36,.97,v);
+    const restore=(1-m)*.08*gauss(v,.55,.19)*smooth(.45,.80,u);
+    let x=u+restore+m*(.12*lower*lower-.065*gauss(v,.50,.20))*(1+.15*noise(u*3,v*3+dreamTime*.015));
+    let y=v-(1-m)*.035*lower+m*(.22*lower+.045*gauss(u,.30,.24)*gauss(v,.64,.22));
+    const tilt=-.12+turn*.14+recoil;
+    const px=x-.5,py=y-.5;
     x=.5+px*Math.cos(tilt)-py*Math.sin(tilt);
-    y=.52+px*Math.sin(tilt)+py*Math.cos(tilt);
+    y=.5+px*Math.sin(tilt)+py*Math.cos(tilt);
     return [clockBox.x+x*clockBox.size,clockBox.y+y*clockBox.size,
-      1-softness*.19*gauss(v,.55,.13)+softness*.07*gauss(v,.39,.07)];
+      1-m*.13*gauss(v,.60,.13)+m*.04*gauss(v,.44,.08)];
   }
   function mesh(tex,m,watchLayer){
-    const nx=watchLayer?60:140,ny=watchLayer?70:100;
+    const nx=watchLayer?60:120,ny=watchLayer?70:100;
     const vertices=new Float32Array((nx+1)*(ny+1)*5),indices=new Uint16Array(nx*ny*6);
     let k=0;
     for(let j=0;j<=ny;j++)for(let i=0;i<=nx;i++){
@@ -203,8 +272,10 @@
   function update(now){
     const dt=Math.min(.15,(now-(last||now))/1000);last=now;
     if(!paused){
+      dreamTime+=dt;
+      advanceWater(dt);
       heldFor=holding?heldFor+dt:0;
-      charge=Math.max(0,Math.min(1,charge+(holding?(heldFor>.7?1/18:0):-1/6.5)*dt));
+      charge=Math.max(0,Math.min(1,charge+(holding?(heldFor>.7&&!gestureTurned?1/18:0):-1/6.5)*dt));
       energy+=(charge-energy)*(1-Math.exp(-dt*16));
       recoil*=Math.exp(-dt*19);
       if(!holding){handTime+=dt;turn*=Math.exp(-dt*10);}
@@ -214,7 +285,7 @@
       const melt=paused?0:1-energy;
       const tick=Math.floor(handTime)!==lastSecond;
       if(ready&&(holding||tick)){paintWatch();lastSecond=Math.floor(handTime);}
-      if(tick||Math.abs(previousMelt-melt)>.0001||Math.abs(turn)>.0001||Math.abs(recoil)>.0001||paused){render(melt);previousMelt=melt;}
+      if(melt>.001||tick||Math.abs(previousMelt-melt)>.0001||Math.abs(turn)>.0001||Math.abs(recoil)>.0001||paused){render(melt);previousMelt=melt;}
       elapsed=0;
     }
     if(!paused)frame=requestAnimationFrame(update);
@@ -235,12 +306,12 @@
   }
   function wind() {
     if (paused) setPaused(false);
-    holding = true;heldFor=0;ratchet=0;
+    holding = true;heldFor=0;gestureTurned=false;
     note.textContent = 'turning back time';
   }
   function release() { holding = false; angle = null; gestureCenter=null; note.textContent = paused ? 'a moment, held' : 'time is passing'; }
   function pointerAngle(event) {
-    const center=gestureCenter||watchPoint(.5,.55,paused?0:1-energy);
+    const center=gestureCenter||watchPoint(.5,.5,paused?0:1-energy);
     return Math.atan2(event.clientY+scrollY-center[1],event.clientX-center[0]);
   }
   function contains(polygon,x,y){
@@ -265,7 +336,7 @@
     const outline=boundary((u,v)=>watchPoint(u,v,m),.09,.01,.91,.99);
     if(!contains(outline,event.clientX,event.clientY+scrollY))return;
     event.preventDefault();clock.focus({preventScroll:true});
-    gestureCenter=watchPoint(.5,.55,m);clock.setPointerCapture(event.pointerId);wind();angle=pointerAngle(event);
+    gestureCenter=watchPoint(.5,.5,m);clock.setPointerCapture(event.pointerId);wind();angle=pointerAngle(event);
   });
   // Hit-test the painted link/control outlines, not their unmelted DOM boxes.
   document.addEventListener('click',event=>{
@@ -288,7 +359,8 @@
     if(Math.hypot(event.clientX-center[0],event.clientY+scrollY-center[1])<clockBox.size*.10){angle=pointerAngle(event);return;}
     const next = pointerAngle(event);
     const delta = Math.atan2(Math.sin(next-angle),Math.cos(next-angle));
-    ratchet+=Math.max(-.45,Math.min(.45,delta));
+    if(Math.abs(delta)>.015)gestureTurned=true;
+    ratchet+=delta;
     while(ratchet>=DETENT){ratchetStep(1);ratchet-=DETENT;}
     while(ratchet<=-DETENT){ratchetStep(-1);ratchet+=DETENT;}
     angle=next;
