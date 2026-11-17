@@ -657,3 +657,5 @@ Revision109 (DESIGN ONLY): User cannot feel mouse propagation. Emit based on acc
 Revision110 (DESIGN ONLY): User wants slow but clearly visible landscape propagation. Mouse fronts move95px/s (was150), remain up to16s with gentle.10/s damping and final fade, narrower65–84px typical bands, radial-dominant displacement,16px nominal amplitude with12px/axis soft cap. Emissions650ms apart, max5 fronts. Ambient settings unchanged. Production remains102.
 
 Revision111 (DESIGN ONLY): User requests a touch less mountain movement. Reduce shared ambient/wave displacement10% over terrain, smoothly feathered across photoY.46–.58. Static mountain shape, text/sky movement, propagation speed/lifetime and local viscous dragging unchanged. Production remains102.
+
+Revision112 (DESIGN ONLY): User likes current waviness and requests removal of preview screen. Removed mountain slider panel, script and panel styles. Current committed shape/motion parameters retained; no local-storage preview overrides load. Production remains102.
