@@ -13,15 +13,16 @@
   let windingOffset=0,keyWinding=false;
   const DETENT=Math.PI/24; // 48 detents/revolution. Desktop: two full turns; touch: one.
   const CHARGE_PER_DETENT=1/(48*3);
+  const WINDING_EXPONENT=Math.log(.5)/Math.log(.75); // 1/4 of total turns restores half.
   let windingGain=1.5; // Desktop gets a modest boost; touch retains its existing gain.
   function ratchetStep(direction=1){
     windingOffset-=direction*92;
     handTime=localClockSeconds()+windingOffset;
-    // Quadratic ease-out: stronger early restoration, gently tapering near clear.
+    // Power ease-out: half a desktop turn restores 50%, two turns restore 100%.
     // Invert the curve before adding turn progress, preserving the total turns.
-    const wound=1-Math.sqrt(Math.max(0,1-charge));
+    const wound=1-Math.pow(Math.max(0,1-charge),1/WINDING_EXPONENT);
     const next=Math.min(1,wound+Math.abs(direction)*CHARGE_PER_DETENT*windingGain);
-    charge=next>=1-1e-10?1:1-(1-next)**2;
+    charge=next>=1-1e-10?1:1-(1-next)**WINDING_EXPONENT;
     turn=Math.max(-.55,Math.min(.55,turn+direction*.035));
     recoil=direction*.018;
   }
