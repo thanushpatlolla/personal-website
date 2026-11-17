@@ -26,6 +26,7 @@
   let last = 0, elapsed = 0, handTime = localClockSeconds(), frame;
   let W = 1, H = 1, timeBounds=null, lakeRegion=null, easterRegions=[], clockBox, ready = false, rebuilding = false;
   const material=new MeltField();
+  const motionSettings={speed:1.61051,sway:1,wave:1,smoothing:0,persistence:1};
   let manualMelt=null,fluidActive=false,geometryDirty=true,pauseTween=null;
   const currentMelt=()=>pauseTween?pauseTween.from*(1-pauseTween.progress*pauseTween.progress*(3-2*pauseTween.progress)):(manualMelt===null?(paused?0:1-energy):manualMelt);
   const timing={frameMs:0,frames:0};
@@ -312,9 +313,9 @@
         const lap=a=>a[i-1]+a[i+1]+a[i-FLUID_N]+a[i+FLUID_N]-4*a[i];
         nextVX[i]=(velX[i]+lap(velX)*viscosity)*damping;
         nextVY[i]=(velY[i]+lap(velY)*viscosity)*damping;
-        nextX[i]=(dragX[i]+nextVX[i]/60+lap(dragX)*viscosity*.3235)*.994;
+        nextX[i]=(dragX[i]+nextVX[i]/60+lap(dragX)*viscosity*.3235)*Math.pow(.994,1/motionSettings.persistence);
         // Disturbed pigment continues a small downward creep as momentum dies.
-        nextY[i]=(dragY[i]+nextVY[i]/60+lap(dragY)*viscosity*.3235+Math.hypot(dragX[i],dragY[i])*.0006)*.994;
+        nextY[i]=(dragY[i]+nextVY[i]/60+lap(dragY)*viscosity*.3235+Math.hypot(dragX[i],dragY[i])*.0006)*Math.pow(.994,1/motionSettings.persistence);
         activity=Math.max(activity,Math.abs(nextX[i]),Math.abs(nextY[i]),Math.abs(nextVX[i])*.1,Math.abs(nextVY[i])*.1);
       }
       [velX,nextVX]=[nextVX,velX];[velY,nextVY]=[nextVY,velY];
@@ -340,7 +341,7 @@
   }
   function advanceAmbient(dt){
     if(manualMelt!==null){ambientBlend=0;return false;}
-    ambientTime+=dt*1.61051;ambientBlend+=(1-ambientBlend)*(1-Math.exp(-dt*2));
+    ambientTime+=dt*motionSettings.speed;ambientBlend+=(1-ambientBlend)*(1-Math.exp(-dt*2));
 
     const copy=document.querySelector('.intro').getBoundingClientRect();
     for(let y=0;y<ambientH;y++)for(let x=0;x<AMBIENT_N;x++){
@@ -353,14 +354,17 @@
       const strength=quiet*ambientBlend*edge*protection*(.18+.82*smooth(.08,.5,v))*material.options.intensity;
       const waveX=t=>material.noise(u*2.3+9.1+t,v*1.7+32.5+t*.37)-material.noise(u*2.3+9.1,v*1.7+32.5);
       const waveY=t=>material.noise(u*2.4+71.3-t*.24,v*2.1+6.8+t)-material.noise(u*2.4+71.3,v*2.1+6.8);
-      ambientX[i]=28*(waveX(time)*(1-copyWeight)+waveX(fastTime)*copyWeight)*strength;
-      ambientY[i]=38*(waveY(time)*(1-copyWeight)+waveY(fastTime)*copyWeight)*strength;
+      const oldX=ambientX[i],oldY=ambientY[i];
+      ambientX[i]=motionSettings.sway*28*(waveX(time)*(1-copyWeight)+waveX(fastTime)*copyWeight)*strength;
+      ambientY[i]=motionSettings.sway*38*(waveY(time)*(1-copyWeight)+waveY(fastTime)*copyWeight)*strength;
       // A low-amplitude traveling swell connects sky, landscape, clock and type.
-      const swell=ambientBlend*edge*material.options.intensity;
+      const swell=ambientBlend*edge*material.options.intensity*motionSettings.wave;
       const phase=u*5.2+v*3.4-ambientTime*.42;
       const crossPhase=u*2.6-v*4.1+ambientTime*.31;
       ambientX[i]+=4.5*Math.sin(phase+.8)*swell;
       ambientY[i]+=(6*Math.sin(phase)+2*Math.sin(crossPhase))*swell;
+      const response=motionSettings.smoothing>0?1-Math.exp(-dt/motionSettings.smoothing):1;
+      ambientX[i]=oldX+(ambientX[i]-oldX)*response;ambientY[i]=oldY+(ambientY[i]-oldY)*response;
     }
     return true;
   }
@@ -378,7 +382,7 @@
   }
   // Cache the expensive static material map separately from the moving paint.
   // Ambient motion must not force reintegration of 20,000 unchanged base points.
-  const mountainSettings={sideways:.897,vertical:.483,curlX:.01656,curlY:.00828,stretch:.15};
+  const mountainSettings={sideways:.897,vertical:.483,curlX:.0156,curlY:.0094,stretch:.18};
   let baseMap=null;
   const dragA=new Float64Array(2),dragB=new Float64Array(2);
   function prepareBase(m){
@@ -711,6 +715,13 @@
     if(manualMelt!==null){charge=energy=1-manualMelt;manualMelt=null;}
   }
   window.melting={
+    getMotionSettings(){return {...motionSettings,viscosity:material.options.viscosity,damping:material.options.damping};},
+    setMotionSettings(values){
+      const limits={speed:[.1,4],sway:[0,3],wave:[0,3],smoothing:[0,3],persistence:[.25,5]};
+      for(const [key,[lo,hi]] of Object.entries(limits)){const value=Number(values[key]);if(Number.isFinite(value))motionSettings[key]=Math.max(lo,Math.min(hi,value));}
+      const fluid={};for(const key of ['viscosity','damping'])if(Number.isFinite(Number(values[key])))fluid[key]=Number(values[key]);
+      material.configure(fluid);geometryDirty=true;return this.getMotionSettings();
+    },
     getMountainSettings(){return {...mountainSettings};},
     setMountainSettings(values){
       const limits={sideways:[0,2],vertical:[0,1.5],curlX:[0,.04],curlY:[0,.03],stretch:[0,1]};
