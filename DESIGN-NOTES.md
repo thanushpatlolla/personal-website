@@ -456,3 +456,14 @@ and ambientTime progressed.133→5.8s; no warnings/errors. Publishing live fix.
 Revision60: Upper photo frame caption “peaks and...?” added using same12px
 caption layout as lower lake? photo. Dark green caption ink on gray-green
 frame for legibility. Saved on design branch.
+
+Revision61: Lake now also opens original Downloads/100_1211.jpg copied to
+assets/lake-time.jpg, same caption/caret/close style with “time?” caption and
+dark slate#28333b frame from supplied swatch appearance. Existing lake song
+stays Weird Fishes at7s. Clock after lake now plays full Daft Punk One More
+Time at0 with Discovery artwork, replacing Sweet Trip return. Initial Sweet
+Trip remains46s; subsequent clock winding while Daft Punk plays doesn't reset
+it. Source opus found beside prior audio in Nov17 YouTube outputs; artwork
+from Apple iTunes Discovery result. Landmark renderer supports action+photo
+together; closing photo does not restart/change music. Syntax checked.
+Saved design branch; not deployed.

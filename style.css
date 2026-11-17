@@ -127,3 +127,6 @@ body:not([data-clock="original"]) #clock>img{filter:sepia(.12) saturate(.94);}
 .hill-photo.has-caption .hill-close{top:8px;}
 
 #peak-photo .hill-caption{color:#243638;}
+
+#lake-song{background:#28333b;border-color:#28333b;}
+#lake-song .hill-caret{background:#28333b;border-color:#28333b;}
