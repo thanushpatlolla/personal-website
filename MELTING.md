@@ -151,3 +151,7 @@ Default clock and Reset now select ridge. Initial energy/charge are0, so first
 render is meltProgress1 and ambient motion runs immediately. Explicit URL or
 saved clock selection still overrides the default. Reduced-motion retains its
 existing paused/readable behavior. Original and warm sky remain selectable.
+
+Revision14: User rejected mountain placement; default and Reset return to warm
+floating sky clock. Keep fully melted initialization and increased text motion.
+Mountain variant remains optional; original asset remains untouched.

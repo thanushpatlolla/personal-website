@@ -45,7 +45,7 @@
   panel.querySelector('#tune-clock').addEventListener('click',()=>{api.useClock();syncProgress();});
   panel.querySelector('#tune-clear').addEventListener('click',()=>api.resetInteraction());
   panel.querySelector('#tune-reset').addEventListener('click',()=>{
-    api.configure(api.defaults);api.setClockStyle('ridge');api.resetInteraction();api.useClock();
+    api.configure(api.defaults);api.setClockStyle('warm');api.resetInteraction();api.useClock();
     try{localStorage.removeItem('melting-settings-v1');localStorage.removeItem('melting-clock-v1');}catch{}
     syncSettings();syncProgress();panel.querySelector('#tune-status').textContent='Default settings restored.';
   });

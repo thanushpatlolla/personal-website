@@ -75,8 +75,8 @@
   paint.width=paint.height=700;
   const photo=document.querySelector('#mountain-photo');
   const clockModes=['original','warm','ridge'];
-  let clockStyle=new URLSearchParams(location.search).get('clock')||'ridge';
-  if(!clockModes.includes(clockStyle))clockStyle='ridge';
+  let clockStyle=new URLSearchParams(location.search).get('clock')||'warm';
+  if(!clockModes.includes(clockStyle))clockStyle='warm';
   const originalWatch=new Image();originalWatch.src='/assets/user-crash-clock.png';
   // Both warm treatments use the exact original pixels; only shader color changes.
   const warmWatch=originalWatch;

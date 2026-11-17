@@ -224,3 +224,7 @@ existing paused/readable behavior. Original and warm sky remain selectable.
 
 User also requested more motion in words: ambient protection reduced from82%
 to45% in copy area. Deterministic copy geometry/size protection is unchanged.
+
+Revision14: User rejected mountain placement; default and Reset return to warm
+floating sky clock. Keep fully melted initialization and increased text motion.
+Mountain variant remains optional; original asset remains untouched.
