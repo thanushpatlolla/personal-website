@@ -405,7 +405,7 @@
   }
   // Cache the expensive static material map separately from the moving paint.
   // Ambient motion must not force reintegration of 20,000 unchanged base points.
-  const mountainSettings={sideways:.897,vertical:.483,curlX:.01632,curlY:.00856,stretch:.1575};
+  const mountainSettings={sideways:.65,vertical:.35,curlX:.012,curlY:.006,stretch:.15};
   let baseMap=null;
   const dragA=new Float64Array(2),dragB=new Float64Array(2);
   function prepareBase(m){
@@ -483,7 +483,7 @@
       const u=p[0]/W,v=p[1]/H;
       const cover=Math.max(W/photo.naturalWidth,H/photo.naturalHeight),photoHeight=photo.naturalHeight*cover;
       const photoY=(y-(H-photoHeight)/2)/photoHeight;
-      const mountainMotion=1-.10*smooth(.46,.58,photoY);
+      const mountainMotion=1-.40*smooth(.46,.58,photoY);
       p[0]+=ambientAt(ambientX,u,v)*m*mountainMotion;p[1]+=ambientAt(ambientY,u,v)*m*mountainMotion;
     }
     // Keep the lake recognizable and easier to catch as the surrounding paint moves.

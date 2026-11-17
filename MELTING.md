@@ -565,3 +565,5 @@ Revision110 (DESIGN ONLY): User wants slow but clearly visible landscape propaga
 Revision111 (DESIGN ONLY): User requests a touch less mountain movement. Reduce shared ambient/wave displacement10% over terrain, smoothly feathered across photoY.46–.58. Static mountain shape, text/sky movement, propagation speed/lifetime and local viscous dragging unchanged. Production remains102.
 
 Revision112 (DESIGN ONLY): User likes current waviness and requests removal of preview screen. Removed mountain slider panel, script and panel styles. Current committed shape/motion parameters retained; no local-storage preview overrides load. Production remains102.
+
+Revision113 (DESIGN ONLY): User still finds mountains too intense. Reduce terrain ambient/wave multiplier.9→.6 (one-third less than112); soften static bend to.65 lateral/.35 vertical and curls.012/.006, stretch.15 (earlier revision89 shape). Sky/text, local mouse dragging, wave speed and lifetime unchanged. Preview controls stay removed. Production remains102.
