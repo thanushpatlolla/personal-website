@@ -501,3 +501,10 @@ artwork (iTunes album version). Click loss landscape? or time toggle resets
 Sweet Trip to46s; discovery progress retained. Time toggle still toggles pause.
 Valley info target now accessible button, normal cursor remains. Syntax passed.
 Production includes ordered photos, Bruno valley song and congratulations.
+
+Revision66: Corrected clock clue placement outside dial. Offset sampled upper
+clock anchor72px right and22px up, scaled down for smaller clock bounds,
+replacing+5px vertical offset. Browser tested real peak→valley→lake sequence,
+clock hover clue visible above/right of rim, leaving hover opacity0, no logs.
+Screenshot clock-cue-above-right-v66.jpg in outputs. Publishing correction
+to prior authorized production cue update.
