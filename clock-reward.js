@@ -11,7 +11,7 @@
   layer.append(cue);document.body.append(layer);
   const card=document.createElement('aside');card.id='clock-reward';card.className='hill-ui hill-photo has-caption';
   card.hidden=true;card.setAttribute('role','dialog');card.setAttribute('aria-label','congratulations!');
-  card.innerHTML='<div class="hill-caption">congratulations!</div><button class="hill-close" type="button" aria-label="Close congratulations photograph">×</button><img src="/assets/congratulations.png" alt="Shinji smiling beneath a blue sky"><span class="hill-caret" aria-hidden="true"></span>';
+  card.innerHTML='<div class="hill-caption"><a class="congratulations-link" href="https://www.youtube.com/watch?v=oyFQVZ2h0V8" target="_blank" rel="noopener noreferrer">congratulations!</a></div><button class="hill-close" type="button" aria-label="Close congratulations photograph">×</button><img src="/assets/congratulations.png" alt="Shinji smiling beneath a blue sky"><span class="hill-caret" aria-hidden="true"></span>';
   document.body.append(card);
   let armed=false;
   document.addEventListener('lakeactivate',()=>{armed=true;card.hidden=true;update();});

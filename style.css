@@ -138,3 +138,6 @@ body:not([data-clock="original"]) #clock>img{filter:sepia(.12) saturate(.94);}
 @media(max-width:760px){#clock-reward{width:180px;}}
 
 .clock-clue .lake-hint{fill:#eee8d9;}
+
+#clock-reward .congratulations-link{color:#0000ee;text-decoration:underline;text-underline-offset:2px;padding:1px 3px;}
+#clock-reward .congratulations-link:hover,#clock-reward .congratulations-link:focus-visible{color:#fff;background:#000080;outline:1px dotted #fff;outline-offset:-2px;}
