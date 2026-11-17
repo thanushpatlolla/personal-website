@@ -4,7 +4,7 @@
   const ns='http://www.w3.org/2000/svg',layer=document.createElementNS(ns,'svg');
   layer.classList.add('hill-ui','clock-clue');layer.setAttribute('aria-hidden','true');
   const cue=document.createElementNS(ns,'g');cue.classList.add('lake-hint');
-  for(const [value,y] of [['?',-25],['⌄',-16]]){
+  for(const [value,y] of [['?',-13],['⌄',-4]]){
     const text=document.createElementNS(ns,'text');text.textContent=value;
     text.setAttribute('y',y);text.setAttribute('text-anchor','middle');cue.append(text);
   }

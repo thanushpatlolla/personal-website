@@ -398,3 +398,15 @@ user continues visual testing. Saved design branch, not deployed.
 
 Revision63: Bottom lake/time? popup frame and caret deepened from slate
 #28333b to blue#182b42. Other photo frames unchanged.
+
+Revision64: Photo discovery order peak→hill/valley photo→lake→clock, tracked
+per page load by photo-journey.js. Locked photo targets/hints hidden and removed
+from keyboard order; discovered photos can reopen. Informational loss landscape
+label remains independent. Clock winding itself still usable before discovery,
+but reward/audio switch gated until lake. Each photo selects its own track:
+peak Sweet Trip46s; valley Bruno Pernadas Valley in the Ocean0; lake Weird
+Fishes7; clock One More Time0. Full supplied Bruno opus copied and official
+iTunes artwork downloaded. Music selection refactored to track table with
+stale async rejection protection. Clock cue moved12px closer, black#171b19.
+Clock reward frame/caret off-white#eee8d9. Syntax/ordered gating checks pass.
+Saved design branch; not deployed.

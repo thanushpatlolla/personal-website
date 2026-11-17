@@ -32,7 +32,7 @@
   if(hasCard)document.body.append(card);
   const ridge=config.ridge;
   let open=false,focused=false,hover=false;
-  function show(value){if(config.info)return;open=value;if(config.action&&value)config.action();if(!hasCard){target.setAttribute('aria-pressed',String(value));update();return;}card.hidden=!value;target.setAttribute('aria-expanded',String(value));update();if(value)card.querySelector('button').focus({preventScroll:true});}
+  function show(value){if(config.info)return;if(value&&!window.photoJourney.open(config.id))return;open=value;if(config.action&&value)config.action();if(!hasCard){target.setAttribute('aria-pressed',String(value));update();return;}card.hidden=!value;target.setAttribute('aria-expanded',String(value));update();if(value)card.querySelector('button').focus({preventScroll:true});}
   target.addEventListener('click',()=>show(!!config.action||!open));
   target.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();show(!!config.action||!open);}});
   target.addEventListener('pointerenter',()=>{hover=true;});target.addEventListener('pointerleave',()=>{hover=false;});
@@ -41,6 +41,10 @@
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&open){show(false);target.focus({preventScroll:true});}});
   document.addEventListener('click',e=>{if(open&&!card.contains(e.target)&&e.target!==target)show(false);},true);
   function update(){
+    const unlocked=window.photoJourney.canOpen(config.id);
+    layer.style.display=unlocked?'':'none';
+    target.setAttribute('tabindex',unlocked?'0':'-1');
+    if(!unlocked)return;
     if(!api.getState().ready)return;
     const w=innerWidth,h=parseFloat(document.querySelector('#liquid-surface').style.height),scale=Math.max(w/photo.naturalWidth,h/photo.naturalHeight);
     const map=([u,v])=>api.samplePoint((w-photo.naturalWidth*scale)/2+u*photo.naturalWidth*scale,(h-photo.naturalHeight*scale)/2+v*photo.naturalHeight*scale);
@@ -75,10 +79,10 @@
   landmark({id:'lake-song',hitPadding:72,hint:[.343,.847],anchor:[.343,.847],caption:'time?',src:'/assets/lake-time.jpg',alt:'Vintage computers, game consoles and controllers scattered across a room',label:'time photograph and play Weird Fishes',action:()=>window.playLakeSong(),
     ridge:[[.300,.866],[.310,.860],[.322,.856],[.332,.850],[.343,.847],[.349,.852],[.359,.855],[.369,.862],[.380,.865]],
     bottom:[[.380,.886],[.300,.887]]});
-  landmark({id:'hill-photo',hint:[.725,.713],caption:'lake?',label:'hiking photograph',src:'/assets/hill-memory.jpg',alt:'Hikers following a trail through a green mountain valley',
+  landmark({id:'hill-photo',action:()=>window.playValleySong(),hint:[.725,.713],caption:'lake?',label:'hiking photograph',src:'/assets/hill-memory.jpg',alt:'Hikers following a trail through a green mountain valley',
     ridge:[[.695,.752],[.709,.731],[.716,.718],[.718,.706],[.722,.703],[.728,.706],[.736,.710],[.746,.710],[.759,.703],[.773,.695]],
     face:[[.682,.799],[.699,.787],[.717,.773],[.736,.760],[.755,.745],[.773,.730]],bottom:[[.775,.755],[.695,.79]],anchor:[.725,.713]});
-  landmark({id:'peak-photo',caption:'peaks and...?',hint:[.586,.529],label:'summit photograph',src:'/assets/peak-memory.jpg',alt:'The moon above a rocky summit with backpacks and weathered timbers',
+  landmark({id:'peak-photo',action:()=>window.playPeakSong(),caption:'peaks and...?',hint:[.586,.529],label:'summit photograph',src:'/assets/peak-memory.jpg',alt:'The moon above a rocky summit with backpacks and weathered timbers',
     ridge:[[.497,.542],[.508,.547],[.522,.549],[.537,.547],[.551,.542],[.565,.536],[.574,.534],[.581,.528],[.586,.525],[.593,.529],[.601,.534],[.617,.537],[.638,.540]],
     bottom:[[.638,.590],[.510,.590]],anchor:[.586,.529]});
 })();
