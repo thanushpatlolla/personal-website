@@ -220,3 +220,12 @@ tests cover whole block with positive Jacobian and footprint bounds; max local
 stretch8.5194,45 scene+18clock cases pass. Landscape strength unchanged. Latest
 steering slightly increases ambient motion: terrain amplitude.45→.53 and
 speed.09→.10; copy amplitude1→1.10 and speed.18→.20. Mouse painting unchanged.
+
+Revision32: Added a second landmark on the sunlit central peak from the user's
+crop (UV .586,.525), opening Downloads/100_1596.jpg copied unchanged to
+assets/peak-memory.jpg. Shared landmark renderer retains warm-white outline,
+charcoal frame/caret, beveled X, padded moving hit area, keyboard and Escape.
+Opening another landmark dismisses the first. Reduced copy strength2.4→2.0
+(~17%); ambient motion remains at revision31 levels. Browser verified correct
+photo/outline placement, click, Escape and Enter, no console warnings/errors.
+Pure geometry suite ran successfully. Screenshot peak-photo-v32.jpg in outputs.

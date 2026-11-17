@@ -80,7 +80,7 @@
           r=1-r; // Put compressed patches above, looser areas below.
           // Isolated soft patches: different lines stretch differently. Fade to
           // zero at block edges so the enclosing text footprint stays stable.
-          const edge=2.4*smooth(0,.12,q)*(1-smooth(.88,1,q))*smooth(0,.12,r)*(1-smooth(.88,1,r));
+          const edge=2.0*smooth(0,.12,q)*(1-smooth(.88,1,q))*smooth(0,.12,r)*(1-smooth(.88,1,r));
           const patch=(cx,cy,rx,ry)=>Math.exp(-(((q-cx)/rx)**2+((r-cy)/ry)**2));
           // Opposing pulls on the left: upward/outward against the main sag.
           textX-=weight*edge*(22*patch(.16,.52,.13,.30)+10*patch(.22,.82,.15,.16));
