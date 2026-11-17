@@ -25,6 +25,10 @@
   const card=document.createElement('aside');card.id=config.id;card.className='hill-ui hill-photo';card.hidden=true;
   card.setAttribute('role','dialog');card.setAttribute('aria-label',config.label);
   if(hasCard)card.innerHTML=`<button class="hill-close" aria-label="Close photograph" type="button">×</button><img src="${config.src}" alt="${config.alt}"><span class="hill-caret" aria-hidden="true"></span>`;
+  if(hasCard&&config.caption){
+    const caption=document.createElement('div');caption.className='hill-caption';caption.textContent=config.caption;
+    card.prepend(caption);card.classList.add('has-caption');
+  }
   if(hasCard)document.body.append(card);
   const ridge=config.ridge;
   let open=false,focused=false,hover=false;
@@ -71,7 +75,7 @@
   landmark({id:'lake-song',hitPadding:48,hint:[.343,.847],label:'Play Weird Fishes / Arpeggi by Radiohead from 7 seconds',action:()=>window.playLakeSong(),
     ridge:[[.300,.866],[.310,.860],[.322,.856],[.332,.850],[.343,.847],[.349,.852],[.359,.855],[.369,.862],[.380,.865]],
     bottom:[[.380,.886],[.300,.887]]});
-  landmark({id:'hill-photo',label:'hiking photograph',src:'/assets/hill-memory.jpg',alt:'Hikers following a trail through a green mountain valley',
+  landmark({id:'hill-photo',caption:'lake?',label:'hiking photograph',src:'/assets/hill-memory.jpg',alt:'Hikers following a trail through a green mountain valley',
     ridge:[[.695,.752],[.709,.731],[.716,.718],[.718,.706],[.722,.703],[.728,.706],[.736,.710],[.746,.710],[.759,.703],[.773,.695]],
     face:[[.682,.799],[.699,.787],[.717,.773],[.736,.760],[.755,.745],[.773,.730]],bottom:[[.775,.755],[.695,.79]],anchor:[.725,.713]});
   landmark({id:'peak-photo',label:'summit photograph',src:'/assets/peak-memory.jpg',alt:'The moon above a rocky summit with backpacks and weathered timbers',

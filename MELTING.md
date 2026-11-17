@@ -327,3 +327,7 @@ pointerdown. Visible strokes unchanged. Lake displacement (base, ambient and
 mouse) attenuated up to75% with smooth photo-anchored Gaussian falloff;
 landmark samplePoint uses same mapping, keeping outline/hitbox attached.
 Script syntax checked; user handles visual testing. Saved on design branch.
+
+Revision51: Lower hill photo has “lake?” caption in12px Georgia, matching
+loss landscape hint. Added25px top frame area, retained charcoal background
+and beveled close button. Popup dimensions remain measured for positioning.
