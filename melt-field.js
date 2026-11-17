@@ -80,7 +80,7 @@
           r=1-r; // Put compressed patches above, looser areas below.
           // Isolated soft patches: different lines stretch differently. Fade to
           // zero at block edges so the enclosing text footprint stays stable.
-          const edge=smooth(0,.12,q)*(1-smooth(.88,1,q))*smooth(0,.12,r)*(1-smooth(.88,1,r));
+          const edge=2.4*smooth(0,.12,q)*(1-smooth(.88,1,q))*smooth(0,.12,r)*(1-smooth(.88,1,r));
           const patch=(cx,cy,rx,ry)=>Math.exp(-(((q-cx)/rx)**2+((r-cy)/ry)**2));
           // Opposing pulls on the left: upward/outward against the main sag.
           textX-=weight*edge*(22*patch(.16,.52,.13,.30)+10*patch(.22,.82,.15,.16));
@@ -124,8 +124,8 @@
       const m=clamp(meltProgress,0,1);if(m===0)return [x,y,1];
       // Integrate a smooth velocity field instead of adding a displacement once.
       // Midpoint integration preserves coherent contours at high curvature.
-      const step=m/6,[a,b,force]=this.scratch;
-      for(let i=0;i<6;i++){
+      const step=m/12,[a,b,force]=this.scratch;
+      for(let i=0;i<12;i++){
         this.vector(x,y,a);
         if(interaction){interaction(x,y,force);a[0]+=force[0];a[1]+=force[1];}
         const mx=x+a[0]*step*.5,my=y+a[1]*step*.5;

@@ -212,3 +212,11 @@ Revision29: Time button restores over2.2s with smoothstep easing, then pauses.
 Existing mouse/ambient displacement freezes and scales down with melt during
 transition, avoiding a snap. Clicking again resumes from intermediate shape.
 Reduced-motion still restores instantly. Manual tuning cancels transition.
+
+Revision30–31: User explicitly requested much stronger/barely readable text.
+Copy-local patch/wave strength multiplied2.4; block-edge falloff retained.
+Integration increased6→12 midpoint steps for stronger field. Expanded copy
+tests cover whole block with positive Jacobian and footprint bounds; max local
+stretch8.5194,45 scene+18clock cases pass. Landscape strength unchanged. Latest
+steering slightly increases ambient motion: terrain amplitude.45→.53 and
+speed.09→.10; copy amplitude1→1.10 and speed.18→.20. Mouse painting unchanged.

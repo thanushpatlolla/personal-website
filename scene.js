@@ -312,8 +312,8 @@
       const edge=smooth(0,.10,u)*smooth(0,.10,1-u)*smooth(0,.07,v)*smooth(0,.08,1-v);
       const protection=1-.45*smooth(copy.left-60,copy.left,u*W)*(1-smooth(copy.right,copy.right+60,u*W))*smooth(copy.top+scrollY-60,copy.top+scrollY,v*H)*(1-smooth(copy.bottom+scrollY,copy.bottom+scrollY+60,v*H));
       const copyWeight=(1-protection)/.45;
-      const time=ambientTime*.09,fastTime=ambientTime*.18;
-      const quiet=.45+.55*copyWeight;
+      const time=ambientTime*.10,fastTime=ambientTime*.20;
+      const quiet=.53+.57*copyWeight;
       const strength=quiet*ambientBlend*edge*protection*(.18+.82*smooth(.08,.5,v))*material.options.intensity;
       const waveX=t=>material.noise(u*2.3+9.1+t,v*1.7+32.5+t*.37)-material.noise(u*2.3+9.1,v*1.7+32.5);
       const waveY=t=>material.noise(u*2.4+71.3-t*.24,v*2.1+6.8+t)-material.noise(u*2.4+71.3,v*2.1+6.8);

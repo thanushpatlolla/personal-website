@@ -63,14 +63,15 @@ let maxTextStretch=0;
 for(const [w,h,left,top,right,bottom] of [[1280,800,152,125,482,370],[390,844,32,237,358,500]]){
   const f=new MeltField();f.resize(w,h);
   f.setMasks([[(left-12)/w,(top-12)/h,(right+12)/w,(bottom+12)/h,.82,65/w,65/h]]);
-  for(let y=top;y<top+120;y+=12)for(let x=left;x<right;x+=18){
+  for(let y=top;y<bottom;y+=12)for(let x=left;x<right;x+=18){
     const p=f.map(x,y,1),px=f.map(x+1,y,1),py=f.map(x,y+1,1);
     const a=px[0]-p[0],b=py[0]-p[0],c=px[1]-p[1],d=py[1]-p[1];
     const trace=a*a+b*b+c*c+d*d,det=(a*d-b*c)**2;
     const stretch=Math.sqrt((trace+Math.sqrt(Math.max(0,trace*trace-4*det)))/2);
-    maxTextStretch=Math.max(maxTextStretch,stretch);assert.ok(stretch<3.5,'Local letter stretching must remain bounded');
-    assert.ok(Math.hypot(b,d)<3.2,'Localized stretching must stay bounded');
-    assert.ok(a*d-b*c>0,'Protected regions must not fold');
+    maxTextStretch=Math.max(maxTextStretch,stretch);assert.ok(stretch<12,'Extreme text deformation must remain finite and bounded');
+    assert.ok(Math.hypot(b,d)<12,'Localized stretching must stay bounded');
+    assert.ok(a*d-b*c>0,'Text regions must not fold');
+    assert.ok(p[0]>left-35&&p[0]<right+35&&p[1]>top-35&&p[1]<bottom+35,'Text block should keep its overall footprint');
   }
 }
 result.maxTextStretch=Number(maxTextStretch.toFixed(4));
