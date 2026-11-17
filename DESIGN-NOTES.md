@@ -420,3 +420,6 @@ Photo hints added at existing popup anchors. Hit padding56px each side, lake72px
 Mouse displacement alone is reduced up to85% near each landmark with soft
 falloff; ambient/base distortion unchanged, including earlier lake steadiness.
 Caption lake? on lower photo remains. User does visual testing.
+
+Revision53: Seconds hand width1.5→3.2 texture pixels; brighter muted copper
+#b56d45 replaces dark rust#7c422c. Other hands/timing unchanged.
