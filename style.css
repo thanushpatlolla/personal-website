@@ -116,8 +116,8 @@ body:not([data-clock="original"]) #clock>img{filter:sepia(.12) saturate(.94);}
 .hill-target{stroke:transparent;stroke-width:112px;stroke-linejoin:round;}
 .hill-outline{stroke:#eee8d9;}
 
-#peak-photo{background:#9da7a7;border-color:#929c9c;box-shadow:0 6px 18px #0003;}
-#peak-photo .hill-caret{background:#9da7a7;border-color:#929c9c;}
+#peak-photo{background:#c0b49c;border-color:#c0b49c;box-shadow:0 6px 18px #0003;}
+#peak-photo .hill-caret{background:#c0b49c;border-color:#c0b49c;}
 
 .lake-hint{fill:#eee8d9;font:15px Georgia,serif;pointer-events:none;opacity:0;transition:opacity .18s ease;}
 .lake-hint text:last-child{font-size:16px;}
@@ -128,8 +128,8 @@ body:not([data-clock="original"]) #clock>img{filter:sepia(.12) saturate(.94);}
 
 #peak-photo .hill-caption{color:#243638;}
 
-#lake-song{background:#182b42;border-color:#182b42;}
-#lake-song .hill-caret{background:#182b42;border-color:#182b42;}
+#lake-song{background:#1d2e3c;border-color:#1d2e3c;}
+#lake-song .hill-caret{background:#1d2e3c;border-color:#1d2e3c;}
 
 .clock-clue{position:absolute;inset:0 auto auto 0;width:100%;z-index:11;pointer-events:none;overflow:visible;}
 #clock-reward{background:#eee8d9;border-color:#eee8d9;box-shadow:0 6px 18px #0003;}
