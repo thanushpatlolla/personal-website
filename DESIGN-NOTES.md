@@ -391,3 +391,9 @@ Revision47: Added informational valley hover highlight following the saddle
 right of central peak (around UV.77,.558), with off-white “loss landscape?”
 and compact downward caret. Reuses mapped shoreline geometry and keyboard
 focus hint; no click destination was requested. User handles visual testing.
+
+Revision48: User clarified animation works; no animation repair needed. Valley
+outline should remain a little imperfect. Lowered four right-slope contour
+points gradually2–21 source pixels toward the photographed slope. Lower hill
+frame restored charcoal#1b1b1a; upper frame muted gray-green#9da7a7 from new
+swatch appearance. Keep beveled close buttons. User prefers own visual testing.

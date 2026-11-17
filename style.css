@@ -104,10 +104,10 @@ body:not([data-clock="original"]) #clock>img{filter:sepia(.12) saturate(.94);}
 .hill-layer{position:absolute;left:0;top:0;width:100%;z-index:10;pointer-events:none;overflow:hidden;}
 .hill-target{fill:transparent;stroke:none;pointer-events:all;cursor:pointer;outline:none;}
 .hill-outline{fill:none;stroke:#080d0b;stroke-width:1.4;stroke-linejoin:round;pointer-events:none;opacity:0;}
-.hill-photo{position:absolute;z-index:15;width:222px;max-width:calc(100vw - 24px);padding:7px;background:#eee8d9;border:1px solid #eee8d9;box-shadow:0 6px 18px #0005;}
+.hill-photo{position:absolute;z-index:15;width:222px;max-width:calc(100vw - 24px);padding:7px;background:#1b1b1a;border:1px solid #141a17;box-shadow:0 6px 18px #0005;}
 .hill-photo img{display:block;width:100%;height:auto;max-height:55svh;object-fit:contain;}
 .hill-close{position:absolute;right:9px;top:9px;width:23px;height:23px;padding:0;border:0;background:#e9e2d0e8;color:#141a17;font:20px Georgia,serif;cursor:pointer;}
-.hill-caret{position:absolute;bottom:-9px;left:var(--caret-x,50%);width:16px;height:16px;background:#eee8d9;border-right:1px solid #eee8d9;border-bottom:1px solid #eee8d9;transform:translateX(-50%) rotate(45deg);}
+.hill-caret{position:absolute;bottom:-9px;left:var(--caret-x,50%);width:16px;height:16px;background:#1b1b1a;border-right:1px solid #141a17;border-bottom:1px solid #141a17;transform:translateX(-50%) rotate(45deg);}
 .hill-close{background:#c8c8c2;border:2px solid;border-color:#f4f4ef #575953 #575953 #f4f4ef;box-shadow:1px 1px 0 #080b09;color:#171917;font:18px/17px Georgia,serif;text-align:center;}
 .hill-close:hover{background:#d4d4cd;}
 .hill-close:active{border-color:#575953 #f4f4ef #f4f4ef #575953;box-shadow:none;padding-top:1px;padding-left:1px;}
@@ -115,8 +115,8 @@ body:not([data-clock="original"]) #clock>img{filter:sepia(.12) saturate(.94);}
 .hill-target{stroke:transparent;stroke-width:32px;stroke-linejoin:round;}
 .hill-outline{stroke:#eee8d9;}
 
-#peak-photo{background:#eee8d9;border-color:#eee8d9;box-shadow:0 6px 18px #0003;}
-#peak-photo .hill-caret{background:#eee8d9;border-color:#eee8d9;}
+#peak-photo{background:#9da7a7;border-color:#929c9c;box-shadow:0 6px 18px #0003;}
+#peak-photo .hill-caret{background:#9da7a7;border-color:#929c9c;}
 
 .lake-hint{fill:#eee8d9;font:15px Georgia,serif;pointer-events:none;opacity:0;transition:opacity .18s ease;}
 .lake-hint text:last-child{font-size:16px;}
