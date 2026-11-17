@@ -541,3 +541,5 @@ retention per60Hz step, not a literal spring. Consider longer disturbance lifeti
 before changing overall intensity; no physics change made in this revision.
 
 Revision101: User requests melt-in from0.1 melted, with no starting pause, and production publication. Initial energy/charge=.9; normal decay starts immediately after assets are ready, reaching fully melted in about6 seconds. Reduced-motion preference remains respected. No text fade added.
+
+Revision102 (DESIGN ONLY): User chooses free discovery of peak/hill/lake photos; only lake→clock remains mandatory. photoJourney now tracks a set of discoveries and gates only clock-reward on lake-song. Caption ideas (gradient/arrows, peaks and...?) remain discussion; green? unchanged.

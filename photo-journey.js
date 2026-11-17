@@ -1,12 +1,14 @@
-/* First discoveries follow the landscape; revisits remain available. */
+/* Photos are free to explore; only the lake unlocks the clock finale. */
 (() => {
-  const order=['peak-photo','hill-photo','lake-song','clock-reward'];
-  let next=0;
+  const discovered=new Set();
+  const canOpen=id=>id!=='clock-reward'||discovered.has('lake-song');
   window.photoJourney={
-    canOpen(id){const i=order.indexOf(id);return i<0||i<=next;},
+    canOpen,
     open(id){
-      const i=order.indexOf(id);if(i<0)return true;if(i>next)return false;
-      if(i===next){next++;document.dispatchEvent(new Event('discoverychange'));}
+      if(!canOpen(id))return false;
+      if(!discovered.has(id)){
+        discovered.add(id);document.dispatchEvent(new Event('discoverychange'));
+      }
       return true;
     }
   };
