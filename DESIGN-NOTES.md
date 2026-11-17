@@ -663,3 +663,5 @@ Revision112 (DESIGN ONLY): User likes current waviness and requests removal of p
 Revision113 (DESIGN ONLY): User still finds mountains too intense. Reduce terrain ambient/wave multiplier.9→.6 (one-third less than112); soften static bend to.65 lateral/.35 vertical and curls.012/.006, stretch.15 (earlier revision89 shape). Sky/text, local mouse dragging, wave speed and lifetime unchanged. Preview controls stay removed. Production remains102.
 
 Revision114 (DESIGN ONLY): User corrects113 reduction to10%, not one-third. Restore112 shape parameters and use terrain motion multiplier.81 (=.9*.9),10% below112. Replaces113 settings. Production remains102.
+
+Revision115 (DESIGN ONLY): Mouse wave propagation speed increased20%,95→114px/s. Amplitude, damping, lifetime and ambient mountain motion unchanged. Production remains102.

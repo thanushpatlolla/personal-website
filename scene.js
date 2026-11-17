@@ -378,7 +378,7 @@
       let rippleX=0,rippleY=0;
       for(const wave of mouseWaves){
         const age=waveTime-wave.born,rx=u*W-wave.x,ry=v*H-wave.y,r=Math.hypot(rx,ry);
-        const width=Math.max(65,Math.min(W,H)*.085),front=age*95;
+        const width=Math.max(65,Math.min(W,H)*.085),front=age*114;
         const q=(r-front)/width;
         const pulse=16*wave.strength*(1-Math.exp(-age*2))*Math.exp(-age*.10)*(1-smooth(12,16,age))*Math.exp(-q*q*1.5)*Math.cos(q*2);
         rippleX+=pulse*(wave.dx*.2+(r?rx/r:0)*.8);
