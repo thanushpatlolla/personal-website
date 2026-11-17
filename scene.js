@@ -26,7 +26,7 @@
   let last = 0, elapsed = 0, handTime = localClockSeconds(), frame;
   let W = 1, H = 1, timeBounds=null, lakeRegion=null, easterRegions=[], clockBox, ready = false, rebuilding = false;
   const material=new MeltField();
-  const motionSettings={speed:1.61051,sway:1,wave:1,smoothing:0,persistence:1};
+  const motionSettings={speed:1.7,sway:1,wave:1.05,smoothing:0,persistence:1};
   let manualMelt=null,fluidActive=false,geometryDirty=true,pauseTween=null;
   const currentMelt=()=>pauseTween?pauseTween.from*(1-pauseTween.progress*pauseTween.progress*(3-2*pauseTween.progress)):(manualMelt===null?(paused?0:1-energy):manualMelt);
   const timing={frameMs:0,frames:0};
@@ -334,13 +334,23 @@
   // Slow, deterministic ambient creep. Manual progress holds a still reference
   // shape; normal clock mode breathes without requiring pointer movement.
   const AMBIENT_N=32;
+  // Broad, low-amplitude traveling disturbances, separate from local dragging.
+  let mouseWaves=[],waveTime=0,lastWaveTime=-1;
+  function emitMouseWave(x,y,dx,dy){
+    const distance=Math.hypot(dx,dy);
+    if(waveTime-lastWaveTime<.18||distance<2)return;
+    mouseWaves.push({x,y,dx:dx/distance,dy:dy/distance,born:waveTime,strength:Math.min(1,distance/30)});
+    if(mouseWaves.length>8)mouseWaves.shift();lastWaveTime=waveTime;
+  }
   let ambientH=32,ambientX,ambientY,ambientTime=0,ambientBlend=0;
   function resetAmbient(){
+    mouseWaves=[];waveTime=0;lastWaveTime=-1;
     ambientH=Math.max(24,Math.min(90,Math.round(AMBIENT_N*H/W)));
     ambientX=new Float32Array(AMBIENT_N*ambientH);ambientY=new Float32Array(ambientX.length);ambientBlend=0;
   }
   function advanceAmbient(dt){
     if(manualMelt!==null){ambientBlend=0;return false;}
+    waveTime+=dt;mouseWaves=mouseWaves.filter(w=>waveTime-w.born<7);
     ambientTime+=dt*motionSettings.speed;ambientBlend+=(1-ambientBlend)*(1-Math.exp(-dt*2));
 
     const copy=document.querySelector('.intro').getBoundingClientRect();
@@ -363,6 +373,17 @@
       const crossPhase=u*2.6-v*4.1+ambientTime*.31;
       ambientX[i]+=4.5*Math.sin(phase+.8)*swell;
       ambientY[i]+=(6*Math.sin(phase)+2*Math.sin(crossPhase))*swell;
+      let rippleX=0,rippleY=0;
+      for(const wave of mouseWaves){
+        const age=waveTime-wave.born,rx=u*W-wave.x,ry=v*H-wave.y,r=Math.hypot(rx,ry);
+        const width=Math.max(90,Math.min(W,H)*.16),front=age*150;
+        const q=(r-front)/width;
+        const pulse=3*wave.strength*(1-Math.exp(-age*5))*Math.exp(-age*.48)*Math.exp(-q*q*1.5)*Math.cos(q*2);
+        rippleX+=pulse*(wave.dx*.65+(r?rx/r:0)*.35);
+        rippleY+=pulse*(wave.dy*.65+(r?ry/r:0)*.35);
+      }
+      ambientX[i]+=4*Math.tanh(rippleX/4)*edge*protection;
+      ambientY[i]+=4*Math.tanh(rippleY/4)*edge*protection;
       const response=motionSettings.smoothing>0?1-Math.exp(-dt/motionSettings.smoothing):1;
       ambientX[i]=oldX+(ambientX[i]-oldX)*response;ambientY[i]=oldY+(ambientY[i]-oldY)*response;
     }
@@ -473,6 +494,7 @@
     if(previousPointer){
       const dx=x-previousPointer.x,dy=y-previousPointer.y,distance=Math.hypot(dx,dy);
       if(distance>0&&distance<250){
+        emitMouseWave(x,y,dx,dy);
         const steps=Math.max(1,Math.ceil(distance/16));
         for(let i=1;i<=steps;i++)dragPaint(previousPointer.x+dx*i/steps,previousPointer.y+dy*i/steps,dx/steps,dy/steps);
       }

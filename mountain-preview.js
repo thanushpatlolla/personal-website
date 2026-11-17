@@ -1,7 +1,7 @@
 /* Local design controls only; saved choices stay in this browser until adopted. */
 (() => {
   if(!['localhost','127.0.0.1','[::1]'].includes(location.hostname)||!window.melting)return;
-  const api=window.melting,defaults={...api.getMountainSettings(),...api.getMotionSettings()},key='mountain-preview-v2';
+  const api=window.melting,defaults={...api.getMountainSettings(),...api.getMotionSettings()},key='mountain-preview-v3';
   const panel=document.createElement('details');panel.open=true;panel.className='melt-ui mountain-preview';
   panel.innerHTML='<summary>Mountain preview</summary><div class="preview-controls"></div>';
   const controls=panel.querySelector('div'),inputs={};
