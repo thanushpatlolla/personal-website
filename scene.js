@@ -335,16 +335,18 @@
   // shape; normal clock mode breathes without requiring pointer movement.
   const AMBIENT_N=32;
   // Broad, low-amplitude traveling disturbances, separate from local dragging.
-  let mouseWaves=[],waveTime=0,lastWaveTime=-1;
+  let mouseWaves=[],waveTime=0,lastWaveTime=-1,waveDistance=0;
   function emitMouseWave(x,y,dx,dy){
     const distance=Math.hypot(dx,dy);
-    if(waveTime-lastWaveTime<.18||distance<2)return;
-    mouseWaves.push({x,y,dx:dx/distance,dy:dy/distance,born:waveTime,strength:Math.min(1,distance/30)});
+    waveDistance+=distance;
+    if(waveTime-lastWaveTime<.3||waveDistance<24||distance===0)return;
+    mouseWaves.push({x,y,dx:dx/distance,dy:dy/distance,born:waveTime,strength:Math.min(1,waveDistance/65)});
+    waveDistance=0;
     if(mouseWaves.length>8)mouseWaves.shift();lastWaveTime=waveTime;
   }
   let ambientH=32,ambientX,ambientY,ambientTime=0,ambientBlend=0;
   function resetAmbient(){
-    mouseWaves=[];waveTime=0;lastWaveTime=-1;
+    mouseWaves=[];waveTime=0;lastWaveTime=-1;waveDistance=0;
     ambientH=Math.max(24,Math.min(90,Math.round(AMBIENT_N*H/W)));
     ambientX=new Float32Array(AMBIENT_N*ambientH);ambientY=new Float32Array(ambientX.length);ambientBlend=0;
   }
@@ -378,12 +380,12 @@
         const age=waveTime-wave.born,rx=u*W-wave.x,ry=v*H-wave.y,r=Math.hypot(rx,ry);
         const width=Math.max(90,Math.min(W,H)*.16),front=age*150;
         const q=(r-front)/width;
-        const pulse=.6*wave.strength*(1-Math.exp(-age*5))*Math.exp(-age*.48)*Math.exp(-q*q*1.5)*Math.cos(q*2);
+        const pulse=4*wave.strength*(1-Math.exp(-age*5))*Math.exp(-age*.48)*Math.exp(-q*q*1.5)*Math.cos(q*2);
         rippleX+=pulse*(wave.dx*.65+(r?rx/r:0)*.35);
         rippleY+=pulse*(wave.dy*.65+(r?ry/r:0)*.35);
       }
-      ambientX[i]+=Math.tanh(rippleX)*edge*protection;
-      ambientY[i]+=Math.tanh(rippleY)*edge*protection;
+      ambientX[i]+=3*Math.tanh(rippleX/3)*edge*protection;
+      ambientY[i]+=3*Math.tanh(rippleY/3)*edge*protection;
       const response=motionSettings.smoothing>0?1-Math.exp(-dt/motionSettings.smoothing):1;
       ambientX[i]=oldX+(ambientX[i]-oldX)*response;ambientY[i]=oldY+(ambientY[i]-oldY)*response;
     }
