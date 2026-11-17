@@ -641,3 +641,5 @@ Revision102 (DESIGN ONLY): User chooses free discovery of peak/hill/lake photos;
 Release102: User approved publishing free photo discovery; only lake unlocks clock. Promoted7bd2f21 to main.
 
 Revision103 (DESIGN ONLY): Clicking loss landscape? reveals gradient descent and three faint downhill arrows ending at the green hillside photo for4.8 seconds, fading during final1.2 seconds. Arrow shafts are sampled through scene deformation; heads follow the final shaft tangent. Supports Enter/Space. Summit caption restored to peaks and…?. Production remains102.
+
+Revision104 (DESIGN ONLY): Desktop clock winding gains20% (1→1.2) for mouse/keyboard turning and hold-to-wind. Full restoration takes2.5 turns instead of3. Touch gain stays3 (one turn). Production remains102.

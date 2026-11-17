@@ -10,9 +10,9 @@
   let paused = motion.matches, energy = .9, charge = .9, holding = false, angle = null;
   let heldFor=0, ratchet=0, turn=0, recoil=0, lastKey=0, gestureCenter=null, gestureTurned=false;
   let windingOffset=0,keyWinding=false;
-  const DETENT=Math.PI/24; // 48 detents/revolution. Three full turns from empty.
+  const DETENT=Math.PI/24; // 48 detents/revolution. Desktop: 2.5 full turns; touch: one.
   const CHARGE_PER_DETENT=1/(48*3);
-  let windingGain=1; // Touch winding restores three times as much per turn.
+  let windingGain=1.2; // Desktop gets a modest boost; touch retains its existing gain.
   function ratchetStep(direction=1){
     windingOffset-=direction*92;
     handTime=localClockSeconds()+windingOffset;
@@ -615,14 +615,14 @@
     start();
   }
   function wind(pointerType) {
-    windingGain=pointerType==='touch'?3:1;
+    windingGain=pointerType==='touch'?3:1.2;
     document.dispatchEvent(new Event('clockwind'));
     useClock();
     if (paused) setPaused(false);
     holding = true;heldFor=0;gestureTurned=false;
     note.textContent = 'turning back time';
   }
-  function release() { windingGain=1;windingOffset=0;keyWinding=false;if(!paused)handTime=localClockSeconds();clockHintDismissed=true;windHint.style.display='none';holding = false; angle = null; gestureCenter=null; note.textContent = paused ? 'a moment, held' : 'time is passing'; }
+  function release() { windingGain=1.2;windingOffset=0;keyWinding=false;if(!paused)handTime=localClockSeconds();clockHintDismissed=true;windHint.style.display='none';holding = false; angle = null; gestureCenter=null; note.textContent = paused ? 'a moment, held' : 'time is passing'; }
   function pointerAngle(event) {
     const center=gestureCenter||watchPoint(.5,.5,currentMelt());
     return Math.atan2(event.clientY+scrollY-center[1],event.clientX-center[0]);
