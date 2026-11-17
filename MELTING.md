@@ -347,3 +347,8 @@ its downward caret. Other three retain ?/caret cues. User likes this distinction
 
 Revision55: Valley informational target uses default arrow cursor instead of
 help/question-mark cursor. Visible loss landscape? hover label remains.
+
+Revision56: All anchors open new tabs with noopener/noreferrer (existing rel=me
+retained). Deformed-position click routing uses window.open too. Mailto remains
+subject to browser/mail-handler behavior. User explicitly authorized publishing
+all accumulated changes to production main.

@@ -610,7 +610,7 @@
       const padX=el===still?28:0,padY=el===still?22:0;
       const shape=boundary((x,y)=>flow(x,y,m),b.left-padX,b.top+scrollY-padY,b.right+padX,b.bottom+scrollY+padY);
       if(contains(shape,event.clientX,event.clientY+scrollY)){
-        if(el===still)setPaused(!paused);else if(el.id==='music-toggle')el.click();else window.location.assign(el.href);
+        if(el===still)setPaused(!paused);else if(el.id==='music-toggle')el.click();else window.open(el.href,'_blank','noopener,noreferrer');
         return;
       }
     }
