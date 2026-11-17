@@ -583,3 +583,5 @@ Release85: User explicitly requested push. Promoted revision85 (ba67073) to main
 Revision86: User explicitly requests removing release pause and publishing. Removed post-wind rest timer entirely; melting/clock/ambient resume immediately on release, including keyboard winding. Production approved.
 
 Revision87: Ambient motion runs10% faster by advancing ambientTime at1.10x. Same wave/noise paths and amplitudes; pointer dynamics and charge decay unchanged. User explicitly requests production push.
+
+Revision88: Slightly stronger mountain bentness: up to20% more sideways base displacement and15% more interior vertical displacement, smoothly restricted to mountain region. Extra vertical bend starts below skyline, preserving mountain/sky balance. Ambient speed unchanged at1.10x. Design preview pending approval for production.
