@@ -507,3 +507,5 @@ Revision89 (DESIGN ONLY): User wants visibly unnatural mountains, closer to the 
 Revision90 (DESIGN ONLY): Ambient speed increased another10%, from1.10x to1.21x original rate. Current mountain bends/amplitudes unchanged.
 
 Revision91 (DESIGN ONLY): Increased shared ambient speed another10%,1.21x to1.331x original. Both text fastTime and landscape time/swell use ambientTime, so text and all scene regions accelerate together. Deformation amplitudes unchanged.
+
+Revision92 (DESIGN ONLY): Mountain-specific extra deformation strengthened15%: lateral gain.65→.7475, vertical gain.35→.4025, lateral curl.012→.0138 and vertical curl.006→.0069. Shared ambient speed and skyline protection unchanged.
