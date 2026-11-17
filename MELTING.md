@@ -593,3 +593,5 @@ Revision124 (DESIGN ONLY): User requests stronger early unmelting while turning 
 Revision125 (DESIGN ONLY): Lighten peak and clock photo frame/background/border/caret12% toward white, preserving hue. Lake unchanged. Production remains123; includes design124 winding curve.
 
 Release126: User requests half desktop turn50% restored and production push. Winding power exponent ln(.5)/ln(.75), preserving2-turn desktop /1-turn touch total. Includes lighter peak/clock frames from125.
+
+Revision127 (DESIGN ONLY): User wants to try25% toward white instead of12%, measured from original peak#b6b4a9/clock#9da4a8 swatches. Production release126 retains12% until approved.
