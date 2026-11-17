@@ -511,3 +511,5 @@ Revision91 (DESIGN ONLY): Increased shared ambient speed another10%,1.21x to1.33
 Revision92 (DESIGN ONLY): Mountain-specific extra deformation strengthened15%: lateral gain.65→.7475, vertical gain.35→.4025, lateral curl.012→.0138 and vertical curl.006→.0069. Shared ambient speed and skyline protection unchanged.
 
 Revision93 (DESIGN ONLY): Mountain-specific added displacement/curls increased another20% (.897 lateral gain,.483 vertical gain,.01656/.00828 curls). Shared ambient speed including text increased10%,1.331→1.4641x original. Skyline protection retained.
+
+Revision94: Shared ambient movement increased another10%,1.4641→1.61051x original. User explicitly approves production push, including accumulated mountain curvature and speed revisions88–94. Skyline protection retained.
