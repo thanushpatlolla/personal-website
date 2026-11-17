@@ -6,6 +6,7 @@
   const ns='http://www.w3.org/2000/svg',layer=document.createElementNS(ns,'svg');
   layer.classList.add('hill-ui','hill-layer');layer.setAttribute('aria-label','Landscape photo');
   const target=document.createElementNS(ns,'path');target.classList.add('hill-target');
+  if(config.hitPadding)target.style.strokeWidth=String(config.hitPadding*2)+'px';
   target.setAttribute('tabindex','0');target.setAttribute('role',config.info?'img':'button');target.setAttribute('aria-label',hasCard?'Open '+config.label:config.label);
   if(config.info)target.style.cursor='help';
   if(config.action)target.setAttribute('aria-pressed','false');else if(hasCard){target.setAttribute('aria-expanded','false');target.setAttribute('aria-controls',config.id);}
@@ -67,7 +68,7 @@
   landmark({id:'valley-hint',info:true,label:'loss landscape?',hintLabel:'loss landscape?',hint:[.770,.558],
     ridge:[[.697,.547],[.717,.551],[.738,.556],[.756,.559],[.770,.558],[.786,.554],[.802,.547],[.817,.538],[.833,.528]],
     bottom:[[.825,.588],[.713,.590]]});
-  landmark({id:'lake-song',hint:[.343,.847],label:'Play Weird Fishes / Arpeggi by Radiohead from 7 seconds',action:()=>window.playLakeSong(),
+  landmark({id:'lake-song',hitPadding:48,hint:[.343,.847],label:'Play Weird Fishes / Arpeggi by Radiohead from 7 seconds',action:()=>window.playLakeSong(),
     ridge:[[.300,.866],[.310,.860],[.322,.856],[.332,.850],[.343,.847],[.349,.852],[.359,.855],[.369,.862],[.380,.865]],
     bottom:[[.380,.886],[.300,.887]]});
   landmark({id:'hill-photo',label:'hiking photograph',src:'/assets/hill-memory.jpg',alt:'Hikers following a trail through a green mountain valley',

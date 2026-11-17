@@ -17,7 +17,7 @@
     recoil=direction*.018;
   }
   let last = 0, elapsed = 0, handTime = 36540, frame;
-  let W = 1, H = 1, timeBounds=null, clockBox, ready = false, rebuilding = false;
+  let W = 1, H = 1, timeBounds=null, lakeRegion=null, clockBox, ready = false, rebuilding = false;
   const material=new MeltField();
   let manualMelt=null,fluidActive=false,geometryDirty=true,pauseTween=null;
   const currentMelt=()=>pauseTween?pauseTween.from*(1-pauseTween.progress*pauseTween.progress*(3-2*pauseTween.progress)):(manualMelt===null?(paused?0:1-energy):manualMelt);
@@ -32,7 +32,7 @@
     if(!ready)return;
     hint.setAttribute('viewBox',`0 0 ${W} ${H}`);hint.style.height=H+'px';
     const p=hoverPointer,focus=document.activeElement;
-    const pointerOnClock=p&&contains(boundary((u,v)=>watchPoint(u,v,m),.09,.01,.91,.99),p.x,p.y);
+    const pointerOnClock=p&&nearShape(boundary((u,v)=>watchPoint(u,v,m),.09,.01,.91,.99),p.x,p.y,24);
     if(p&&!pointerOnClock)clockHintDismissed=false;
     const onClock=holding||(!clockHintDismissed&&((focus===clock&&clock.matches(':focus-visible'))||pointerOnClock));
     const b=still.getBoundingClientRect();
@@ -231,6 +231,10 @@
       Object.assign(area.style,{left:clockBox.x+'px',top:clockBox.y+'px',right:'auto',width:ridgeSize+'px',height:ridgeSize+'px'});
       clock.style.height=ridgeSize+'px';
     }
+    const photoScale=Math.max(W/photo.naturalWidth,H/photo.naturalHeight);
+    lakeRegion={x:(W-photo.naturalWidth*photoScale)/2+.343*photo.naturalWidth*photoScale,
+      y:(H-photo.naturalHeight*photoScale)/2+.863*photo.naturalHeight*photoScale,
+      rx:.085*photo.naturalWidth*photoScale,ry:.065*photo.naturalHeight*photoScale};
     material.resize(W,H);
     const masks=[['.intro',.82],['.music',.70],['#still',.94]].map(([selector,strength])=>{
       const b=document.querySelector(selector).getBoundingClientRect();
@@ -375,6 +379,11 @@
     if(manualMelt===null&&(!paused||pauseTween)&&ambientBlend>0){
       const u=p[0]/W,v=p[1]/H;
       p[0]+=ambientAt(ambientX,u,v)*m;p[1]+=ambientAt(ambientY,u,v)*m;
+    }
+    // Keep the lake recognizable and easier to catch as the surrounding paint moves.
+    if(lakeRegion){
+      const b=lakeRegion,weight=Math.exp(-(((x-b.x)/b.rx)**2+((y-b.y)/b.ry)**2));
+      p[0]=x+(p[0]-x)*(1-.75*weight);p[1]=y+(p[1]-y)*(1-.75*weight);
     }
     if(timeBounds){
       const b=timeBounds;
@@ -557,6 +566,15 @@
     }
     return inside;
   }
+  function nearShape(polygon,x,y,padding){
+    if(contains(polygon,x,y))return true;
+    for(let i=0,j=polygon.length-1;i<polygon.length;j=i++){
+      const a=polygon[j],b=polygon[i],dx=b[0]-a[0],dy=b[1]-a[1];
+      const t=Math.max(0,Math.min(1,((x-a[0])*dx+(y-a[1])*dy)/(dx*dx+dy*dy||1)));
+      if(Math.hypot(x-a[0]-t*dx,y-a[1]-t*dy)<=padding)return true;
+    }
+    return false;
+  }
   function boundary(map,x0,y0,x1,y1){
     const points=[];
     for(let i=0;i<=16;i++)points.push(map(x0+(x1-x0)*i/16,y0));
@@ -569,7 +587,7 @@
     if(!ready||!event.isPrimary||event.button!==0||event.target.closest('.melt-ui,.hill-ui'))return;
     const m=currentMelt();
     const outline=boundary((u,v)=>watchPoint(u,v,m),.09,.01,.91,.99);
-    if(!contains(outline,event.clientX,event.clientY+scrollY))return;
+    if(!nearShape(outline,event.clientX,event.clientY+scrollY,24))return;
     event.preventDefault();clock.focus({preventScroll:true});
     gestureCenter=watchPoint(.5,.5,m);clock.setPointerCapture(event.pointerId);wind();angle=pointerAngle(event);
   });

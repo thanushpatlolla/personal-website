@@ -401,3 +401,11 @@ swatch appearance. Keep beveled close buttons. User prefers own visual testing.
 Revision49: Clock black hover arc moved farther from silhouette (texture offset
 19→27px) and stroke increased1→1.25px. Same mapped geometry/hover behavior.
 User continues visual testing; saved on design branch.
+
+Revision50: User requests all easter eggs remain easy to find despite mouse
+drag. Landmark hit padding increased16→32px on each side, lake48px per side.
+Clock gets24px screen-space halo around moving boundary for both hover and
+pointerdown. Visible strokes unchanged. Lake displacement (base, ambient and
+mouse) attenuated up to75% with smooth photo-anchored Gaussian falloff;
+landmark samplePoint uses same mapping, keeping outline/hitbox attached.
+Script syntax checked; user handles visual testing. Saved on design branch.
