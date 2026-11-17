@@ -264,3 +264,21 @@ copy patches/waves unchanged. Reduced the five recently added landscape pulls
 to~40% strength. Ambient displacement outside intro now45% amplitude and half
 speed; feathered copy region retains previous ambient amplitude/speed. Mouse
 painting unchanged. Arrow offset increased9→19 texture pixels for more gap.
+
+Revision23–25: Added hill-popover.js, anchored to the small foreground hill
+near photo UV(.725,.713). Hover black contour and SVG hit target use the same
+scene mapping. Clicking/tapping/Enter/Space opens supplied Downloads/100_1386
+(4).jpg, copied unchanged to assets/hill-memory.jpg. Framed portrait and caret
+track hill as it moves; X, Escape, or outside click dismiss. Keyboard focus
+supported. Popup excluded from scene text capture and pointer-paint handlers.
+Frame/caret now #1b1b1a sampled from user swatch; keep existing light X button
+style (user explicitly likes it). Text patches vertically flipped to reduce
+large “deep learning” lettering and put looser stretches lower. Clock hover
+arrow hides immediately on release; leave/re-enter to show again. Tested clock
+release, hill hover/click/keyboard open/Escape, and geometry45+18 cases.
+
+Follow-up: X button now classic raised gray OS bevel with light top/left and
+dark lower/right, inset bevel when pressed, dotted keyboard focus.
+
+Latest hill steering: outline changed to warm white; transparent32px stroke
+adds16px hit padding around the moving hill shape.

@@ -73,10 +73,11 @@
         protection*=1-strength*weight;
         // A shallow curved baseline and shear preserve glyph height/width.
         // These pulls vary across the block, not separately for each word.
-        const q=(u-left)/(right-left),r=(v-top)/(bottom-top);
+        const q=(u-left)/(right-left);let r=(v-top)/(bottom-top);
         textX+=weight*3*(r-.5);
         const copyArea=top<.6&&(right-left)*this.width>280;
         if(copyArea){
+          r=1-r; // Put compressed patches above, looser areas below.
           // Isolated soft patches: different lines stretch differently. Fade to
           // zero at block edges so the enclosing text footprint stays stable.
           const edge=smooth(0,.12,q)*(1-smooth(.88,1,q))*smooth(0,.12,r)*(1-smooth(.88,1,r));

@@ -22,7 +22,7 @@
   let manualMelt=null,fluidActive=false,geometryDirty=true;
   const currentMelt=()=>manualMelt===null?(paused?0:1-energy):manualMelt;
   const timing={frameMs:0,frames:0};
-  let hoverPointer=null;
+  let hoverPointer=null,clockHintDismissed=false;
   const hint=document.createElementNS('http://www.w3.org/2000/svg','svg');
   hint.id='interaction-hints';hint.setAttribute('aria-hidden','true');
   hint.innerHTML='<defs><marker id="wind-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M1 1 L7 4 L1 7" fill="none" stroke="#171b19"/></marker></defs><path id="time-underline" fill="none" stroke="currentColor"/><g id="wind-hint"><path fill="none" stroke="currentColor" marker-end="url(#wind-arrow)"/></g>';
@@ -32,7 +32,9 @@
     if(!ready)return;
     hint.setAttribute('viewBox',`0 0 ${W} ${H}`);hint.style.height=H+'px';
     const p=hoverPointer,focus=document.activeElement;
-    const onClock=holding||(focus===clock&&clock.matches(':focus-visible'))||(p&&contains(boundary((u,v)=>watchPoint(u,v,m),.09,.01,.91,.99),p.x,p.y));
+    const pointerOnClock=p&&contains(boundary((u,v)=>watchPoint(u,v,m),.09,.01,.91,.99),p.x,p.y);
+    if(p&&!pointerOnClock)clockHintDismissed=false;
+    const onClock=holding||(!clockHintDismissed&&((focus===clock&&clock.matches(':focus-visible'))||pointerOnClock));
     const b=still.getBoundingClientRect();
     const onTime=(focus===still&&still.matches(':focus-visible'))||(p&&contains(boundary((x,y)=>flow(x,y,m),b.left-28,b.top+scrollY-22,b.right+28,b.bottom+scrollY+22),p.x,p.y));
     timeUnderline.style.display=onTime?'':'none';windHint.style.display=onClock?'':'none';
@@ -53,7 +55,7 @@
     }
     document.body.style.cursor=onClock?'grab':onTime?'pointer':'';
   }
-  document.addEventListener('pointermove',e=>{hoverPointer=e.target.closest('.melt-ui')?null:{x:e.clientX,y:e.clientY+scrollY};if(ready)updateHints(currentMelt());},{passive:true});
+  document.addEventListener('pointermove',e=>{hoverPointer=e.target.closest('.melt-ui,.hill-ui')?null:{x:e.clientX,y:e.clientY+scrollY};if(ready)updateHints(currentMelt());},{passive:true});
   document.addEventListener('pointerleave',()=>{hoverPointer=null;if(ready)updateHints(currentMelt());});
   const surface = document.createElement('canvas');
   surface.id = 'liquid-surface'; surface.setAttribute('aria-hidden','true');
@@ -135,7 +137,7 @@
     let n;
     while((n=walker.nextNode())){
       const el=n.parentElement;
-      if(!n.textContent.trim()||el.closest('script,style,svg,.landscape,#clock,.visually-hidden,.melt-ui')||el.namespaceURI!=='http://www.w3.org/1999/xhtml')continue;
+      if(!n.textContent.trim()||el.closest('script,style,svg,.landscape,#clock,.visually-hidden,.melt-ui,.hill-ui')||el.namespaceURI!=='http://www.w3.org/1999/xhtml')continue;
       const style=getComputedStyle(el);if(style.display==='none'||style.visibility==='hidden')continue;
       const range=document.createRange();let line='',left=0,top=0,height=0;
       ctx.font=`${style.fontStyle} ${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
@@ -173,7 +175,7 @@
     paintText();
     for(const {svg,img} of icons){const b=svg.getBoundingClientRect();ctx.drawImage(img,b.left,b.top+scrollY,b.width,b.height);}
     const focus=document.activeElement;
-    if(focus&&!focus.closest('.melt-ui')&&focus.matches('a:focus-visible,#still:focus-visible,#music-toggle:focus-visible')){
+    if(focus&&!focus.closest('.melt-ui,.hill-ui')&&focus.matches('a:focus-visible,#still:focus-visible,#music-toggle:focus-visible')){
       const b=focus.getBoundingClientRect();ctx.strokeStyle='#fff1c9';ctx.lineWidth=1;
       if(focus===still){
         ctx.beginPath();ctx.moveTo(b.left+12,b.bottom+scrollY-3);
@@ -376,7 +378,7 @@
     return p;
   }
   document.addEventListener('pointermove',event=>{
-    if(!ready||holding||paused||event.pointerType==='touch'||event.target.closest('.melt-ui')){previousPointer=null;return;}
+    if(!ready||holding||paused||event.pointerType==='touch'||event.target.closest('.melt-ui,.hill-ui')){previousPointer=null;return;}
     const x=event.clientX,y=event.clientY+scrollY;
     if(previousPointer){
       const dx=x-previousPointer.x,dy=y-previousPointer.y,distance=Math.hypot(dx,dy);
@@ -524,7 +526,7 @@
     holding = true;heldFor=0;gestureTurned=false;
     note.textContent = 'turning back time';
   }
-  function release() { holding = false; angle = null; gestureCenter=null; note.textContent = paused ? 'a moment, held' : 'time is passing'; }
+  function release() { clockHintDismissed=true;windHint.style.display='none';holding = false; angle = null; gestureCenter=null; note.textContent = paused ? 'a moment, held' : 'time is passing'; }
   function pointerAngle(event) {
     const center=gestureCenter||watchPoint(.5,.5,currentMelt());
     return Math.atan2(event.clientY+scrollY-center[1],event.clientX-center[0]);
@@ -546,7 +548,7 @@
     return points;
   }
   document.addEventListener('pointerdown',event=>{
-    if(!ready||!event.isPrimary||event.button!==0||event.target.closest('.melt-ui'))return;
+    if(!ready||!event.isPrimary||event.button!==0||event.target.closest('.melt-ui,.hill-ui'))return;
     const m=currentMelt();
     const outline=boundary((u,v)=>watchPoint(u,v,m),.09,.01,.91,.99);
     if(!contains(outline,event.clientX,event.clientY+scrollY))return;
@@ -555,7 +557,7 @@
   });
   // Hit-test the painted link/control outlines, not their unmelted DOM boxes.
   document.addEventListener('click',event=>{
-    if(!ready||event.detail===0||event.target.closest('.melt-ui'))return;
+    if(!ready||event.detail===0||event.target.closest('.melt-ui,.hill-ui'))return;
     event.preventDefault();event.stopPropagation();
     const m=currentMelt();
     for(const el of document.querySelectorAll('a:not(.music a):not(.melt-ui a),#still,#music-toggle')){
