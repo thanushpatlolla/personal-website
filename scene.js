@@ -371,15 +371,27 @@
     const data=new Float32Array((nx+1)*(ny+1)*2);
     const photoHeight=photo.naturalHeight*Math.max(W/photo.naturalWidth,H/photo.naturalHeight);
     const photoTop=(H-photoHeight)/2;
+    // Remove each column's shared ridge drift, not its vertical variation.
+    // This leaves opposing pulls above/below the ridge instead of sinking land.
+    const ridgeY=photoTop+photoHeight*.52;
+    const ridgeDrift=Array.from({length:nx+1},(_,x)=>{
+      const px=x*W/nx;return material.map(px,ridgeY,m)[1]-ridgeY;
+    });
     for(let y=0;y<=ny;y++)for(let x=0;x<=nx;x++){
       const px=x*W/nx,py=y*H/ny,p=material.map(px,py,m),i=(y*(nx+1)+x)*2;
-      // Preserve the mountain/sky balance: resist the broad downward sag
-      // around the ridgeline, while retaining sideways melt and ambient motion.
-      // Image coordinates keep the protection aligned under responsive cropping.
-      const photoY=(py-photoTop)/photoHeight;
-      const terrain=smooth(.28,.44,photoY)*(1-smooth(.70,.96,photoY));
-      const dy=p[1]-py;
-      data[i]=p[0]-px;data[i+1]=dy>0?dy*(1-.85*terrain):dy;
+      const photoY=(py-photoTop)/photoHeight,u=px/W,v=py/H;
+      const ridgeWeight=smooth(.10,.40,photoY)*(1-smooth(.70,1,photoY));
+      const edge=smooth(0,.10,u)*smooth(0,.10,1-u)*smooth(0,.08,v)*smooth(0,.08,1-v);
+      // Overlapping, smoothly feathered stretch bands: each has both upward
+      // and downward motion. Their overlap mixes gently across the skyline.
+      const stretchBand=(lo,hi)=>{
+        const t=Math.max(0,Math.min(1,(photoY-lo)/(hi-lo)));
+        return Math.sin(2*Math.PI*t)*Math.sin(Math.PI*t)**2;
+      };
+      const variation=.75+.25*material.noise(u*3.1+18,photoY*2+7);
+      const stretch=photoHeight*.045*(stretchBand(.06,.59)+stretchBand(.45,1))*variation*m*material.options.intensity;
+      data[i]=p[0]-px;
+      data[i+1]=p[1]-py-.92*ridgeDrift[x]*ridgeWeight*smooth(0,.08,v)*smooth(0,.08,1-v)+stretch*edge;
     }
     baseMap={nx,ny,data,m,version:material.version};
   }

@@ -549,3 +549,12 @@ paused Stardust selection and playing switch to peak Ipanema; left player paused
 Syntax and existing geometry checks pass; new terrain test checks12 combinations
 of viewport/progress for no folded mesh. Commit/push design branch only; production
 remains revision80 (5563507). Preview screenshot outputs/mountain-balance-v81.jpg.
+
+Revision82 (DESIGN ONLY): User clarified vertical stretching should remain within
+sky and mountains, with mixing but no collective mountain droop. Replaced v81's
+vertical attenuation with per-column ridge drift subtraction (92%, smoothly
+feathered) plus opposing vertical stretch bands in sky and terrain. Bands overlap
+near skyline; image-relative positions follow cropping and perimeter is fixed.
+Shared geometry continues to align controls. Terrain mesh checks pass across12
+viewport/progress combinations; visually reviewed localhost. Paused song selection
+from v81 retained. Production remains revision80; do not deploy without request.
