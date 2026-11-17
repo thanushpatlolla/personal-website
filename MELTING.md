@@ -549,3 +549,5 @@ Release102: User approved publishing free photo discovery; only lake unlocks clo
 Revision103 (DESIGN ONLY): Clicking loss landscape? reveals gradient descent and three faint downhill arrows ending at the green hillside photo for4.8 seconds, fading during final1.2 seconds. Arrow shafts are sampled through scene deformation; heads follow the final shaft tangent. Supports Enter/Space. Summit caption restored to peaks and…?. Production remains102.
 
 Revision104 (DESIGN ONLY): Desktop clock winding gains20% (1→1.2) for mouse/keyboard turning and hold-to-wind. Full restoration takes2.5 turns instead of3. Touch gain stays3 (one turn). Production remains102.
+
+Revision105 (DESIGN ONLY): Start30% melted with immediate decay. Removed gradient interaction/arrows at user request; loss landscape? is informational again. Added localhost-only mountain sliders (sideways/vertical bend, curls, vertical stretch), full-melt inspection, resume clock, browser-local save/load and reset. Saved preview choices are not production defaults until user selects them for adoption. Summit caption remains peaks and…?. Production remains102.

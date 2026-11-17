@@ -6,8 +6,8 @@
   const still = document.querySelector('#still');
   const note = document.querySelector('#time-note');
   const motion = matchMedia('(prefers-reduced-motion: reduce)');
-  // Start 10% melted; normal charge decay begins immediately when ready.
-  let paused = motion.matches, energy = .9, charge = .9, holding = false, angle = null;
+  // Start 30% melted; normal charge decay begins immediately when ready.
+  let paused = motion.matches, energy = .7, charge = .7, holding = false, angle = null;
   let heldFor=0, ratchet=0, turn=0, recoil=0, lastKey=0, gestureCenter=null, gestureTurned=false;
   let windingOffset=0,keyWinding=false;
   const DETENT=Math.PI/24; // 48 detents/revolution. Desktop: 2.5 full turns; touch: one.
@@ -378,6 +378,7 @@
   }
   // Cache the expensive static material map separately from the moving paint.
   // Ambient motion must not force reintegration of 20,000 unchanged base points.
+  const mountainSettings={sideways:.897,vertical:.483,curlX:.01656,curlY:.00828,stretch:.15};
   let baseMap=null;
   const dragA=new Float64Array(2),dragB=new Float64Array(2);
   function prepareBase(m){
@@ -408,16 +409,16 @@
       // Stronger mountain curvature, with opposing curls rather than a shared sag.
       const mountainBend=smooth(.46,.56,photoY)*(1-smooth(.84,1,photoY));
       const curl=m*material.options.intensity*mountainBend*edge;
-      data[i]=(p[0]-px)*(1+.897*mountainBend)
-        +photoHeight*.01656*Math.sin((photoY-.5)*14+u*4)*curl;
+      data[i]=(p[0]-px)*(1+mountainSettings.sideways*mountainBend)
+        +photoHeight*mountainSettings.curlX*Math.sin((photoY-.5)*14+u*4)*curl;
       const dy=p[1]-py;
       const terrain=smooth(.28,.44,photoY)*(1-smooth(.70,.96,photoY));
       const gentle=dy>0?dy*(1-.85*terrain):dy;
       const stretched=dy-.92*ridgeDrift[x]*ridgeWeight*smooth(0,.08,v)*smooth(0,.08,1-v)+stretch*edge;
       // Mostly the restrained mountain balance, with only a touch of stretch.
       const verticalBend=smooth(.56,.66,photoY)*(1-smooth(.84,1,photoY));
-      data[i+1]=(gentle+.15*(stretched-gentle))*(1+.483*verticalBend)
-        +photoHeight*.00828*Math.sin(u*13+photoY*4)*curl;
+      data[i+1]=(gentle+mountainSettings.stretch*(stretched-gentle))*(1+mountainSettings.vertical*verticalBend)
+        +photoHeight*mountainSettings.curlY*Math.sin(u*13+photoY*4)*curl;
     }
     baseMap={nx,ny,data,m,version:material.version};
   }
@@ -710,6 +711,12 @@
     if(manualMelt!==null){charge=energy=1-manualMelt;manualMelt=null;}
   }
   window.melting={
+    getMountainSettings(){return {...mountainSettings};},
+    setMountainSettings(values){
+      const limits={sideways:[0,2],vertical:[0,1.5],curlX:[0,.04],curlY:[0,.03],stretch:[0,1]};
+      for(const [key,[lo,hi]] of Object.entries(limits)){const v=Number(values[key]);if(Number.isFinite(v))mountainSettings[key]=Math.max(lo,Math.min(hi,v));}
+      baseMap=null;geometryDirty=true;if(ready)render(currentMelt());return {...mountainSettings};
+    },
     setClockStyle(value){
       if(!clockModes.includes(value))return;
       release();clockStyle=value;watch=value==='original'?originalWatch:warmWatch;
