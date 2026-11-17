@@ -620,3 +620,5 @@ Deployment diagnosis correction: Dashboard showed clock release4bee5ca just comp
 Revision98: Pause time freezes clock hands as well as landscape; removed paused wall-time refresh timer. Frame updates and release/blur handlers preserve frozen time while paused. Resuming syncs immediately to local time and clears winding offsets. User explicitly requests production deployment.
 
 Revision99 (DESIGN ONLY): Touch clock winding restores scene2x faster per detent (1.5 revolutions from empty instead of3); touch hold-to-wind also2x faster. Actual pointerType selects gain, leaving mouse/keyboard unchanged. Release resets gain. Hand winding and ambient speed unchanged.
+
+Release99: User explicitly approved production publication of2x touch winding. Publishing and verifying live revision99.
