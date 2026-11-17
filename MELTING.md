@@ -203,3 +203,7 @@ style (user explicitly likes it). Text patches vertically flipped to reduce
 large “deep learning” lettering and put looser stretches lower. Clock hover
 arrow hides immediately on release; leave/re-enter to show again. Tested clock
 release, hill hover/click/keyboard open/Escape, and geometry45+18 cases.
+
+Revision27: User requests stronger text disruption and a different left-side
+stretch direction. Added localized upward/leftward pulls against central
+downward sag, feathered at block perimeter. Landscape and controls unchanged.

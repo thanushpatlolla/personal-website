@@ -82,6 +82,10 @@
           // zero at block edges so the enclosing text footprint stays stable.
           const edge=smooth(0,.12,q)*(1-smooth(.88,1,q))*smooth(0,.12,r)*(1-smooth(.88,1,r));
           const patch=(cx,cy,rx,ry)=>Math.exp(-(((q-cx)/rx)**2+((r-cy)/ry)**2));
+          // Opposing pulls on the left: upward/outward against the main sag.
+          textX-=weight*edge*(22*patch(.16,.52,.13,.30)+10*patch(.22,.82,.15,.16));
+          textY-=weight*edge*22*patch(.18,.55,.16,.25)*o.gravity;
+          textY+=weight*edge*12*patch(.47,.46,.15,.15)*o.gravity;
           textX+=weight*edge*1.35*(19*patch(.30,.22,.15,.19)-16*patch(.70,.64,.16,.23));
           textX+=weight*edge*1.35*12*patch(.40,.84,.18,.12);
           textX+=weight*edge*1.35*(8*patch(.77,.25,.13,.13)-7*patch(.22,.53,.12,.15));

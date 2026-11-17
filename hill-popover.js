@@ -31,7 +31,11 @@
     const path=points.map((p,i)=>(i?'L':'M')+p[0]+','+p[1]).join(' ');
     const bottomA=map([.775,.755]),bottomB=map([.695,.79]);
     target.setAttribute('d',path+` L${bottomA[0]},${bottomA[1]} L${bottomB[0]},${bottomB[1]} Z`);
-    outline.setAttribute('d',path);outline.style.opacity=hover||focused||open?'1':'0';
+    const face=[[.682,.799],[.699,.787],[.717,.773],[.736,.760],[.755,.745],[.773,.730]];
+    const facePoints=[];
+    for(let j=0;j<face.length-1;j++)for(let i=0;i<6;i++){const t=i/6,a=face[j],b=face[j+1];facePoints.push(map([a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t]));}
+    const facePath=facePoints.map((p,i)=>(i?'L':'M')+p[0]+','+p[1]).join(' ');
+    outline.setAttribute('d',path+' '+facePath);outline.style.opacity=hover||focused||open?'1':'0';
     if(open){
       const a=map([.725,.713]),cw=card.offsetWidth,ch=card.offsetHeight;
       const left=Math.max(12,Math.min(w-cw-12,a[0]-cw/2));

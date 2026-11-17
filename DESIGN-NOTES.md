@@ -282,3 +282,10 @@ dark lower/right, inset bevel when pressed, dotted keyboard focus.
 
 Latest hill steering: outline changed to warm white; transparent32px stroke
 adds16px hit padding around the moving hill shape.
+
+Revision27: User requests stronger text disruption and a different left-side
+stretch direction. Added localized upward/leftward pulls against central
+downward sag, feathered at block perimeter. Landscape and controls unchanged.
+
+Revision28: Hill hover outline now also draws a white lower contour across the
+mountain face below the hill, using same photo-space/melt mapping.
