@@ -26,7 +26,7 @@
   let last = 0, elapsed = 0, handTime = localClockSeconds(), frame;
   let W = 1, H = 1, timeBounds=null, lakeRegion=null, easterRegions=[], clockBox, ready = false, rebuilding = false;
   const material=new MeltField();
-  const motionSettings={speed:1.7,sway:1,wave:1.05,smoothing:0,persistence:1};
+  const motionSettings={speed:1.633,sway:1,wave:1.0125,smoothing:0,persistence:1};
   let manualMelt=null,fluidActive=false,geometryDirty=true,pauseTween=null;
   const currentMelt=()=>pauseTween?pauseTween.from*(1-pauseTween.progress*pauseTween.progress*(3-2*pauseTween.progress)):(manualMelt===null?(paused?0:1-energy):manualMelt);
   const timing={frameMs:0,frames:0};
@@ -378,12 +378,12 @@
         const age=waveTime-wave.born,rx=u*W-wave.x,ry=v*H-wave.y,r=Math.hypot(rx,ry);
         const width=Math.max(90,Math.min(W,H)*.16),front=age*150;
         const q=(r-front)/width;
-        const pulse=3*wave.strength*(1-Math.exp(-age*5))*Math.exp(-age*.48)*Math.exp(-q*q*1.5)*Math.cos(q*2);
+        const pulse=.6*wave.strength*(1-Math.exp(-age*5))*Math.exp(-age*.48)*Math.exp(-q*q*1.5)*Math.cos(q*2);
         rippleX+=pulse*(wave.dx*.65+(r?rx/r:0)*.35);
         rippleY+=pulse*(wave.dy*.65+(r?ry/r:0)*.35);
       }
-      ambientX[i]+=4*Math.tanh(rippleX/4)*edge*protection;
-      ambientY[i]+=4*Math.tanh(rippleY/4)*edge*protection;
+      ambientX[i]+=Math.tanh(rippleX)*edge*protection;
+      ambientY[i]+=Math.tanh(rippleY)*edge*protection;
       const response=motionSettings.smoothing>0?1-Math.exp(-dt/motionSettings.smoothing):1;
       ambientX[i]=oldX+(ambientX[i]-oldX)*response;ambientY[i]=oldY+(ambientY[i]-oldY)*response;
     }
@@ -403,7 +403,7 @@
   }
   // Cache the expensive static material map separately from the moving paint.
   // Ambient motion must not force reintegration of 20,000 unchanged base points.
-  const mountainSettings={sideways:.897,vertical:.483,curlX:.0156,curlY:.0094,stretch:.18};
+  const mountainSettings={sideways:.897,vertical:.483,curlX:.01632,curlY:.00856,stretch:.1575};
   let baseMap=null;
   const dragA=new Float64Array(2),dragB=new Float64Array(2);
   function prepareBase(m){

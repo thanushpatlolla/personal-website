@@ -1,8 +1,8 @@
 /* Local design controls only; saved choices stay in this browser until adopted. */
 (() => {
   if(!['localhost','127.0.0.1','[::1]'].includes(location.hostname)||!window.melting)return;
-  const api=window.melting,defaults={...api.getMountainSettings(),...api.getMotionSettings()},key='mountain-preview-v3';
-  const panel=document.createElement('details');panel.open=true;panel.className='melt-ui mountain-preview';
+  const api=window.melting,defaults={...api.getMountainSettings(),...api.getMotionSettings()},key='mountain-preview-v4';
+  const panel=document.createElement('details');panel.open=false;panel.className='melt-ui mountain-preview';
   panel.innerHTML='<summary>Mountain preview</summary><div class="preview-controls"></div>';
   const controls=panel.querySelector('div'),inputs={};
   const fields=[['speed','Oscillation speed',.1,4,.01],['sway','Drifting sway',0,3,.01],['wave','Traveling waves',0,3,.01],['smoothing','Motion smoothing (seconds)',0,3,.05],['viscosity','Mouse spread / viscosity',.05,.23,.005],['damping','Mouse damping',2,12,.1],['persistence','Disturbance lifetime',.25,5,.05],['sideways','Sideways bend',0,2,.01],['vertical','Vertical bend',0,1.5,.01],['curlX','Sideways curl',0,.04,.0002],['curlY','Vertical curl',0,.03,.0002],['stretch','Vertical stretch',0,1,.01]];
