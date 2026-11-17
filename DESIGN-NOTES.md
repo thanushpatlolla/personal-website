@@ -519,3 +519,5 @@ Revision69: One More Time now starts at27 seconds at user request. Song choices 
 Revision70: Peak plays supplied The Girl From Ipanema (Garota De Ipanema) opus from0. YouTube source metadata identifies Oscar Peterson Trio; matching We Get Requests artwork from iTunes. One More Time remains27s. User explicitly requests production deployment.
 
 Revision71: Valley in the Ocean starts at3 seconds at user request. Continuing production updates; other tracks unchanged.
+
+Revision72: Nudged One More Time start from27 to27.2 seconds at user request for iterative listening. Continuing production updates.
