@@ -6,7 +6,7 @@
   const still = document.querySelector('#still');
   const note = document.querySelector('#time-note');
   const motion = matchMedia('(prefers-reduced-motion: reduce)');
-  let paused = motion.matches, energy = .94, charge = .94, holding = false, angle = null;
+  let paused = motion.matches, energy = 0, charge = 0, holding = false, angle = null;
   let heldFor=0, ratchet=0, turn=0, recoil=0, lastKey=0, gestureCenter=null, gestureTurned=false;
   const DETENT=Math.PI/24; // 48 detents/revolution. Three full turns from empty.
   const CHARGE_PER_DETENT=1/(48*3);
@@ -75,8 +75,8 @@
   paint.width=paint.height=700;
   const photo=document.querySelector('#mountain-photo');
   const clockModes=['original','warm','ridge'];
-  let clockStyle=new URLSearchParams(location.search).get('clock')||'warm';
-  if(!clockModes.includes(clockStyle))clockStyle='warm';
+  let clockStyle=new URLSearchParams(location.search).get('clock')||'ridge';
+  if(!clockModes.includes(clockStyle))clockStyle='ridge';
   const originalWatch=new Image();originalWatch.src='/assets/user-crash-clock.png';
   // Both warm treatments use the exact original pixels; only shader color changes.
   const warmWatch=originalWatch;
@@ -263,7 +263,7 @@
     for(let y=0;y<ambientH;y++)for(let x=0;x<AMBIENT_N;x++){
       const u=x/(AMBIENT_N-1),v=y/(ambientH-1),i=y*AMBIENT_N+x;
       const edge=smooth(0,.10,u)*smooth(0,.10,1-u)*smooth(0,.07,v)*smooth(0,.08,1-v);
-      const protection=1-.82*smooth(copy.left-60,copy.left,u*W)*(1-smooth(copy.right,copy.right+60,u*W))*smooth(copy.top+scrollY-60,copy.top+scrollY,v*H)*(1-smooth(copy.bottom+scrollY,copy.bottom+scrollY+60,v*H));
+      const protection=1-.45*smooth(copy.left-60,copy.left,u*W)*(1-smooth(copy.right,copy.right+60,u*W))*smooth(copy.top+scrollY-60,copy.top+scrollY,v*H)*(1-smooth(copy.bottom+scrollY,copy.bottom+scrollY+60,v*H));
       const strength=ambientBlend*edge*protection*(.18+.82*smooth(.08,.5,v))*material.options.intensity;
       ambientX[i]=28*(material.noise(u*2.3+9.1+time,v*1.7+32.5+time*.37)-material.noise(u*2.3+9.1,v*1.7+32.5))*strength;
       ambientY[i]=38*(material.noise(u*2.4+71.3-time*.24,v*2.1+6.8+time)-material.noise(u*2.4+71.3,v*2.1+6.8))*strength;

@@ -144,3 +144,10 @@ restrained slope shading. Ambient field now28/38px amplitudes and .18 time rate
 render submission2.8ms on this host. Manual slider still freezes ambient motion.
 45 geometry/18 clock cases passed before final shading-only change. This is
 a manually composed 2D terrain illusion, not depth reconstruction.
+
+
+Revision13: User requests the draped preview and fully melted initialization.
+Default clock and Reset now select ridge. Initial energy/charge are0, so first
+render is meltProgress1 and ambient motion runs immediately. Explicit URL or
+saved clock selection still overrides the default. Reduced-motion retains its
+existing paused/readable behavior. Original and warm sky remain selectable.
