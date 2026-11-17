@@ -335,18 +335,21 @@
   // shape; normal clock mode breathes without requiring pointer movement.
   const AMBIENT_N=32;
   // Broad, low-amplitude traveling disturbances, separate from local dragging.
-  let mouseWaves=[],waveTime=0,lastWaveTime=-1,waveDistance=0;
+  let mouseWaves=[],waveTime=0,lastWaveTime=-1,waveDistance=0,lastWaveInput=-1;
   function emitMouseWave(x,y,dx,dy){
     const distance=Math.hypot(dx,dy);
+    const freshGesture=waveTime-lastWaveInput>.18;
+    lastWaveInput=waveTime;
+    if(freshGesture){waveDistance=0;lastWaveTime=-1;}
     waveDistance+=distance;
-    if(waveTime-lastWaveTime<.65||waveDistance<24||distance===0)return;
-    mouseWaves.push({x,y,dx:dx/distance,dy:dy/distance,born:waveTime,strength:Math.min(1,waveDistance/65)});
+    if(waveTime-lastWaveTime<.3||waveDistance<6||distance===0)return;
+    mouseWaves.push({x,y,dx:dx/distance,dy:dy/distance,born:waveTime,strength:Math.max(.4,Math.min(1,waveDistance/65))});
     waveDistance=0;
     if(mouseWaves.length>5)mouseWaves.shift();lastWaveTime=waveTime;
   }
   let ambientH=32,ambientX,ambientY,ambientTime=0,ambientBlend=0;
   function resetAmbient(){
-    mouseWaves=[];waveTime=0;lastWaveTime=-1;waveDistance=0;
+    mouseWaves=[];waveTime=0;lastWaveTime=-1;waveDistance=0;lastWaveInput=-1;
     ambientH=Math.max(24,Math.min(90,Math.round(AMBIENT_N*H/W)));
     ambientX=new Float32Array(AMBIENT_N*ambientH);ambientY=new Float32Array(ambientX.length);ambientBlend=0;
   }
@@ -380,7 +383,7 @@
         const age=waveTime-wave.born,rx=u*W-wave.x,ry=v*H-wave.y,r=Math.hypot(rx,ry);
         const width=Math.max(65,Math.min(W,H)*.085),front=age*114;
         const q=(r-front)/width;
-        const pulse=16*wave.strength*(1-Math.exp(-age*2))*Math.exp(-age*.10)*(1-smooth(12,16,age))*Math.exp(-q*q*1.5)*Math.cos(q*2);
+        const pulse=16*wave.strength*(1-Math.exp(-age*12))*Math.exp(-age*.10)*(1-smooth(12,16,age))*Math.exp(-q*q*1.5)*Math.cos(q*2);
         rippleX+=pulse*(wave.dx*.2+(r?rx/r:0)*.8);
         rippleY+=pulse*(wave.dy*.2+(r?ry/r:0)*.8);
       }

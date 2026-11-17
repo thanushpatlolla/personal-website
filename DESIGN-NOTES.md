@@ -665,3 +665,5 @@ Revision113 (DESIGN ONLY): User still finds mountains too intense. Reduce terrai
 Revision114 (DESIGN ONLY): User corrects113 reduction to10%, not one-third. Restore112 shape parameters and use terrain motion multiplier.81 (=.9*.9),10% below112. Replaces113 settings. Production remains102.
 
 Revision115 (DESIGN ONLY): Mouse wave propagation speed increased20%,95→114px/s. Amplitude, damping, lifetime and ambient mountain motion unchanged. Production remains102.
+
+Revision116 (DESIGN ONLY): Reduce perceived wave onset delay. Fresh gestures after180ms idle bypass emission cooldown; travel threshold24→6px, ongoing spacing650→300ms, minimum pulse strength.4. Fade-in time constant500→83ms. Propagation remains114px/s; maximum amplitude/lifetime unchanged. Production remains102.
