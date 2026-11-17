@@ -598,7 +598,7 @@
     holding = false;
     angle = null;
     document.body.classList.toggle('paused', paused);
-    still.textContent = paused ? 'let time pass' : 'time is passing';
+    still.textContent = paused ? 'let time pass' : 'pause time';
     still.setAttribute('aria-pressed', String(paused));
     note.textContent = paused ? 'a moment, held' : 'time is passing';
     if(paused){
