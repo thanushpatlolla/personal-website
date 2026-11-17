@@ -185,3 +185,9 @@ under clock, aligned closely, thin rather than thicker. Arrow now traces actual
 original PNG alpha silhouette at700px texture size, offset9 texture pixels,
 Catmull interpolated then mapped through exact watch geometry. No text label.
 GitHub social link/icon removed at user request. Latest preview checked, no logs.
+
+Revision22: User likes word stretching but wants quieter landscape. Kept all
+copy patches/waves unchanged. Reduced the five recently added landscape pulls
+to~40% strength. Ambient displacement outside intro now45% amplitude and half
+speed; feathered copy region retains previous ambient amplitude/speed. Mouse
+painting unchanged. Arrow offset increased9→19 texture pixels for more gap.

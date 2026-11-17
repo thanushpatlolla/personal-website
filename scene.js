@@ -194,7 +194,7 @@
       const pixels=brush.getImageData(0,0,700,700).data;
       for(let y=42;y<665;y+=12){
         for(let x=1;x<697;x++)if(pixels[(y*700+x)*4+3]>180&&pixels[(y*700+x+2)*4+3]>180){
-          clockRimPoints.push([(x-9)/700,y/700]);break;
+          clockRimPoints.push([(x-19)/700,y/700]);break;
         }
       }
     }
@@ -303,15 +303,20 @@
   function advanceAmbient(dt){
     if(manualMelt!==null){ambientBlend=0;return false;}
     ambientTime+=dt;ambientBlend+=(1-ambientBlend)*(1-Math.exp(-dt*2));
-    const time=ambientTime*.18;
+
     const copy=document.querySelector('.intro').getBoundingClientRect();
     for(let y=0;y<ambientH;y++)for(let x=0;x<AMBIENT_N;x++){
       const u=x/(AMBIENT_N-1),v=y/(ambientH-1),i=y*AMBIENT_N+x;
       const edge=smooth(0,.10,u)*smooth(0,.10,1-u)*smooth(0,.07,v)*smooth(0,.08,1-v);
       const protection=1-.45*smooth(copy.left-60,copy.left,u*W)*(1-smooth(copy.right,copy.right+60,u*W))*smooth(copy.top+scrollY-60,copy.top+scrollY,v*H)*(1-smooth(copy.bottom+scrollY,copy.bottom+scrollY+60,v*H));
-      const strength=ambientBlend*edge*protection*(.18+.82*smooth(.08,.5,v))*material.options.intensity;
-      ambientX[i]=28*(material.noise(u*2.3+9.1+time,v*1.7+32.5+time*.37)-material.noise(u*2.3+9.1,v*1.7+32.5))*strength;
-      ambientY[i]=38*(material.noise(u*2.4+71.3-time*.24,v*2.1+6.8+time)-material.noise(u*2.4+71.3,v*2.1+6.8))*strength;
+      const copyWeight=(1-protection)/.45;
+      const time=ambientTime*.09,fastTime=ambientTime*.18;
+      const quiet=.45+.55*copyWeight;
+      const strength=quiet*ambientBlend*edge*protection*(.18+.82*smooth(.08,.5,v))*material.options.intensity;
+      const waveX=t=>material.noise(u*2.3+9.1+t,v*1.7+32.5+t*.37)-material.noise(u*2.3+9.1,v*1.7+32.5);
+      const waveY=t=>material.noise(u*2.4+71.3-t*.24,v*2.1+6.8+t)-material.noise(u*2.4+71.3,v*2.1+6.8);
+      ambientX[i]=28*(waveX(time)*(1-copyWeight)+waveX(fastTime)*copyWeight)*strength;
+      ambientY[i]=38*(waveY(time)*(1-copyWeight)+waveY(fastTime)*copyWeight)*strength;
     }
     return true;
   }
