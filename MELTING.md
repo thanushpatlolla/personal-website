@@ -352,3 +352,9 @@ Revision56: All anchors open new tabs with noopener/noreferrer (existing rel=me
 retained). Deformed-position click routing uses window.open too. Mailto remains
 subject to browser/mail-handler behavior. User explicitly authorized publishing
 all accumulated changes to production main.
+
+Revision57: User requests1s freeze after winding then production push.
+Release after gaining charge gives1s windRest before charge decay, ambient,
+fluid and clock ticking resume. Keyboard ratchet renews1s timer per step.
+Energy still settles smoothly to earned charge; release recoil settles.
+Mouse painting ignored during rest; time toggle clears rest timer.
