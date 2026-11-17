@@ -521,3 +521,5 @@ Revision70: Peak plays supplied The Girl From Ipanema (Garota De Ipanema) opus f
 Revision71: Valley in the Ocean starts at3 seconds at user request. Continuing production updates; other tracks unchanged.
 
 Revision72: Nudged One More Time start from27 to27.2 seconds at user request for iterative listening. Continuing production updates.
+
+Revision73: Top/peak photo caption changed from forest? to green? at user request. Continuing production updates.
