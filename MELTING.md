@@ -539,3 +539,5 @@ Friend's screenshot asks for slower propagation, gentler return and offscreen
 edge constraints. Current simulation uses diffusion/damping and.994 displacement
 retention per60Hz step, not a literal spring. Consider longer disturbance lifetime
 before changing overall intensity; no physics change made in this revision.
+
+Revision101: User requests melt-in from0.1 melted, with no starting pause, and production publication. Initial energy/charge=.9; normal decay starts immediately after assets are ready, reaching fully melted in about6 seconds. Reduced-motion preference remains respected. No text fade added.

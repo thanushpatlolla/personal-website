@@ -6,7 +6,8 @@
   const still = document.querySelector('#still');
   const note = document.querySelector('#time-note');
   const motion = matchMedia('(prefers-reduced-motion: reduce)');
-  let paused = motion.matches, energy = 0, charge = 0, holding = false, angle = null;
+  // Start 10% melted; normal charge decay begins immediately when ready.
+  let paused = motion.matches, energy = .9, charge = .9, holding = false, angle = null;
   let heldFor=0, ratchet=0, turn=0, recoil=0, lastKey=0, gestureCenter=null, gestureTurned=false;
   let windingOffset=0,keyWinding=false;
   const DETENT=Math.PI/24; // 48 detents/revolution. Three full turns from empty.
