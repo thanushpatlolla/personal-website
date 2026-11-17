@@ -385,3 +385,13 @@ it. Source opus found beside prior audio in Nov17 YouTube outputs; artwork
 from Apple iTunes Discovery result. Landmark renderer supports action+photo
 together; closing photo does not restart/change music. Syntax checked.
 Saved design branch; not deployed.
+
+Revision62: Lake activation reveals ?/downward-caret cue above clock. First
+clock activation switching Weird Fishes→One More Time opens supplied Shinji
+image, caption “congratulations!”, to clock right. Frame matches summit
+#9da7a7, left-edge caret points toward clock; same beveled close button and
+Escape dismissal. New clock-reward.js listens lakeactivate/clockreward events;
+reward fires after audio.play resolves, clue hides then. Clock bounds exported
+from mapped watch geometry so cue/card follow clock movement. Image copied
+unchanged from user attachment to assets/congratulations.png. Syntax checked;
+user continues visual testing. Saved design branch, not deployed.

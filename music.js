@@ -29,7 +29,7 @@
     audio.src = '/assets/one-more-time.opus';
     audio.currentTime = startAt;
     sync();
-    try { await audio.play(); }
+    try { await audio.play(); if(track==='daft')document.dispatchEvent(new Event('clockreward')); }
     catch { sync(); status.textContent = '· retry playback'; }
   }
   const clock = document.querySelector('#clock');
@@ -41,6 +41,7 @@
   window.playLakeSong = async () => {
     audio.pause();
     track = 'weird';startAt = 7;
+    document.dispatchEvent(new Event('lakeactivate'));
     title = 'Weird Fishes / Arpeggi by Radiohead';
     document.querySelector('.music-title').textContent = 'Weird Fishes / Arpeggi';
     const artist = document.querySelector('.music-artist');

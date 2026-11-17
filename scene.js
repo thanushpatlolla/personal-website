@@ -686,6 +686,12 @@
     getState(){return {ready,clockStyle,meltProgress:currentMelt(),manual:manualMelt!==null,options:{...material.options},fluidActive,ambientTime,ambientActive:manualMelt===null&&!paused,renderMs:timing.frameMs};},
     mapPoint(x,y,progress=currentMelt()){return material.map(x,y,progress);},
     samplePoint(x,y){return flow(x,y,currentMelt());},
+    getClockBounds(){
+      if(!ready)return null;
+      const points=boundary((u,v)=>watchPoint(u,v,currentMelt()),.15,.06,.85,.94);
+      return {left:Math.min(...points.map(p=>p[0])),right:Math.max(...points.map(p=>p[0])),
+        top:Math.min(...points.map(p=>p[1])),bottom:Math.max(...points.map(p=>p[1]))};
+    },
     defaults:{...MeltField.defaults},limits:MeltField.limits
   };
   still.addEventListener('click', () => setPaused(!paused));
