@@ -631,3 +631,5 @@ Friend's screenshot asks for slower propagation, gentler return and offscreen
 edge constraints. Current simulation uses diffusion/damping and.994 displacement
 retention per60Hz step, not a literal spring. Consider longer disturbance lifetime
 before changing overall intensity; no physics change made in this revision.
+
+Release100: User explicitly requested publishing changes so far. Publish inert loss landscape? and3x mobile touch winding. Broader UX suggestions remain unimplemented.
