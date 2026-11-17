@@ -132,9 +132,9 @@ body:not([data-clock="original"]) #clock>img{filter:sepia(.12) saturate(.94);}
 #lake-song .hill-caret{background:#1d2e3c;border-color:#1d2e3c;}
 
 .clock-clue{position:absolute;inset:0 auto auto 0;width:100%;z-index:11;pointer-events:none;overflow:visible;}
-#clock-reward{background:#b6bbbe;border-color:#b6bbbe;box-shadow:0 6px 18px #0003;}
+#clock-reward{background:#babfc2;border-color:#babfc2;box-shadow:0 6px 18px #0003;}
 #clock-reward .hill-caption{color:#243638;}
-#clock-reward .hill-caret{left:-9px;top:var(--caret-y,50%);bottom:auto;background:#b6bbbe;border:0;border-left:1px solid #b6bbbe;border-bottom:1px solid #b6bbbe;transform:translateY(-50%) rotate(45deg);}
+#clock-reward .hill-caret{left:-9px;top:var(--caret-y,50%);bottom:auto;background:#babfc2;border:0;border-left:1px solid #babfc2;border-bottom:1px solid #babfc2;transform:translateY(-50%) rotate(45deg);}
 @media(max-width:760px){#clock-reward{width:180px;}}
 
 .clock-clue .lake-hint{fill:#eee8d9;}

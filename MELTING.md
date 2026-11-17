@@ -595,3 +595,5 @@ Revision125 (DESIGN ONLY): Lighten peak and clock photo frame/background/border/
 Release126: User requests half desktop turn50% restored and production push. Winding power exponent ln(.5)/ln(.75), preserving2-turn desktop /1-turn touch total. Includes lighter peak/clock frames from125.
 
 Revision127 (DESIGN ONLY): User wants to try25% toward white instead of12%, measured from original peak#b6b4a9/clock#9da4a8 swatches. Production release126 retains12% until approved.
+
+Release128: User approves peak frame25% toward white (#c8c7be), clock30% (#babfc2), both relative to original swatches. Publish both to production.
