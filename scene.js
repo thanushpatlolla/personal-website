@@ -391,7 +391,12 @@
       const variation=.75+.25*material.noise(u*3.1+18,photoY*2+7);
       const stretch=photoHeight*.045*(stretchBand(.06,.59)+stretchBand(.45,1))*variation*m*material.options.intensity;
       data[i]=p[0]-px;
-      data[i+1]=p[1]-py-.92*ridgeDrift[x]*ridgeWeight*smooth(0,.08,v)*smooth(0,.08,1-v)+stretch*edge;
+      const dy=p[1]-py;
+      const terrain=smooth(.28,.44,photoY)*(1-smooth(.70,.96,photoY));
+      const gentle=dy>0?dy*(1-.85*terrain):dy;
+      const stretched=dy-.92*ridgeDrift[x]*ridgeWeight*smooth(0,.08,v)*smooth(0,.08,1-v)+stretch*edge;
+      // Mostly the restrained mountain balance, with only a touch of stretch.
+      data[i+1]=gentle+.15*(stretched-gentle);
     }
     baseMap={nx,ny,data,m,version:material.version};
   }

@@ -558,3 +558,5 @@ near skyline; image-relative positions follow cropping and perimeter is fixed.
 Shared geometry continues to align controls. Terrain mesh checks pass across12
 viewport/progress combinations; visually reviewed localhost. Paused song selection
 from v81 retained. Production remains revision80; do not deploy without request.
+
+Revision83 (DESIGN ONLY): User found v82 too strong and preferred v81 with a small touch of vertical stretch. Blend85% v81 gentle terrain balance with15% v82 separated stretch. Playback-state behavior retained. Production unchanged.
