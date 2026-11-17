@@ -581,3 +581,5 @@ Revision85 (DESIGN ONLY): Snoopy shifted left to photo UV(.435,.549), feet seate
 Release85: User explicitly requested push. Promoted revision85 (ba67073) to main for production. Future design pushes remain isolated by disabled preview-branch builds.
 
 Revision86: User explicitly requests removing release pause and publishing. Removed post-wind rest timer entirely; melting/clock/ambient resume immediately on release, including keyboard winding. Production approved.
+
+Revision87: Ambient motion runs10% faster by advancing ambientTime at1.10x. Same wave/noise paths and amplitudes; pointer dynamics and charge decay unchanged. User explicitly requests production push.

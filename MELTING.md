@@ -497,3 +497,5 @@ design-only. DEPLOY.md now describes actual Worker setup rather than Pages.
 Revision85 (DESIGN ONLY): Snoopy shifted left to photo UV(.435,.549), feet seated on central ridge shoulder. Now drawn directly into scene texture before veil, so entire character deforms with mountain (base melt, ambient and pointer motion), rather than translating rigid overlay. Original30px size and playing-only visibility retained. Removed snoopy.js overlay and CSS. Syntax/browser preview checked.
 
 Revision86: User explicitly requests removing release pause and publishing. Removed post-wind rest timer entirely; melting/clock/ambient resume immediately on release, including keyboard winding. Production approved.
+
+Revision87: Ambient motion runs10% faster by advancing ambientTime at1.10x. Same wave/noise paths and amplitudes; pointer dynamics and charge decay unchanged. User explicitly requests production push.

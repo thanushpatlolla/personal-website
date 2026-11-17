@@ -31,7 +31,7 @@ Local server: `python3 -m http.server 8765` from this directory.
 
 ## Current published version
 
-User approved revision86 on 2026-11-17: gentle terrain stretch, playback-state
-preservation, and tiny Snoopy seated farther left, melting with the mountain. Post-winding release now resumes melting immediately.
+User approved revision87 on 2026-11-17: gentle terrain stretch, playback-state
+preservation, and tiny Snoopy seated farther left, melting with the mountain. Post-winding release now resumes melting immediately. Ambient movement runs10% faster.
 Production and design currently share this approved version. Subsequent design
 pushes remain isolated because preview-branch builds are disabled.
