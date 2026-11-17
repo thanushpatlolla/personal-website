@@ -36,9 +36,9 @@ Local server: `python3 -m http.server 8765` from this directory.
 
 ## Current published version
 
-User approved revision97 on 2026-11-17: local-time clock with temporary winding
+User approved revision98 on 2026-11-17: local-time clock with temporary winding
 hand offset that resets on release, additional gentle clock drift, and a more
-visible copper-red seconds hand. Clock face/case colors unchanged. Running-state time button now reads pause time. Includes the
+visible copper-red seconds hand. Clock face/case colors unchanged. Pause time now freezes the hands too; resume syncs to local time. Includes the
 previously approved mountain, motion, playback and Snoopy changes.
 Production and design share this approved version. Subsequent design pushes remain
 isolated because preview-branch builds are disabled.

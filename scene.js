@@ -563,7 +563,7 @@
   let lastSecond=-1, previousMelt=-1;
   function update(now){
     const dt=Math.min(.15,(now-(last||now))/1000);last=now;
-    handTime=localClockSeconds()+((holding||keyWinding)?windingOffset:0);
+    if(!paused)handTime=localClockSeconds()+((holding||keyWinding)?windingOffset:0);
     if(pauseTween){
       pauseTween.progress=Math.min(1,pauseTween.progress+dt/2.2);geometryDirty=true;
       if(pauseTween.progress===1){pauseTween=null;charge=energy=1;resetFluid();resetAmbient();}
@@ -595,6 +595,8 @@
     if(!value&&wasTransitioning)charge=energy=1-from;
     manualMelt=null;
     paused = value;
+    windingOffset=0;keyWinding=false;
+    if(!paused)handTime=localClockSeconds();
     holding = false;
     angle = null;
     document.body.classList.toggle('paused', paused);
@@ -617,7 +619,7 @@
     holding = true;heldFor=0;gestureTurned=false;
     note.textContent = 'turning back time';
   }
-  function release() { windingOffset=0;keyWinding=false;handTime=localClockSeconds();clockHintDismissed=true;windHint.style.display='none';holding = false; angle = null; gestureCenter=null; note.textContent = paused ? 'a moment, held' : 'time is passing'; }
+  function release() { windingOffset=0;keyWinding=false;if(!paused)handTime=localClockSeconds();clockHintDismissed=true;windHint.style.display='none';holding = false; angle = null; gestureCenter=null; note.textContent = paused ? 'a moment, held' : 'time is passing'; }
   function pointerAngle(event) {
     const center=gestureCenter||watchPoint(.5,.5,currentMelt());
     return Math.atan2(event.clientY+scrollY-center[1],event.clientX-center[0]);
@@ -738,10 +740,6 @@
   function toggleTime(){document.dispatchEvent(new Event('restoresweet'));setPaused(!paused);}
   still.addEventListener('click',toggleTime);
   motion.addEventListener('change', event => setPaused(event.matches));
-  // The landscape can be held still while the hands continue showing real time.
-  setInterval(()=>{
-    if(ready&&paused&&!document.hidden&&handTime!==localClockSeconds())start();
-  },250);
   document.addEventListener('visibilitychange', () => {
     release();
     if (document.hidden) cancelAnimationFrame(frame); else start();

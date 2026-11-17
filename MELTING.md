@@ -526,3 +526,5 @@ four local-time mapping cases pass. Browser preview checked; not published.
 Revision96 (DESIGN ONLY): Restored directional hand winding via temporary92-second offset per detent while pointer/Space/Enter held or arrow key winding. Release/cancel/blur/key release clears offset and returns immediately to local wall time. Actual-time idle clock and drift retained.
 
 Revision97: Time button running-state label changed to pause time (initial HTML and dynamic update). Paused-state let time pass unchanged. User explicitly requests production push.
+
+Revision98: Pause time freezes clock hands as well as landscape; removed paused wall-time refresh timer. Frame updates and release/blur handlers preserve frozen time while paused. Resuming syncs immediately to local time and clears winding offsets. User explicitly requests production deployment.
