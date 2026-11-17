@@ -125,3 +125,5 @@ body:not([data-clock="original"]) #clock>img{filter:sepia(.12) saturate(.94);}
 
 .hill-caption{height:25px;box-sizing:border-box;padding:2px 28px 5px;color:#eee8d9;font:12px/18px Georgia,serif;text-align:center;}
 .hill-photo.has-caption .hill-close{top:8px;}
+
+#peak-photo .hill-caption{color:#243638;}

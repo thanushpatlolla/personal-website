@@ -452,3 +452,7 @@ with independent once listeners plus cleanup and explicit already-broken image
 rejection. tests/image-loading.test.cjs covers shared cold image, cached image,
 error event and cached error. Tests pass. Cache-disabled Chromium page ready=true
 and ambientTime progressed.133→5.8s; no warnings/errors. Publishing live fix.
+
+Revision60: Upper photo frame caption “peaks and...?” added using same12px
+caption layout as lower lake? photo. Dark green caption ink on gray-green
+frame for legibility. Saved on design branch.
