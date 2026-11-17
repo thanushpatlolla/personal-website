@@ -311,3 +311,8 @@ Opening another landmark dismisses the first. Reduced copy strength2.4→2.0
 (~17%); ambient motion remains at revision31 levels. Browser verified correct
 photo/outline placement, click, Escape and Enter, no console warnings/errors.
 Pure geometry suite ran successfully. Screenshot peak-photo-v32.jpg in outputs.
+
+Revision33: User clarified text should return to immediately before the
+“really fuck it up” request, with only a slight increase. Baseline is09cf02e
+(copy multiplier1.0); current multiplier is1.1, replacing2.0. Retained12-step
+integration for smooth geometry, current ambient motion and both photo popups.
