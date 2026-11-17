@@ -196,7 +196,7 @@
       const pixels=brush.getImageData(0,0,700,700).data;
       for(let y=42;y<665;y+=12){
         for(let x=1;x<697;x++)if(pixels[(y*700+x)*4+3]>180&&pixels[(y*700+x+2)*4+3]>180){
-          clockRimPoints.push([(x-19)/700,y/700]);break;
+          clockRimPoints.push([(x-27)/700,y/700]);break;
         }
       }
     }

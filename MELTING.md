@@ -315,3 +315,7 @@ outline should remain a little imperfect. Lowered four right-slope contour
 points gradually2–21 source pixels toward the photographed slope. Lower hill
 frame restored charcoal#1b1b1a; upper frame muted gray-green#9da7a7 from new
 swatch appearance. Keep beveled close buttons. User prefers own visual testing.
+
+Revision49: Clock black hover arc moved farther from silhouette (texture offset
+19→27px) and stroke increased1→1.25px. Same mapped geometry/hover behavior.
+User continues visual testing; saved on design branch.

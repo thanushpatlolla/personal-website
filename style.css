@@ -101,6 +101,7 @@ body:not([data-clock="original"]) #clock>img{filter:sepia(.12) saturate(.94);}
 #still:hover{text-decoration:underline;text-underline-offset:4px;}
 
 #wind-hint{color:#171b19;}
+#wind-hint>path{stroke-width:1.25;}
 .hill-layer{position:absolute;left:0;top:0;width:100%;z-index:10;pointer-events:none;overflow:hidden;}
 .hill-target{fill:transparent;stroke:none;pointer-events:all;cursor:pointer;outline:none;}
 .hill-outline{fill:none;stroke:#080d0b;stroke-width:1.4;stroke-linejoin:round;pointer-events:none;opacity:0;}
