@@ -11,10 +11,11 @@
   let windingOffset=0,keyWinding=false;
   const DETENT=Math.PI/24; // 48 detents/revolution. Three full turns from empty.
   const CHARGE_PER_DETENT=1/(48*3);
+  let windingGain=1; // Touch winding restores twice as much per turn.
   function ratchetStep(direction=1){
     windingOffset-=direction*92;
     handTime=localClockSeconds()+windingOffset;
-    charge=Math.min(1,charge+Math.abs(direction)*CHARGE_PER_DETENT);
+    charge=Math.min(1,charge+Math.abs(direction)*CHARGE_PER_DETENT*windingGain);
     turn=Math.max(-.55,Math.min(.55,turn+direction*.035));
     recoil=direction*.018;
   }
@@ -573,7 +574,7 @@
       if(motionDt>0&&advanceFluid(motionDt))geometryDirty=true;
       if(motionDt>0&&advanceAmbient(motionDt)&&currentMelt()>.001)geometryDirty=true;
       heldFor=holding?heldFor+dt:0;
-      charge=Math.max(0,Math.min(1,charge+(holding?(heldFor>.7&&!gestureTurned?dt/18:0):-motionDt/6.5)));
+      charge=Math.max(0,Math.min(1,charge+(holding?(heldFor>.7&&!gestureTurned?dt*windingGain/18:0):-motionDt/6.5)));
       energy+=(charge-energy)*(1-Math.exp(-dt*16));
       recoil*=Math.exp(-dt*19);
       if(!holding){turn*=Math.exp(-dt*10);}
@@ -612,14 +613,15 @@
     if(ready)captureScene();
     start();
   }
-  function wind() {
+  function wind(pointerType) {
+    windingGain=pointerType==='touch'?2:1;
     document.dispatchEvent(new Event('clockwind'));
     useClock();
     if (paused) setPaused(false);
     holding = true;heldFor=0;gestureTurned=false;
     note.textContent = 'turning back time';
   }
-  function release() { windingOffset=0;keyWinding=false;if(!paused)handTime=localClockSeconds();clockHintDismissed=true;windHint.style.display='none';holding = false; angle = null; gestureCenter=null; note.textContent = paused ? 'a moment, held' : 'time is passing'; }
+  function release() { windingGain=1;windingOffset=0;keyWinding=false;if(!paused)handTime=localClockSeconds();clockHintDismissed=true;windHint.style.display='none';holding = false; angle = null; gestureCenter=null; note.textContent = paused ? 'a moment, held' : 'time is passing'; }
   function pointerAngle(event) {
     const center=gestureCenter||watchPoint(.5,.5,currentMelt());
     return Math.atan2(event.clientY+scrollY-center[1],event.clientX-center[0]);
@@ -655,7 +657,7 @@
     const outline=boundary((u,v)=>watchPoint(u,v,m),.09,.01,.91,.99);
     if(!nearShape(outline,event.clientX,event.clientY+scrollY,24))return;
     event.preventDefault();clock.focus({preventScroll:true});
-    gestureCenter=watchPoint(.5,.5,m);clock.setPointerCapture(event.pointerId);wind();angle=pointerAngle(event);
+    gestureCenter=watchPoint(.5,.5,m);clock.setPointerCapture(event.pointerId);wind(event.pointerType);angle=pointerAngle(event);
   });
   // Hit-test the painted link/control outlines, not their unmelted DOM boxes.
   document.addEventListener('click',event=>{

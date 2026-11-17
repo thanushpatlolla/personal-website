@@ -618,3 +618,5 @@ Deployment follow-up: User noticed10:07 instead of11:07. Live source was still r
 Deployment diagnosis correction: Dashboard showed clock release4bee5ca just completed and c06bafb label build in progress. Builds were catching up, not proven missing triggers. Live96 now contains Date.getHours/localClockSeconds; awaiting97 label. Earlier push success must not be reported as verified live deployment.
 
 Revision98: Pause time freezes clock hands as well as landscape; removed paused wall-time refresh timer. Frame updates and release/blur handlers preserve frozen time while paused. Resuming syncs immediately to local time and clears winding offsets. User explicitly requests production deployment.
+
+Revision99 (DESIGN ONLY): Touch clock winding restores scene2x faster per detent (1.5 revolutions from empty instead of3); touch hold-to-wind also2x faster. Actual pointerType selects gain, leaving mouse/keyboard unchanged. Release resets gain. Hand winding and ambient speed unchanged.
