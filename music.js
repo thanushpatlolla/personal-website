@@ -8,7 +8,7 @@
     peak:{title:'The Girl From Ipanema',artist:'Oscar Peterson Trio',src:'girl-from-ipanema.opus',cover:'we-get-requests-cover.jpg',alt:'We Get Requests album cover',start:0},
     valley:{title:'Valley in the Ocean',artist:'Bruno Pernadas',src:'valley-in-the-ocean.opus',cover:'bruno-cover.jpg',alt:'Those Who Throw Objects at the Crocodiles Will Be Asked to Retrieve Them album cover',start:3},
     weird:{title:'Weird Fishes / Arpeggi',artist:'Radiohead',src:'weird-fishes.opus',cover:'in-rainbows-cover.jpg',alt:'In Rainbows album cover',start:7},
-    daft:{title:'One More Time',artist:'Daft Punk',src:'one-more-time.opus',cover:'discovery-cover.jpg',alt:'Discovery album cover',start:27.2}
+    daft:{title:'One More Time',artist:'Daft Punk',src:'one-more-time.opus',cover:'discovery-cover.jpg',alt:'Discovery album cover',start:27.4}
   };
   let current='sweet',pending=false,request=0;
   const notify=()=>document.dispatchEvent(new Event('musicchange'));

@@ -443,3 +443,5 @@ Revision72: Nudged One More Time start from27 to27.2 seconds at user request for
 Revision73: Top/peak photo caption changed from forest? to green? at user request. Continuing production updates.
 
 Revision74: Clicking loss landscape? now selects Music Sounds Better With You by Stardust from0, reusing supplied audio and artwork. Time toggle still restores Sweet Trip; photo sequence unchanged. Continuing production updates.
+
+Revision75: One More Time starts at27.4 seconds, another0.2 seconds later, at user request. Explicitly requested production push.
