@@ -677,3 +677,5 @@ Revision119 (DESIGN ONLY): Replace peak/top frame, border and caret with new sup
 Revision120 / release120: User approves all current design changes for production, latest top-frame swatch #b6b4a9, and further reduced wave delay. Wave trigger1px, ongoing emission spacing150ms, fade-in29ms. Includes accumulated revisions103–119 in their final form (gradient idea removed, preview controls removed).
 
 Release121: User requests slightly slower initial melt-in during production release. Initial decay denominator8s vs6.5s (~19% slower); starting30% melted now reaches full melt in5.6s vs4.55s plus smoothing. Clock/time-button interaction exits startup rate; subsequent melt unchanged. Production publication authorized in ongoing release request.
+
+Release122: User requests full restoration in2 clock turns. Desktop winding gain1.2→1.5,96 detents from empty; touch stays3 (48 detents). Includes slower startup release121.
