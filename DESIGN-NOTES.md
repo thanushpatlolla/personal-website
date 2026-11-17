@@ -27,3 +27,29 @@ mobile, hold/release, circular drag, keyboard, pause, reduced-motion, console,
 and no-JS fallback when changing interaction. Photo is user-provided; no generated
 imagery. CSS/JS visual effects leave original asset unchanged. Existing favicon,
 canonical URL, robots and sitemap retained. Metadata updated to new interests.
+
+## Revision: continuous painted melt (same day)
+User rejected word-level skew/stretch and slow oval watch. Replaced renderer with
+one WebGL textured surface for the complete photograph and UI, plus a separately
+meshed painted watch. Whole glyph strokes bend together along smooth gravity
+channels; no word splitting or independent movement. Watch folds into an
+asymmetric narrow waist and heavy curled lower lobe. Numerals and ticking hands
+are part of its texture and deform with the enamel. Generated transparent oil
+painted watch at assets/painted-watch.png; original landscape photo unchanged.
+
+Melt duration: 5.5 seconds, immediate onset on release. Hold restores in ~0.87 s;
+circular dragging adds wind. Full scene includes name, icons, reading, footer,
+and hint. Scene capture uses DOM text ranges for actual line wrapping; native
+HTML retained for semantics/keyboard and readable fallback without WebGL.
+Pointer links/pause and watch are hit-tested against the deformed outlines,
+including the watch tip outside its original button. Reduced-motion starts
+paused. Renderer stops repeated uploads of an unchanged fully melted surface;
+hands tick once per second. Assets are same-origin, no dependencies/build step.
+
+Revision validation: visually inspected full melt and restored states on desktop
+and 390×844 mobile. Held the melted lower tip for 1.4s: melt returned from 1 to
+0.03 after release. Clicked visibly deformed pause control: melt=0, pressed=true.
+Emulated reduced-motion: melt=0, pressed=true; reset emulation after check.
+No console errors/warnings; no horizontal overflow. Screenshot pair in chat
+workspace outputs. Browser rendering is tested in Chromium; Safari/Firefox
+have not been independently tested. Original HTML is retained as fallback.

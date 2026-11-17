@@ -105,25 +105,7 @@
       </section>
       <div class="clock-area" hidden>
         <button id="clock" aria-label="Wind the clock. Drag around the face, hold, or press Space or Enter." aria-describedby="clock-hint">
-          <svg id="clock-svg" viewBox="0 0 340 410" aria-hidden="true">
-            <defs>
-              <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#e7cb8c"/><stop offset=".35" stop-color="#aa7441"/><stop offset=".65" stop-color="#f6e0aa"/><stop offset="1" stop-color="#806044"/></linearGradient>
-              <radialGradient id="face" cx=".35" cy=".25" r=".9"><stop stop-color="#ede3c6"/><stop offset="1" stop-color="#b9aa82"/></radialGradient>
-              <filter id="shadow" x="-60%" y="-30%" width="220%" height="200%"><feDropShadow dx="8" dy="15" stdDeviation="12" flood-color="#081c23" flood-opacity=".45"/></filter>
-            </defs>
-            <g id="watch" filter="url(#shadow)">
-              <g id="crown"><path d="M153 42v-14q17-8 34 0v14" fill="none" stroke="url(#gold)" stroke-width="5"/><rect x="155" y="37" width="30" height="15" rx="3" fill="url(#gold)"/><path d="M160 39v10m5-10v10m5-10v10m5-10v10m5-10v10" stroke="#725a35"/></g>
-              <path id="rim" fill="url(#gold)" stroke="#705b3e" stroke-width="1"/>
-              <path id="dial" fill="url(#face)" stroke="#7e704f" stroke-width="1"/>
-              <g id="ticks" stroke="#655c47"></g>
-              <g id="numerals" fill="#3c413a" text-anchor="middle" font-family="Georgia,serif" font-size="21"></g>
-              <text x="170" y="134" fill="#756f59" text-anchor="middle" font-family="Georgia,serif" font-size="9" letter-spacing="2">TAKE YOUR TIME</text>
-              <path id="hour" fill="none" stroke="#3e4943" stroke-width="5" stroke-linecap="round"/>
-              <path id="minute" fill="none" stroke="#3e4943" stroke-width="3" stroke-linecap="round"/>
-              <path id="second" fill="none" stroke="#9b5139" stroke-width="1.2"/>
-              <circle cx="170" cy="170" r="5" fill="#a66a45"/>
-            </g>
-          </svg>
+          <img src="/assets/painted-watch.png" alt="" aria-hidden="true">
         </button>
         <p id="clock-hint">wind the clock <span>↻</span><small>drag around the face, or hold</small></p>
       </div>
