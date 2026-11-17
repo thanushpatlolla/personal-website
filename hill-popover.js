@@ -2,34 +2,37 @@
 (() => {
   const api=window.melting,photo=document.querySelector('#mountain-photo');if(!api)return;
   function landmark(config){
+  const hasCard=!config.action&&!config.info;
   const ns='http://www.w3.org/2000/svg',layer=document.createElementNS(ns,'svg');
   layer.classList.add('hill-ui','hill-layer');layer.setAttribute('aria-label','Landscape photo');
   const target=document.createElementNS(ns,'path');target.classList.add('hill-target');
-  target.setAttribute('tabindex','0');target.setAttribute('role','button');target.setAttribute('aria-label',config.action?config.label:'Open '+config.label);
-  if(config.action)target.setAttribute('aria-pressed','false');else{target.setAttribute('aria-expanded','false');target.setAttribute('aria-controls',config.id);}
+  target.setAttribute('tabindex','0');target.setAttribute('role',config.info?'img':'button');target.setAttribute('aria-label',hasCard?'Open '+config.label:config.label);
+  if(config.info)target.style.cursor='help';
+  if(config.action)target.setAttribute('aria-pressed','false');else if(hasCard){target.setAttribute('aria-expanded','false');target.setAttribute('aria-controls',config.id);}
   const outline=document.createElementNS(ns,'path');outline.classList.add('hill-outline');
   layer.append(target,outline);document.body.append(layer);
   let hint;
   if(config.hint){
     hint=document.createElementNS(ns,'g');hint.classList.add('lake-hint');hint.setAttribute('aria-hidden','true');
-    for(const [text,y] of [['?',-25],['⌄',-16]]){
+    for(const [text,y] of [[config.hintLabel||'?',-25],['⌄',-16]]){
       const label=document.createElementNS(ns,'text');label.textContent=text;
+      if(config.hintLabel&&text===config.hintLabel)label.style.fontSize='12px';
       label.setAttribute('y',y);label.setAttribute('text-anchor','middle');hint.append(label);
     }
     layer.append(hint);
   }
   const card=document.createElement('aside');card.id=config.id;card.className='hill-ui hill-photo';card.hidden=true;
   card.setAttribute('role','dialog');card.setAttribute('aria-label',config.label);
-  if(!config.action)card.innerHTML=`<button class="hill-close" aria-label="Close photograph" type="button">×</button><img src="${config.src}" alt="${config.alt}"><span class="hill-caret" aria-hidden="true"></span>`;
-  if(!config.action)document.body.append(card);
+  if(hasCard)card.innerHTML=`<button class="hill-close" aria-label="Close photograph" type="button">×</button><img src="${config.src}" alt="${config.alt}"><span class="hill-caret" aria-hidden="true"></span>`;
+  if(hasCard)document.body.append(card);
   const ridge=config.ridge;
   let open=false,focused=false,hover=false;
-  function show(value){open=value;if(config.action){target.setAttribute('aria-pressed',String(value));if(value)config.action();update();return;}card.hidden=!value;target.setAttribute('aria-expanded',String(value));update();if(value)card.querySelector('button').focus({preventScroll:true});}
+  function show(value){if(config.info)return;open=value;if(config.action){target.setAttribute('aria-pressed',String(value));if(value)config.action();update();return;}card.hidden=!value;target.setAttribute('aria-expanded',String(value));update();if(value)card.querySelector('button').focus({preventScroll:true});}
   target.addEventListener('click',()=>show(!!config.action||!open));
   target.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();show(!!config.action||!open);}});
   target.addEventListener('pointerenter',()=>{hover=true;});target.addEventListener('pointerleave',()=>{hover=false;});
   target.addEventListener('focus',()=>{focused=true;});target.addEventListener('blur',()=>{focused=false;});
-  if(!config.action)card.querySelector('button').addEventListener('click',()=>{show(false);target.focus({preventScroll:true});});
+  if(hasCard)card.querySelector('button').addEventListener('click',()=>{show(false);target.focus({preventScroll:true});});
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&open){show(false);target.focus({preventScroll:true});}});
   document.addEventListener('click',e=>{if(open&&!card.contains(e.target)&&e.target!==target)show(false);},true);
   function update(){
@@ -52,7 +55,7 @@
       hint.setAttribute('transform',`translate(${a[0]},${a[1]})`);
       hint.style.opacity=hover||focused?'1':'0';
     }
-    if(open&&!config.action){
+    if(open&&hasCard){
       const a=map(config.anchor),cw=card.offsetWidth,ch=card.offsetHeight;
       const left=Math.max(12,Math.min(w-cw-12,a[0]-cw/2));
       card.style.left=left+'px';card.style.top=Math.max(scrollY+12,a[1]-ch-15)+'px';
@@ -61,6 +64,9 @@
   }
   function tick(){if(!document.hidden)update();requestAnimationFrame(tick);}tick();
   }
+  landmark({id:'valley-hint',info:true,label:'loss landscape?',hintLabel:'loss landscape?',hint:[.770,.558],
+    ridge:[[.697,.547],[.717,.551],[.738,.556],[.756,.559],[.770,.558],[.786,.552],[.802,.541],[.817,.529],[.833,.515]],
+    bottom:[[.825,.588],[.713,.590]]});
   landmark({id:'lake-song',hint:[.343,.847],label:'Play Weird Fishes / Arpeggi by Radiohead from 7 seconds',action:()=>window.playLakeSong(),
     ridge:[[.300,.866],[.310,.860],[.322,.856],[.332,.850],[.343,.847],[.349,.852],[.359,.855],[.369,.862],[.380,.865]],
     bottom:[[.380,.886],[.300,.887]]});

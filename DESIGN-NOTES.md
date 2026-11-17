@@ -386,3 +386,8 @@ Revision46: User explicitly authorized production push and restored Sweet Trip
 start to46 seconds (first play, replay, clock return). Publish current design
 branch commit to origin/main without force; Cloudflare Pages deploys main.
 User owns further interaction testing.
+
+Revision47: Added informational valley hover highlight following the saddle
+right of central peak (around UV.77,.558), with off-white “loss landscape?”
+and compact downward caret. Reuses mapped shoreline geometry and keyboard
+focus hint; no click destination was requested. User handles visual testing.
