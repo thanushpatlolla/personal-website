@@ -8,9 +8,12 @@
   const motion = matchMedia('(prefers-reduced-motion: reduce)');
   let paused = motion.matches, energy = 0, charge = 0, holding = false, angle = null;
   let heldFor=0, ratchet=0, turn=0, recoil=0, lastKey=0, gestureCenter=null, gestureTurned=false;
+  let windingOffset=0,keyWinding=false;
   const DETENT=Math.PI/24; // 48 detents/revolution. Three full turns from empty.
   const CHARGE_PER_DETENT=1/(48*3);
   function ratchetStep(direction=1){
+    windingOffset-=direction*92;
+    handTime=localClockSeconds()+windingOffset;
     charge=Math.min(1,charge+Math.abs(direction)*CHARGE_PER_DETENT);
     turn=Math.max(-.55,Math.min(.55,turn+direction*.035));
     recoil=direction*.018;
@@ -560,7 +563,7 @@
   let lastSecond=-1, previousMelt=-1;
   function update(now){
     const dt=Math.min(.15,(now-(last||now))/1000);last=now;
-    handTime=localClockSeconds();
+    handTime=localClockSeconds()+((holding||keyWinding)?windingOffset:0);
     if(pauseTween){
       pauseTween.progress=Math.min(1,pauseTween.progress+dt/2.2);geometryDirty=true;
       if(pauseTween.progress===1){pauseTween=null;charge=energy=1;resetFluid();resetAmbient();}
@@ -614,7 +617,7 @@
     holding = true;heldFor=0;gestureTurned=false;
     note.textContent = 'turning back time';
   }
-  function release() { clockHintDismissed=true;windHint.style.display='none';holding = false; angle = null; gestureCenter=null; note.textContent = paused ? 'a moment, held' : 'time is passing'; }
+  function release() { windingOffset=0;keyWinding=false;handTime=localClockSeconds();clockHintDismissed=true;windHint.style.display='none';holding = false; angle = null; gestureCenter=null; note.textContent = paused ? 'a moment, held' : 'time is passing'; }
   function pointerAngle(event) {
     const center=gestureCenter||watchPoint(.5,.5,currentMelt());
     return Math.atan2(event.clientY+scrollY-center[1],event.clientX-center[0]);
@@ -684,14 +687,14 @@
   clock.addEventListener('keydown', event => {
     lastKey=performance.now();
     if(['ArrowRight','ArrowUp','ArrowLeft','ArrowDown'].includes(event.key)){
-      event.preventDefault();useClock();if(paused)setPaused(false);const d=['ArrowLeft','ArrowDown'].includes(event.key)?-1:1;ratchetStep(d);ratchetStep(d);
+      event.preventDefault();useClock();if(paused)setPaused(false);keyWinding=true;const d=['ArrowLeft','ArrowDown'].includes(event.key)?-1:1;ratchetStep(d);ratchetStep(d);
     }
     if (event.key === ' ' || event.key === 'Enter') {
       event.preventDefault();if(!holding)wind();
     }
   });
   clock.addEventListener('keyup', event => {
-    if (event.key === ' ' || event.key === 'Enter') {event.preventDefault();lastKey=performance.now();release();}
+    if ([' ','Enter','ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(event.key)) {event.preventDefault();lastKey=performance.now();release();}
   });
   clock.addEventListener('click', event => {
     if(event.detail===0&&!holding&&performance.now()-lastKey>500){

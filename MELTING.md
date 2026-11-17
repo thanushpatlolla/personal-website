@@ -522,3 +522,5 @@ using ambient time and melt intensity, shared by geometry/hit targets/cues.
 Ridge-clock variant stays seated. Seconds hand length168→182, width3.2→5.5,
 color brighter copper-red#d85b32. Syntax,45 geometry cases/18 clock cases and
 four local-time mapping cases pass. Browser preview checked; not published.
+
+Revision96 (DESIGN ONLY): Restored directional hand winding via temporary92-second offset per detent while pointer/Space/Enter held or arrow key winding. Release/cancel/blur/key release clears offset and returns immediately to local wall time. Actual-time idle clock and drift retained.
