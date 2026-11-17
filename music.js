@@ -1,27 +1,31 @@
-/* Official full-track player; the initial page makes no autoplay claim. */
+/* Direct preview audio, like the reference site; no iframe or player overlay. */
 (() => {
-  const toggle = document.querySelector('#music-toggle');
-  const panel = document.querySelector('#music-panel');
-  const frame = document.querySelector('#music-frame');
+  const button = document.querySelector('#music-toggle');
+  const audio = document.querySelector('#song');
   const status = document.querySelector('#music-status');
-  function close() {
-    frame.removeAttribute('src'); // Stop audio as well as closing the panel.
-    panel.hidden = true;
-    toggle.setAttribute('aria-expanded', 'false');
-    toggle.setAttribute('aria-label', 'Play To All the Dancers of the World, a Round Form of Fantasy by Sweet Trip');
-    status.textContent = '· play';
-    toggle.focus({preventScroll:true});
+  const icon = document.querySelector('.record-play');
+  const title = 'To All the Dancers of the World, a Round Form of Fantasy by Sweet Trip';
+  let pending = false;
+  function sync() {
+    const playing = !audio.paused && !audio.ended;
+    button.setAttribute('aria-pressed', String(playing));
+    button.setAttribute('aria-label', `${playing ? 'Pause' : 'Play'} preview of ${title}`);
+    status.textContent = playing ? '· playing preview' : '· play preview';
+    icon.textContent = playing ? 'Ⅱ' : '▶';
   }
-  toggle.addEventListener('click', () => {
-    if (!panel.hidden) { close(); return; }
-    panel.hidden = false;
-    toggle.setAttribute('aria-expanded', 'true');
-    toggle.setAttribute('aria-label', 'Stop music and close player');
-    frame.src = 'https://www.youtube.com/embed/FseYuqzoLSQ?autoplay=1&playsinline=1&rel=0';
-    status.textContent = '· player open';
+  button.addEventListener('click', async () => {
+    if (pending) return;
+    if (!audio.paused) { audio.pause(); return; }
+    pending = true;
+    status.textContent = '· loading';
+    try {
+      if (audio.ended) audio.currentTime = 0;
+      await audio.play();
+    } catch {
+      sync();
+      status.textContent = '· retry playback';
+    } finally { pending = false; }
   });
-  document.querySelector('#music-close').addEventListener('click', close);
-  document.querySelector('.music').addEventListener('keydown', event => {
-    if (event.key === 'Escape' && !panel.hidden) {event.preventDefault();close();}
-  });
+  for (const event of ['playing', 'pause', 'ended']) audio.addEventListener(event, sync);
+  audio.addEventListener('error', () => {sync();status.textContent='· audio unavailable';});
 })();

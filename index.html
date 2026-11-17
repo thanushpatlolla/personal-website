@@ -68,8 +68,8 @@
     <main>
       <section class="intro" aria-label="About Thanush">
         <div class="bio">
-          <p>Currently studying EECS and physics at MIT. I think deep learning is cool, and am excited about connections in robotics, science, and cognition.</p>
-          <p>I also like building guitar electronics, climbing, hiking, and collecting vinyls.</p>
+          <p>Studying EECS and physics at MIT. Interested in deep learning and its connections to robotics, science, and cognition.</p>
+          <p>Guitar electronics, climbing, hiking, and vinyl.</p>
         </div>
         <nav class="social-links" aria-label="Contact and social links">
           <a href="mailto:thanush@mit.edu" aria-label="Email Thanush" title="Email">
@@ -109,19 +109,14 @@
         </button>
       </div>
     </main>
-    <footer><span>somewhere, for a little while.</span></footer>
     <span id="time-note" class="visually-hidden" aria-hidden="true">time is passing</span>
     <aside class="music" aria-label="Music">
-      <div id="music-panel" hidden>
-        <button id="music-close" aria-label="Stop music and close player">close ×</button>
-        <iframe id="music-frame" title="Sweet Trip — To All the Dancers of the World, a Round Form of Fantasy" width="320" height="200" allow="autoplay; encrypted-media; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-        <a class="music-source" href="https://www.youtube.com/watch?v=FseYuqzoLSQ" target="_blank" rel="noopener">listen on YouTube ↗</a>
-      </div>
-      <button id="music-toggle" aria-expanded="false" aria-controls="music-panel" aria-label="Play To All the Dancers of the World, a Round Form of Fantasy by Sweet Trip">
-        <span class="record-cover"><img src="https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e022aa34d5906e01231eff70f82" width="52" height="52" alt="Velocity: Design: Comfort. album cover"><span class="record-play" aria-hidden="true">▶</span></span>
-        <span class="music-caption"><span class="music-title">To All the Dancers of the World,<br>a Round Form of Fantasy</span><span class="music-artist">Sweet Trip <span id="music-status">· play</span></span></span>
+      <button id="music-toggle" aria-pressed="false" aria-label="Play preview of To All the Dancers of the World, a Round Form of Fantasy by Sweet Trip">
+        <span class="record-cover"><img src="https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e022aa34d5906e01231eff70f82" width="40" height="40" alt="Velocity: Design: Comfort. album cover"><span class="record-play" aria-hidden="true">▶</span></span>
+        <span class="music-caption"><span class="music-title">To All the Dancers of the World,<br>a Round Form of Fantasy</span><span class="music-artist">Sweet Trip <span id="music-status">· play preview</span></span></span>
       </button>
-      <noscript><a href="https://www.youtube.com/watch?v=FseYuqzoLSQ">Listen on YouTube ↗</a></noscript>
+      <audio id="song" preload="none" src="https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/8e/73/e0/8e73e0c9-70e9-fa32-8ae7-b8be1f45e94c/mzaf_11498733055042504170.plus.aac.p.m4a"></audio>
+      <noscript><a href="https://music.apple.com/us/song/299710497">Listen on Apple Music ↗</a></noscript>
     </aside>
     <script src="/scene.js" defer></script>
     <script src="/music.js" defer></script>

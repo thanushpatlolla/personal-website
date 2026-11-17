@@ -136,3 +136,24 @@ Verified embedded YouTube playback: Pause video button, advancing elapsed time,
 to 0, 390x844 mobile placement without horizontal overflow, no runtime errors.
 JS parsed/executed in Chromium; node unavailable on shell PATH. Screenshot saved
 in chat outputs as music-landscape-v6.jpg. No production deployment authorized.
+
+## Revision 7: compact text, broken escapement, direct audio
+User rejected embedded video/music UI and requested smaller, compressed text,
+matching name/music side margins, no footer phrase, unchanged time-button spot.
+Bio is now 16px (same as name), tighter 1.5 leading, shortened to 2 compact
+paragraphs. Name retained provisionally as a small identifier; not required.
+Shared --side is 44px desktop / 24px mobile for name, bio, music. Removed footer.
+Cleaned old CSS overrides; smaller 40px album art. Time button stays top right.
+Clock advances on seeded uneven intervals: 0.18–0.34s double-tick spacing,
+0.50–1.20s normal waits, occasional 1.20–1.44s hesitation; 6% double steps.
+Expected rate ~1.30 clock seconds per real second; winding/melting rate unchanged.
+Fixed resize feedback from old canvas height affecting body.scrollHeight.
+Mira inspection: audio.js?v=154 uses Audio elements with tracks.json previewUrl,
+Apple iTunes previews. Replaced iframe with direct native audio from official
+Apple lookup track 299710497. Verified real playback at 8.34s, readyState=4,
+duration 30.001s; pause works, iframe count=0. Preview label is explicit.
+Full-length native playback STILL NEEDS a full-track audio file or direct source;
+no Sweet Trip audio found in Downloads/Music. Do not claim full song now plays.
+Verified bio/name 16px, equal 44px desktop /24px mobile margins, no horizontal
+overflow, canvas height exactly844 in 390x844 viewport, time toggle and no logs.
+Screenshot compact-landscape-v7.jpg in chat outputs. No production push.

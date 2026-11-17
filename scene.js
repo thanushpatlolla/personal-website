@@ -131,6 +131,8 @@
   }
   function resize(){
     if(!ready||rebuilding)return;rebuilding=true;
+    // Exclude the previous canvas height when measuring a smaller viewport.
+    surface.style.height='0px';
     W=innerWidth;H=Math.max(innerHeight,document.body.scrollHeight);
     const dpr=Math.min(devicePixelRatio||1,2);
     surface.width=Math.round(W*dpr);surface.height=Math.round(H*dpr);
@@ -277,6 +279,18 @@
     gl.uniform1f(night,melt*.12);
     mesh(sceneTexture,melt,false);mesh(watchTexture,melt,true);
   }
+  // A slightly fast, unreliable escapement: uneven waits, an occasional
+  // skipped tooth, and brief double ticks. Independent of the landscape flow.
+  let tickSeed=0x1c10c, tickWait=.55;
+  const tickRandom=()=>{tickSeed=(Math.imul(tickSeed,1664525)+1013904223)>>>0;return tickSeed/4294967296;};
+  function advanceClock(dt){
+    tickWait-=dt;
+    while(tickWait<=0){
+      handTime+=tickRandom()<.06?2:1;
+      const temperament=tickRandom();
+      tickWait+=temperament<.12?.18+tickRandom()*.16:temperament>.93?1.20+tickRandom()*.24:.50+tickRandom()*.70;
+    }
+  }
   let lastSecond=-1, previousMelt=-1;
   function update(now){
     const dt=Math.min(.15,(now-(last||now))/1000);last=now;
@@ -287,7 +301,7 @@
       charge=Math.max(0,Math.min(1,charge+(holding?(heldFor>.7&&!gestureTurned?1/18:0):-1/6.5)*dt));
       energy+=(charge-energy)*(1-Math.exp(-dt*16));
       recoil*=Math.exp(-dt*19);
-      if(!holding){handTime+=dt;turn*=Math.exp(-dt*10);}
+      if(!holding){advanceClock(dt);turn*=Math.exp(-dt*10);}
       elapsed+=dt;
     }
     if(elapsed>1/40||paused||holding){
