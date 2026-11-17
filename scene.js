@@ -171,7 +171,7 @@
     }
     const cover=album.getBoundingClientRect();
     ctx.save();ctx.globalAlpha=.85;ctx.filter='saturate(.6)';
-    ctx.drawImage(album,cover.left,cover.top+scrollY,cover.width,cover.height);ctx.restore();
+    if(album.complete&&album.naturalWidth)ctx.drawImage(album,cover.left,cover.top+scrollY,cover.width,cover.height);ctx.restore();
     paintText();
     for(const {svg,img} of icons){const b=svg.getBoundingClientRect();ctx.drawImage(img,b.left,b.top+scrollY,b.width,b.height);}
     const focus=document.activeElement;
@@ -538,6 +538,7 @@
     start();
   }
   function wind() {
+    document.dispatchEvent(new Event('clockwind'));
     useClock();
     if (paused) setPaused(false);
     holding = true;heldFor=0;gestureTurned=false;

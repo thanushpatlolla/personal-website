@@ -336,3 +336,17 @@ increased Sweet Trip artist label12→12.5px, softened peak frame/caret to
 muted warm gray#8c8687 inspired by supplied swatch, border#827d7e and lighter
 shadow. Browser verified computed font/margins and popup appearance.
 Preview muted-frame-v36.jpg in chat outputs.
+
+Revision37: Peak frame/caret now exactly text off-white#eee8d9. Added lake
+landmark along upper shoreline around UV(.34,.85), with shared moving white
+outline/padded hit area and keyboard activation. Clicking restarts supplied
+Weird Fishes / Arpeggi opus at0, changes title/artist and In Rainbows cover.
+Audio copied unchanged from user's specified Nov17 YouTube-download outputs.
+Artwork fetched from Apple iTunes search result (Radiohead/In Rainbows).
+Clicking actual painted clock (clockwind event) or keyboard winding switches
+back to existing Sweet Trip preview and artwork. Sweet Trip remains the original
+30-second preview; full Sweet Trip file was discovered alongside supplied opus
+but not integrated in this change. Guard canvas capture while artwork loads.
+Verified lake playback readyState4/currentTime advancing, painted clock restores
+Sweet Trip, lake reselect starts at0, popup frame and console without warnings.
+No production deployment. Preview lake-radiohead-v37.jpg in chat outputs.

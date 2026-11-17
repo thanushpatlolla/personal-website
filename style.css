@@ -115,5 +115,5 @@ body:not([data-clock="original"]) #clock>img{filter:sepia(.12) saturate(.94);}
 .hill-target{stroke:transparent;stroke-width:32px;stroke-linejoin:round;}
 .hill-outline{stroke:#eee8d9;}
 
-#peak-photo{background:#8c8687;border-color:#827d7e;box-shadow:0 6px 18px #0003;}
-#peak-photo .hill-caret{background:#8c8687;border-color:#827d7e;}
+#peak-photo{background:#eee8d9;border-color:#eee8d9;box-shadow:0 6px 18px #0003;}
+#peak-photo .hill-caret{background:#eee8d9;border-color:#eee8d9;}

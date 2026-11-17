@@ -5,21 +5,22 @@
   const ns='http://www.w3.org/2000/svg',layer=document.createElementNS(ns,'svg');
   layer.classList.add('hill-ui','hill-layer');layer.setAttribute('aria-label','Landscape photo');
   const target=document.createElementNS(ns,'path');target.classList.add('hill-target');
-  target.setAttribute('tabindex','0');target.setAttribute('role','button');target.setAttribute('aria-label','Open '+config.label);target.setAttribute('aria-expanded','false');target.setAttribute('aria-controls',config.id);
+  target.setAttribute('tabindex','0');target.setAttribute('role','button');target.setAttribute('aria-label',config.action?config.label:'Open '+config.label);
+  if(config.action)target.setAttribute('aria-pressed','false');else{target.setAttribute('aria-expanded','false');target.setAttribute('aria-controls',config.id);}
   const outline=document.createElementNS(ns,'path');outline.classList.add('hill-outline');
   layer.append(target,outline);document.body.append(layer);
   const card=document.createElement('aside');card.id=config.id;card.className='hill-ui hill-photo';card.hidden=true;
   card.setAttribute('role','dialog');card.setAttribute('aria-label',config.label);
-  card.innerHTML=`<button class="hill-close" aria-label="Close photograph" type="button">×</button><img src="${config.src}" alt="${config.alt}"><span class="hill-caret" aria-hidden="true"></span>`;
-  document.body.append(card);
+  if(!config.action)card.innerHTML=`<button class="hill-close" aria-label="Close photograph" type="button">×</button><img src="${config.src}" alt="${config.alt}"><span class="hill-caret" aria-hidden="true"></span>`;
+  if(!config.action)document.body.append(card);
   const ridge=config.ridge;
   let open=false,focused=false,hover=false;
-  function show(value){open=value;card.hidden=!value;target.setAttribute('aria-expanded',String(value));update();if(value)card.querySelector('button').focus({preventScroll:true});}
-  target.addEventListener('click',()=>show(!open));
-  target.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();show(!open);}});
+  function show(value){open=value;if(config.action){target.setAttribute('aria-pressed',String(value));if(value)config.action();update();return;}card.hidden=!value;target.setAttribute('aria-expanded',String(value));update();if(value)card.querySelector('button').focus({preventScroll:true});}
+  target.addEventListener('click',()=>show(!!config.action||!open));
+  target.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();show(!!config.action||!open);}});
   target.addEventListener('pointerenter',()=>{hover=true;});target.addEventListener('pointerleave',()=>{hover=false;});
   target.addEventListener('focus',()=>{focused=true;});target.addEventListener('blur',()=>{focused=false;});
-  card.querySelector('button').addEventListener('click',()=>{show(false);target.focus({preventScroll:true});});
+  if(!config.action)card.querySelector('button').addEventListener('click',()=>{show(false);target.focus({preventScroll:true});});
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&open){show(false);target.focus({preventScroll:true});}});
   document.addEventListener('click',e=>{if(open&&!card.contains(e.target)&&e.target!==target)show(false);},true);
   function update(){
@@ -37,7 +38,7 @@
     for(let j=0;j<face.length-1;j++)for(let i=0;i<=6;i++){const t=i/6,a=face[j],b=face[j+1];facePoints.push(map([a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t]));}
     const facePath=facePoints.map((p,i)=>(i?'L':'M')+p[0]+','+p[1]).join(' ');
     outline.setAttribute('d',path+' '+facePath);outline.style.opacity=hover||focused||open?'1':'0';
-    if(open){
+    if(open&&!config.action){
       const a=map(config.anchor),cw=card.offsetWidth,ch=card.offsetHeight;
       const left=Math.max(12,Math.min(w-cw-12,a[0]-cw/2));
       card.style.left=left+'px';card.style.top=Math.max(scrollY+12,a[1]-ch-15)+'px';
@@ -46,6 +47,9 @@
   }
   function tick(){if(!document.hidden)update();requestAnimationFrame(tick);}tick();
   }
+  landmark({id:'lake-song',label:'Play Weird Fishes / Arpeggi by Radiohead from the beginning',action:()=>window.playLakeSong(),
+    ridge:[[.300,.866],[.310,.860],[.322,.856],[.332,.850],[.343,.847],[.349,.852],[.359,.855],[.369,.862],[.380,.865]],
+    bottom:[[.380,.886],[.300,.887]]});
   landmark({id:'hill-photo',label:'hiking photograph',src:'/assets/hill-memory.jpg',alt:'Hikers following a trail through a green mountain valley',
     ridge:[[.695,.752],[.709,.731],[.716,.718],[.718,.706],[.722,.703],[.728,.706],[.736,.710],[.746,.710],[.759,.703],[.773,.695]],
     face:[[.682,.799],[.699,.787],[.717,.773],[.736,.760],[.755,.745],[.773,.730]],bottom:[[.775,.755],[.695,.79]],anchor:[.725,.713]});
