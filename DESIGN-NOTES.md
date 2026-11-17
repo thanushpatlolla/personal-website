@@ -444,3 +444,11 @@ Mouse painting ignored during rest; time toggle clears rest timer.
 Revision58: Time control now follows ambient waves/full base geometry;86%
 local protection applies only to mouse displacement. Padded warped hitbox
 retained. Included in ongoing authorized production update with1s winding rest.
+
+Revision59: Fixed confirmed cold-cache startup deadlock. originalWatch and
+warmWatch reference same Image; loaded() assigned onload twice, leaving first
+promise unresolved. Reproduced1/2 waiters resolving. Replaced property handlers
+with independent once listeners plus cleanup and explicit already-broken image
+rejection. tests/image-loading.test.cjs covers shared cold image, cached image,
+error event and cached error. Tests pass. Cache-disabled Chromium page ready=true
+and ambientTime progressed.133→5.8s; no warnings/errors. Publishing live fix.

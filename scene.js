@@ -122,7 +122,18 @@
   let watch=clockStyle==='original'?originalWatch:warmWatch;
   document.body.dataset.clock=clockStyle;
   clock.querySelector('img').src=watch.src;
-  function loaded(img){return img.complete&&img.naturalWidth?Promise.resolve():new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=reject;});}
+  function loaded(img){
+    return new Promise((resolve,reject)=>{
+      const cleanup=()=>{img.removeEventListener('load',onLoad);img.removeEventListener('error',onError);};
+      const onLoad=()=>{cleanup();resolve();};
+      const onError=()=>{cleanup();reject(new Error('Image failed to load: '+img.src));};
+      // The warm and original clock share an Image. Each caller needs its own
+      // listener; assigning onload twice strands one cold-cache startup waiter.
+      img.addEventListener('load',onLoad,{once:true});
+      img.addEventListener('error',onError,{once:true});
+      if(img.complete){if(img.naturalWidth)onLoad();else onError();}
+    });
+  }
   const icons=[];
   async function prepareIcons(){
     for(const svg of document.querySelectorAll('.social-links svg')){
