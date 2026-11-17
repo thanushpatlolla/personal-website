@@ -19,6 +19,7 @@
     status.textContent='';icon.textContent=playing?'Ⅱ':'▶';notify();
   }
   async function select(key){
+    const resume=!audio.paused&&!audio.ended;
     const ticket=++request,t=tracks[key];audio.pause();current=key;
     const title=document.querySelector('.music-title');
     if(key==='sweet')title.innerHTML='To All the Dancers of the World,<br>a Round Form of Fantasy';
@@ -27,6 +28,7 @@
     const cover=document.querySelector('.record-cover img');cover.addEventListener('load',notify,{once:true});
     cover.src='/assets/'+t.cover;cover.alt=t.alt;
     audio.src='/assets/'+t.src;audio.currentTime=t.start;sync();
+    if(!resume)return ticket===request;
     try{await audio.play();return ticket===request;}
     catch{if(ticket===request){sync();status.textContent='· retry playback';}return false;}
   }

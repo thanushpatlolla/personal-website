@@ -537,3 +537,15 @@ Revision78: Valley in the Ocean starts at3.4 seconds, another0.1 seconds later a
 Revision79: Shortened post-winding rest before melting resumes from1 second to0.2 seconds for both pointer release and keyboard ratchet steps. User requested shorter delay; continuing production updates.
 
 Revision80: Valley in the Ocean starts at3.5 seconds, another0.1 seconds later at user request. Continuing production updates.
+
+Revision81 (DESIGN ONLY): User explicitly says not production for this work.
+Reduced downward base displacement by85% around the mountain ridge, smoothly
+feathered in source-photo coordinates so responsive cover cropping stays aligned.
+Horizontal melt, ambient waves and pointer interaction remain. Same shared map
+keeps landmark hit targets attached. Browser preview shows taller mountains.
+Song selection now preserves playback state: paused stays paused; playing resumes
+the selected track. Clock reward can open even with paused audio. Browser checked
+paused Stardust selection and playing switch to peak Ipanema; left player paused.
+Syntax and existing geometry checks pass; new terrain test checks12 combinations
+of viewport/progress for no folded mesh. Commit/push design branch only; production
+remains revision80 (5563507). Preview screenshot outputs/mountain-balance-v81.jpg.

@@ -369,9 +369,17 @@
     if(baseMap&&baseMap.m===m&&baseMap.version===material.version)return;
     const nx=96,ny=Math.max(48,Math.min(144,Math.round(96*H/W)));
     const data=new Float32Array((nx+1)*(ny+1)*2);
+    const photoHeight=photo.naturalHeight*Math.max(W/photo.naturalWidth,H/photo.naturalHeight);
+    const photoTop=(H-photoHeight)/2;
     for(let y=0;y<=ny;y++)for(let x=0;x<=nx;x++){
       const px=x*W/nx,py=y*H/ny,p=material.map(px,py,m),i=(y*(nx+1)+x)*2;
-      data[i]=p[0]-px;data[i+1]=p[1]-py;
+      // Preserve the mountain/sky balance: resist the broad downward sag
+      // around the ridgeline, while retaining sideways melt and ambient motion.
+      // Image coordinates keep the protection aligned under responsive cropping.
+      const photoY=(py-photoTop)/photoHeight;
+      const terrain=smooth(.28,.44,photoY)*(1-smooth(.70,.96,photoY));
+      const dy=p[1]-py;
+      data[i]=p[0]-px;data[i+1]=dy>0?dy*(1-.85*terrain):dy;
     }
     baseMap={nx,ny,data,m,version:material.version};
   }
