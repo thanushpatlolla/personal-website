@@ -330,3 +330,9 @@ Added smooth65% attenuation centered at reversed copy r=.40 with radius.17,
 reducing local pulls around icons/lower bio while retaining remaining distortion
 and global waves. Geometry suite passed; browser visually checked normal-sized
 icons with ongoing deformation. Preview softer-icons-v35.jpg in outputs.
+
+Revision36: Raised music/time controls8px (desktop bottom92px/mobile80px),
+increased Sweet Trip artist label12→12.5px, softened peak frame/caret to
+muted warm gray#8c8687 inspired by supplied swatch, border#827d7e and lighter
+shadow. Browser verified computed font/margins and popup appearance.
+Preview muted-frame-v36.jpg in chat outputs.
