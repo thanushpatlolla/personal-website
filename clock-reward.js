@@ -23,8 +23,9 @@
     const b=api.getClockBounds();if(!b)return;
     const h=parseFloat(document.querySelector('#liquid-surface').style.height);
     layer.setAttribute('viewBox',`0 0 ${innerWidth} ${h}`);layer.style.height=h+'px';
-    cue.setAttribute('transform',`translate(${(b.left+b.right)/2},${b.top})`);
-    cue.style.opacity=armed?'1':'0';
+    const anchor=api.getClockCue();
+    cue.setAttribute('transform',`translate(${anchor.point[0]},${anchor.point[1]+5})`);
+    cue.style.opacity=armed&&anchor.hovered?'1':'0';
     if(!card.hidden){
       const cw=card.offsetWidth,ch=card.offsetHeight,cy=(b.top+b.bottom)/2;
       card.style.left=Math.max(12,Math.min(innerWidth-cw-12,b.right+18))+'px';

@@ -4,6 +4,7 @@
   const status=document.querySelector('#music-status'),icon=document.querySelector('.record-play');
   const tracks={
     sweet:{title:'To All the Dancers of the World, a Round Form of Fantasy',artist:'Sweet Trip',src:'sweet-trip.opus',cover:'sweet-trip-cover.jpg',alt:'Velocity: Design: Comfort. album cover',start:46},
+    peak:{title:'Falling From Cloud 9',artist:'Lift to Experience',src:'falling-from-cloud-9.opus',cover:'lift-cover.jpg',alt:'The Texas-Jerusalem Crossroads album cover',start:0},
     valley:{title:'Valley in the Ocean',artist:'Bruno Pernadas',src:'valley-in-the-ocean.opus',cover:'bruno-cover.jpg',alt:'Those Who Throw Objects at the Crocodiles Will Be Asked to Retrieve Them album cover',start:0},
     weird:{title:'Weird Fishes / Arpeggi',artist:'Radiohead',src:'weird-fishes.opus',cover:'in-rainbows-cover.jpg',alt:'In Rainbows album cover',start:7},
     daft:{title:'One More Time',artist:'Daft Punk',src:'one-more-time.opus',cover:'discovery-cover.jpg',alt:'Discovery album cover',start:0}
@@ -28,7 +29,9 @@
     try{await audio.play();return ticket===request;}
     catch{if(ticket===request){sync();status.textContent='· retry playback';}return false;}
   }
-  window.playPeakSong=()=>select('sweet');
+  window.playPeakSong=()=>select('peak');
+  window.playSweetTrip=()=>select('sweet');
+  document.addEventListener('restoresweet',window.playSweetTrip);
   window.playValleySong=()=>select('valley');
   window.playLakeSong=()=>{document.dispatchEvent(new Event('lakeactivate'));return select('weird');};
   async function playClockSong(){

@@ -629,7 +629,7 @@
       const padX=el===still?28:0,padY=el===still?22:0;
       const shape=boundary((x,y)=>flow(x,y,m),b.left-padX,b.top+scrollY-padY,b.right+padX,b.bottom+scrollY+padY);
       if(contains(shape,event.clientX,event.clientY+scrollY)){
-        if(el===still)setPaused(!paused);else if(el.id==='music-toggle')el.click();else window.open(el.href,'_blank','noopener,noreferrer');
+        if(el===still)toggleTime();else if(el.id==='music-toggle')el.click();else window.open(el.href,'_blank','noopener,noreferrer');
         return;
       }
     }
@@ -686,6 +686,11 @@
     getState(){return {ready,clockStyle,meltProgress:currentMelt(),manual:manualMelt!==null,options:{...material.options},fluidActive,ambientTime,ambientActive:manualMelt===null&&!paused,renderMs:timing.frameMs};},
     mapPoint(x,y,progress=currentMelt()){return material.map(x,y,progress);},
     samplePoint(x,y){return flow(x,y,currentMelt());},
+    getClockCue(){
+      if(!ready)return null;
+      const m=currentMelt(),p=hoverPointer;
+      return {point:watchPoint(.47,.08,m),hovered:!!p&&nearShape(boundary((u,v)=>watchPoint(u,v,m),.09,.01,.91,.99),p.x,p.y,24)};
+    },
     getClockBounds(){
       if(!ready)return null;
       const points=boundary((u,v)=>watchPoint(u,v,currentMelt()),.15,.06,.85,.94);
@@ -694,7 +699,8 @@
     },
     defaults:{...MeltField.defaults},limits:MeltField.limits
   };
-  still.addEventListener('click', () => setPaused(!paused));
+  function toggleTime(){document.dispatchEvent(new Event('restoresweet'));setPaused(!paused);}
+  still.addEventListener('click',toggleTime);
   motion.addEventListener('change', event => setPaused(event.matches));
   document.addEventListener('visibilitychange', () => {
     release();

@@ -7,9 +7,9 @@
   layer.classList.add('hill-ui','hill-layer');layer.setAttribute('aria-label','Landscape photo');
   const target=document.createElementNS(ns,'path');target.classList.add('hill-target');
   if(config.hitPadding)target.style.strokeWidth=String(config.hitPadding*2)+'px';
-  target.setAttribute('tabindex','0');target.setAttribute('role',config.info?'img':'button');target.setAttribute('aria-label',hasCard?'Open '+config.label:config.label);
+  target.setAttribute('tabindex','0');target.setAttribute('role',config.info&&!config.action?'img':'button');target.setAttribute('aria-label',hasCard?'Open '+config.label:config.label);
   if(config.info)target.style.cursor='default';
-  if(hasCard){target.setAttribute('aria-expanded','false');target.setAttribute('aria-controls',config.id);}else if(config.action)target.setAttribute('aria-pressed','false');
+  if(hasCard){target.setAttribute('aria-expanded','false');target.setAttribute('aria-controls',config.id);}else if(config.action&&!config.info)target.setAttribute('aria-pressed','false');
   const outline=document.createElementNS(ns,'path');outline.classList.add('hill-outline');
   layer.append(target,outline);document.body.append(layer);
   let hint;
@@ -32,7 +32,7 @@
   if(hasCard)document.body.append(card);
   const ridge=config.ridge;
   let open=false,focused=false,hover=false;
-  function show(value){if(config.info)return;if(value&&!window.photoJourney.open(config.id))return;open=value;if(config.action&&value)config.action();if(!hasCard){target.setAttribute('aria-pressed',String(value));update();return;}card.hidden=!value;target.setAttribute('aria-expanded',String(value));update();if(value)card.querySelector('button').focus({preventScroll:true});}
+  function show(value){if(config.info){if(value&&config.action)config.action();return;}if(value&&!window.photoJourney.open(config.id))return;open=value;if(config.action&&value)config.action();if(!hasCard){target.setAttribute('aria-pressed',String(value));update();return;}card.hidden=!value;target.setAttribute('aria-expanded',String(value));update();if(value)card.querySelector('button').focus({preventScroll:true});}
   target.addEventListener('click',()=>show(!!config.action||!open));
   target.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();show(!!config.action||!open);}});
   target.addEventListener('pointerenter',()=>{hover=true;});target.addEventListener('pointerleave',()=>{hover=false;});
@@ -73,7 +73,7 @@
   }
   function tick(){if(!document.hidden)update();requestAnimationFrame(tick);}tick();
   }
-  landmark({id:'valley-hint',info:true,label:'loss landscape?',hintLabel:'loss landscape?',hint:[.770,.558],
+  landmark({id:'valley-hint',info:true,action:()=>window.playSweetTrip(),label:'loss landscape?',hintLabel:'loss landscape?',hint:[.770,.558],
     ridge:[[.697,.547],[.717,.551],[.738,.556],[.756,.559],[.770,.558],[.786,.554],[.802,.547],[.817,.538],[.833,.528]],
     bottom:[[.825,.588],[.713,.590]]});
   landmark({id:'lake-song',hitPadding:72,hint:[.343,.847],anchor:[.343,.847],caption:'time?',src:'/assets/lake-time.jpg',alt:'Vintage computers, game consoles and controllers scattered across a room',label:'time photograph and play Weird Fishes',action:()=>window.playLakeSong(),

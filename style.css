@@ -137,4 +137,4 @@ body:not([data-clock="original"]) #clock>img{filter:sepia(.12) saturate(.94);}
 #clock-reward .hill-caret{left:-9px;top:var(--caret-y,50%);bottom:auto;background:#eee8d9;border:0;border-left:1px solid #eee8d9;border-bottom:1px solid #eee8d9;transform:translateY(-50%) rotate(45deg);}
 @media(max-width:760px){#clock-reward{width:180px;}}
 
-.clock-clue .lake-hint{fill:#171b19;}
+.clock-clue .lake-hint{fill:#eee8d9;}

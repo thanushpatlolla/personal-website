@@ -492,3 +492,12 @@ iTunes artwork downloaded. Music selection refactored to track table with
 stale async rejection protection. Clock cue moved12px closer, black#171b19.
 Clock reward frame/caret off-white#eee8d9. Syntax/ordered gating checks pass.
 Saved design branch; not deployed.
+
+Revision65: User requests publish all pending changes. Clock discovery cue
+white again and hover-only, anchored near actual upper dial UV(.47,.08)
+instead of loose bounds; moved close above clock. Peak song changed to full
+Lift to Experience Falling From Cloud9 at0, with Texas-Jerusalem Crossroads
+artwork (iTunes album version). Click loss landscape? or time toggle resets
+Sweet Trip to46s; discovery progress retained. Time toggle still toggles pause.
+Valley info target now accessible button, normal cursor remains. Syntax passed.
+Production includes ordered photos, Bruno valley song and congratulations.
