@@ -423,3 +423,6 @@ Caption lake? on lower photo remains. User does visual testing.
 
 Revision53: Seconds hand width1.5→3.2 texture pixels; brighter muted copper
 #b56d45 replaces dark rust#7c422c. Other hands/timing unchanged.
+
+Revision54: Restored visible “loss landscape?” label on valley hint, retaining
+its downward caret. Other three retain ?/caret cues. User likes this distinction.

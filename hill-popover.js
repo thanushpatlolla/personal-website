@@ -69,7 +69,7 @@
   }
   function tick(){if(!document.hidden)update();requestAnimationFrame(tick);}tick();
   }
-  landmark({id:'valley-hint',info:true,label:'loss landscape?',hint:[.770,.558],
+  landmark({id:'valley-hint',info:true,label:'loss landscape?',hintLabel:'loss landscape?',hint:[.770,.558],
     ridge:[[.697,.547],[.717,.551],[.738,.556],[.756,.559],[.770,.558],[.786,.554],[.802,.547],[.817,.538],[.833,.528]],
     bottom:[[.825,.588],[.713,.590]]});
   landmark({id:'lake-song',hitPadding:72,hint:[.343,.847],label:'Play Weird Fishes / Arpeggi by Radiohead from 7 seconds',action:()=>window.playLakeSong(),
