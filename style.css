@@ -94,3 +94,8 @@ p{margin:0 0 .75em;}
 @media(max-width:760px){body[data-clock="ridge"] .intro{margin-top:48px;}}
 
 body:not([data-clock="original"]) #clock>img{filter:sepia(.12) saturate(.94);}
+
+#interaction-hints{position:absolute;left:0;top:0;width:100%;z-index:9;pointer-events:none;color:#eee8d9;overflow:visible;opacity:.72;font:11px Georgia,serif;}
+#interaction-hints>path,#wind-hint{display:none;}
+.liquid-ready #interaction-hints>path,.liquid-ready #wind-hint{display:initial;}
+#still:hover{text-decoration:underline;text-underline-offset:4px;}

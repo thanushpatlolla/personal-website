@@ -72,7 +72,18 @@
         // These pulls vary across the block, not separately for each word.
         const q=(u-left)/(right-left),r=(v-top)/(bottom-top);
         textX+=weight*3*(r-.5);
-        textY+=weight*(14*Math.exp(-(((q-.55)/.34)**2))-3)*o.gravity*Math.min(1,(right-left)*this.width/330);
+        const copyArea=top<.6&&(right-left)*this.width>280;
+        if(copyArea){
+          // Isolated soft patches: different lines stretch differently. Fade to
+          // zero at block edges so the enclosing text footprint stays stable.
+          const edge=smooth(0,.12,q)*(1-smooth(.88,1,q))*smooth(0,.12,r)*(1-smooth(.88,1,r));
+          const patch=(cx,cy,rx,ry)=>Math.exp(-(((q-cx)/rx)**2+((r-cy)/ry)**2));
+          textX+=weight*edge*(19*patch(.30,.22,.15,.19)-16*patch(.70,.64,.16,.23));
+          textX+=weight*edge*12*patch(.40,.84,.18,.12);
+          textY+=weight*edge*16*patch(.43,.82,.18,.12)*o.gravity;
+          textY+=weight*edge*(23*patch(.33,.25,.18,.16)-16*patch(.65,.68,.19,.18))*o.gravity;
+        }
+        textY+=weight*((copyArea?3:14)*Math.exp(-(((q-.55)/.34)**2))-3)*o.gravity*Math.min(1,(right-left)*this.width/330);
       }
       const mask=(.16+.84*smooth(.07,.32,v))*(1-o.anchoring*fixed)*protection;
       const edge=smooth(0,.12,u)*smooth(0,.12,1-u)*smooth(0,.08,v)*smooth(0,.10,1-v);

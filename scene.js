@@ -17,11 +17,43 @@
     recoil=direction*.018;
   }
   let last = 0, elapsed = 0, handTime = 36540, frame;
-  let W = 1, H = 1, clockBox, ready = false, rebuilding = false;
+  let W = 1, H = 1, timeBounds=null, clockBox, ready = false, rebuilding = false;
   const material=new MeltField();
   let manualMelt=null,fluidActive=false,geometryDirty=true;
   const currentMelt=()=>manualMelt===null?(paused?0:1-energy):manualMelt;
   const timing={frameMs:0,frames:0};
+  let hoverPointer=null;
+  const hint=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  hint.id='interaction-hints';hint.setAttribute('aria-hidden','true');
+  hint.innerHTML='<defs><marker id="wind-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M1 1 L7 4 L1 7" fill="none" stroke="currentColor"/></marker></defs><path id="time-underline" fill="none" stroke="currentColor"/><g id="wind-hint"><path fill="none" stroke="currentColor" marker-end="url(#wind-arrow)"/></g>';
+  document.body.append(hint);
+  const timeUnderline=hint.querySelector('#time-underline'),windHint=hint.querySelector('#wind-hint');
+  function updateHints(m){
+    if(!ready)return;
+    hint.setAttribute('viewBox',`0 0 ${W} ${H}`);hint.style.height=H+'px';
+    const p=hoverPointer,focus=document.activeElement;
+    const onClock=holding||(focus===clock&&clock.matches(':focus-visible'))||(p&&contains(boundary((u,v)=>watchPoint(u,v,m),.09,.01,.91,.99),p.x,p.y));
+    const b=still.getBoundingClientRect();
+    const onTime=(focus===still&&still.matches(':focus-visible'))||(p&&contains(boundary((x,y)=>flow(x,y,m),b.left-28,b.top+scrollY-22,b.right+28,b.bottom+scrollY+22),p.x,p.y));
+    timeUnderline.style.display=onTime?'':'none';windHint.style.display=onClock?'':'none';
+    if(onTime){let d='';for(let i=0;i<=16;i++){const a=flow(b.left+12+(b.width-12)*i/16,b.bottom+scrollY+3,m);d+=(i?'L':'M')+a[0]+','+a[1];}timeUnderline.setAttribute('d',d);}
+    if(onClock){
+      // The arc is attached to UV points just outside the painted rim, so it
+      // shares every deformation, perspective change and mouse pull of the dial.
+      const edge=[[.60,.018],[.68,.10],[.735,.24],[.745,.38],[.70,.54],[.71,.70],[.72,.84],[.68,.93]];
+      let d='';
+      for(let j=0;j<edge.length-1;j++)for(let i=0;i<8;i++){
+        const t=i/8,a=edge[Math.max(0,j-1)],b=edge[j],c=edge[j+1],e=edge[Math.min(edge.length-1,j+2)];
+        const curve=k=>.5*((2*b[k])+(-a[k]+c[k])*t+(2*a[k]-5*b[k]+4*c[k]-e[k])*t*t+(-a[k]+3*b[k]-3*c[k]+e[k])*t*t*t);
+        const q=watchPoint(curve(0),curve(1),m);
+        d+=(d?'L':'M')+q[0]+','+q[1];
+      }
+      windHint.removeAttribute('transform');windHint.querySelector('path').setAttribute('d',d);
+    }
+    document.body.style.cursor=onClock?'grab':onTime?'pointer':'';
+  }
+  document.addEventListener('pointermove',e=>{hoverPointer=e.target.closest('.melt-ui')?null:{x:e.clientX,y:e.clientY+scrollY};if(ready)updateHints(currentMelt());},{passive:true});
+  document.addEventListener('pointerleave',()=>{hoverPointer=null;if(ready)updateHints(currentMelt());});
   const surface = document.createElement('canvas');
   surface.id = 'liquid-surface'; surface.setAttribute('aria-hidden','true');
   document.body.append(surface);
@@ -191,6 +223,7 @@
       return [(b.left-12)/W,(b.top+scrollY-12)/H,(b.right+12)/W,(b.bottom+scrollY+12)/H,strength,65/W,65/H];
     });
     material.setMasks(masks);
+    const tb=still.getBoundingClientRect();timeBounds={left:tb.left,right:tb.right,top:tb.top+scrollY,bottom:tb.bottom+scrollY};
     resetFluid();resetAmbient();geometryDirty=true;captureScene();paintWatch();rebuilding=false;render(currentMelt());
   }
   const smooth=(a,b,x)=>{let t=Math.min(1,Math.max(0,(x-a)/(b-a)));return t*t*(3-2*t);};
@@ -318,6 +351,11 @@
       const u=p[0]/W,v=p[1]/H;
       p[0]+=ambientAt(ambientX,u,v)*m;p[1]+=ambientAt(ambientY,u,v)*m;
     }
+    if(timeBounds){
+      const b=timeBounds;
+      const weight=smooth(b.left-65,b.left-12,x)*(1-smooth(b.right+12,b.right+65,x))*smooth(b.top-60,b.top-10,y)*(1-smooth(b.bottom+10,b.bottom+60,y));
+      p[0]=x+(p[0]-x)*(1-.86*weight);p[1]=y+(p[1]-y)*(1-.86*weight);
+    }
     return p;
   }
   document.addEventListener('pointermove',event=>{
@@ -411,6 +449,7 @@
     mesh(sceneTexture,melt,false,dirty);
     mesh(watchTexture,melt,true,dirty||turn!==lastTurn||recoil!==lastRecoil);
     lastGeometryMelt=melt;lastTurn=turn;lastRecoil=recoil;geometryDirty=false;
+    updateHints(melt);
     timing.frameMs=performance.now()-started;timing.frames++;
   }
   // A slightly fast, unreliable escapement: uneven waits, an occasional
@@ -504,7 +543,8 @@
     const m=currentMelt();
     for(const el of document.querySelectorAll('a:not(.music a):not(.melt-ui a),#still,#music-toggle')){
       const b=el.getBoundingClientRect();
-      const shape=boundary((x,y)=>flow(x,y,m),b.left,b.top+scrollY,b.right,b.bottom+scrollY);
+      const padX=el===still?28:0,padY=el===still?22:0;
+      const shape=boundary((x,y)=>flow(x,y,m),b.left-padX,b.top+scrollY-padY,b.right+padX,b.bottom+scrollY+padY);
       if(contains(shape,event.clientX,event.clientY+scrollY)){
         if(el===still)setPaused(!paused);else if(el.id==='music-toggle')el.click();else window.location.assign(el.href);
         return;

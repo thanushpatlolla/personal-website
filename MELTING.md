@@ -155,3 +155,19 @@ existing paused/readable behavior. Original and warm sky remain selectable.
 Revision14: User rejected mountain placement; default and Reset return to warm
 floating sky clock. Keep fully melted initialization and increased text motion.
 Mountain variant remains optional; original asset remains untouched.
+
+
+Revision15–18: User rejected repetitive baseline curves and any “drag to wind”
+label. Final text melt uses isolated2D patches, stretching selected words and
+icons/links rather than stretching every line. Added lower patch for reading
+links; increased amplitudes at explicit user request. Overall patch influence
+fades at block boundary. Tests now allow local stretching (max2.0691) while
+checking positive orientation;45 scene and18 clock cases pass.
+Clock hover shows ONLY a thin curved arrow, interpolated along original rim UVs
+and mapped through watchPoint so it melts/paints with clock. No label. Keyboard
+focus also shows cue. Time hover adds a similarly mapped underline. Its hover
+and click target have28px horizontal/22px vertical padding, tested outside the
+visible text. Its deformation is attenuated86% locally to keep it away from
+corner and easier to catch. Original clock and warm default preserved.
+Browser checked latest screenshot, no warnings/errors. Pending full-track audio
+file/start42sec remains outstanding. Continue on design/melting-landscape.
