@@ -679,3 +679,5 @@ Revision120 / release120: User approves all current design changes for productio
 Release121: User requests slightly slower initial melt-in during production release. Initial decay denominator8s vs6.5s (~19% slower); starting30% melted now reaches full melt in5.6s vs4.55s plus smoothing. Clock/time-button interaction exits startup rate; subsequent melt unchanged. Production publication authorized in ongoing release request.
 
 Release122: User requests full restoration in2 clock turns. Desktop winding gain1.2→1.5,96 detents from empty; touch stays3 (48 detents). Includes slower startup release121.
+
+Release123: User requests clock photograph frame color from supplied swatch and production push. Frame/border/caret changed to mean RGB #9da4a8. All current design changes approved.
