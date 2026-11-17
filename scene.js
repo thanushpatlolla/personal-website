@@ -6,7 +6,15 @@
   const still = document.querySelector('#still');
   const note = document.querySelector('#time-note');
   const motion = matchMedia('(prefers-reduced-motion: reduce)');
-  let paused = motion.matches, energy = .94, holding = false, angle = null;
+  let paused = motion.matches, energy = .94, charge = .94, holding = false, angle = null;
+  let heldFor=0, ratchet=0, turn=0, recoil=0, lastKey=0, gestureCenter=null;
+  const DETENT=Math.PI/24; // 7.5-degree mechanical steps; about one turn to wind.
+  function ratchetStep(direction=1){
+    charge=Math.min(1,charge+Math.max(0,direction)*.021);
+    handTime-=direction*92;
+    turn=Math.max(-.55,Math.min(.55,turn+direction*.035));
+    recoil=direction*.018;
+  }
   let last = 0, elapsed = 0, handTime = 36540, frame;
   let W = 1, H = 1, clockBox, ready = false, rebuilding = false;
   const surface = document.createElement('canvas');
@@ -128,28 +136,43 @@
   }
   const smooth=(a,b,x)=>{let t=Math.min(1,Math.max(0,(x-a)/(b-a)));return t*t*(3-2*t);};
   const gauss=(x,c,w)=>Math.exp(-(((x-c)/w)**2));
+  // Fixed, irregular material weaknesses, not repeating waves or frame noise.
+  // Displacement is local in BOTH dimensions so the horizon stays recognizable.
+  const softSpots=[
+    [.205,.255,.125,.115, -4,31],
+    [.413,.402,.061,.079,  5,18],
+    [.122,.575,.092,.140, -3,12],
+    [.557,.618,.147,.110, -9,37],
+    [.803,.447,.111,.073,  6,21],
+    [.906,.783,.068,.122, -5,28],
+    [.326,.855,.171,.091,  8,13]
+  ];
   function flow(x,y,m){
     const u=x/W,v=y/H;
-    // Broad shoulders, narrow descending tongues, and a pool near the bottom.
-    // All layers use this same spatial field; no independent letters or words.
-    const drift=.024*Math.sin(v*5.3);
-    const streams=.80*gauss(u,.185+drift,.052)+.98*gauss(u,.38-drift*.6,.043)+.7*gauss(u,.66+drift,.062)+.92*gauss(u,.86-drift,.043);
-    const sag=m*(.018+streams*.34)*H*Math.sin(Math.PI*Math.min(1,Math.max(0,v)));
-    const curl=m*m*W*.035*Math.sin(v*6+u*9)*smooth(.1,.7,v)*Math.sin(Math.PI*u);
-    const pool=smooth(.72,1,v)*m;
-    return [x+curl,y+sag*(1-pool*.68),1-m*.15*streams+ m*.035*Math.sin(u*45+v*9)];
+    let dx=0,dy=0;
+    for(const [cx,cy,rx,ry,sx,sy] of softSpots){
+      const weight=gauss(u,cx,rx)*gauss(v,cy,ry);
+      dx+=sx*weight;dy+=sy*weight;
+    }
+    const edge=smooth(0,.06,u)*smooth(0,.06,1-u)*smooth(0,.04,v)*smooth(0,.04,1-v);
+    const scale=Math.max(.55,Math.min(1,W/980));
+    return [x+dx*m*edge*scale,y+dy*m*edge*scale,1];
   }
   function watchPoint(u,v,m){
-    // A folded sheet of enamel: upper left shoulder stays suspended, the waist
-    // pinches and turns back on itself, and the heavy lower lobe falls to the right.
-    const t=smooth(.23,.86,v);
-    const center=.5+m*(.22*Math.sin(v*6.4)-.13+ .28*t*t);
-    const width=1-m*(.64*gauss(v,.59,.17)+.14*t);
-    const x=center+(u-.5)*width;
-    const y=v+m*(.43*t + .14*Math.sin(u*5.8+v*2)*Math.sin(Math.PI*v));
-    const folded=gauss(v,.52,.09);
+    // The watch is already soft when the landscape is restored. Its enamel
+    // bends as one broad sheet; it never pinches into an hourglass or a knot.
+    const softness=.43+.37*m;
+    const lower=smooth(.31,.94,v);
+    const center=.5+softness*(.17*Math.sin(v*5.7)-.075+.12*lower*lower);
+    const width=.96-softness*(.34*gauss(v,.62,.24)+.07*lower);
+    let x=center+(u-.5)*width;
+    let y=v*.91+softness*(.23*lower+.07*Math.sin(u*4.2+v)*Math.sin(Math.PI*v));
+    const tilt=-.27+turn*.14+recoil;
+    const px=x-.5,py=y-.52;
+    x=.5+px*Math.cos(tilt)-py*Math.sin(tilt);
+    y=.52+px*Math.sin(tilt)+py*Math.cos(tilt);
     return [clockBox.x+x*clockBox.size,clockBox.y+y*clockBox.size,
-      1-m*.40*folded +m*.15*gauss(v,.43,.045) -m*.12*(u-.5)];
+      1-softness*.19*gauss(v,.55,.13)+softness*.07*gauss(v,.39,.07)];
   }
   function mesh(tex,m,watchLayer){
     const nx=watchLayer?60:140,ny=watchLayer?70:100;
@@ -173,18 +196,25 @@
     root.style.setProperty('--melt',melt.toFixed(3));
     if(!ready||!clockBox)return;
     gl.clearColor(.035,.075,.09,1);gl.clear(gl.COLOR_BUFFER_BIT);
-    gl.uniform1f(night,melt*.4);
+    gl.uniform1f(night,melt*.12);
     mesh(sceneTexture,melt,false);mesh(watchTexture,melt,true);
   }
   let lastSecond=-1, previousMelt=-1;
   function update(now){
     const dt=Math.min(.15,(now-(last||now))/1000);last=now;
-    if(!paused){energy=Math.max(0,Math.min(1,energy+(holding?1.15:-1/5.5)*dt));handTime+=holding?-dt*1500:dt;elapsed+=dt;}
+    if(!paused){
+      heldFor=holding?heldFor+dt:0;
+      charge=Math.max(0,Math.min(1,charge+(holding?(heldFor>.7?1/18:0):-1/6.5)*dt));
+      energy+=(charge-energy)*(1-Math.exp(-dt*16));
+      recoil*=Math.exp(-dt*19);
+      if(!holding){handTime+=dt;turn*=Math.exp(-dt*10);}
+      elapsed+=dt;
+    }
     if(elapsed>1/40||paused||holding){
       const melt=paused?0:1-energy;
       const tick=Math.floor(handTime)!==lastSecond;
       if(ready&&(holding||tick)){paintWatch();lastSecond=Math.floor(handTime);}
-      if(tick||Math.abs(previousMelt-melt)>.0001||paused){render(melt);previousMelt=melt;}
+      if(tick||Math.abs(previousMelt-melt)>.0001||Math.abs(turn)>.0001||Math.abs(recoil)>.0001||paused){render(melt);previousMelt=melt;}
       elapsed=0;
     }
     if(!paused)frame=requestAnimationFrame(update);
@@ -198,20 +228,20 @@
     still.textContent = paused ? 'let time pass' : 'pause time';
     still.setAttribute('aria-pressed', String(paused));
     note.textContent = paused ? 'a moment, held' : 'time is passing';
-    if (paused) energy = 1;
+    if (paused) charge = energy = 1;
     render(paused ? 0 : 1 - energy);
     if(ready)captureScene();
     start();
   }
   function wind() {
     if (paused) setPaused(false);
-    holding = true;
+    holding = true;heldFor=0;ratchet=0;
     note.textContent = 'turning back time';
   }
-  function release() { holding = false; angle = null; note.textContent = paused ? 'a moment, held' : 'time is passing'; }
+  function release() { holding = false; angle = null; gestureCenter=null; note.textContent = paused ? 'a moment, held' : 'time is passing'; }
   function pointerAngle(event) {
-    const box = clock.getBoundingClientRect();
-    return Math.atan2(event.clientY - (box.top + box.height * 170 / 410), event.clientX - (box.left + box.width / 2));
+    const center=gestureCenter||watchPoint(.5,.55,paused?0:1-energy);
+    return Math.atan2(event.clientY+scrollY-center[1],event.clientX-center[0]);
   }
   function contains(polygon,x,y){
     let inside=false;
@@ -235,7 +265,7 @@
     const outline=boundary((u,v)=>watchPoint(u,v,m),.09,.01,.91,.99);
     if(!contains(outline,event.clientX,event.clientY+scrollY))return;
     event.preventDefault();clock.focus({preventScroll:true});
-    clock.setPointerCapture(event.pointerId);wind();angle=pointerAngle(event);
+    gestureCenter=watchPoint(.5,.55,m);clock.setPointerCapture(event.pointerId);wind();angle=pointerAngle(event);
   });
   // Hit-test the painted link/control outlines, not their unmelted DOM boxes.
   document.addEventListener('click',event=>{
@@ -253,21 +283,34 @@
   },true);
   clock.addEventListener('pointermove', event => {
     if (!holding || angle === null) return;
+    const center=gestureCenter;
+    // Ignore the singularity at the spindle; crossing it is not a turn.
+    if(Math.hypot(event.clientX-center[0],event.clientY+scrollY-center[1])<clockBox.size*.10){angle=pointerAngle(event);return;}
     const next = pointerAngle(event);
-    const delta = Math.atan2(Math.sin(next - angle), Math.cos(next - angle));
-    energy = Math.min(1, energy + Math.abs(delta) * .2);
-    handTime -= Math.abs(delta) * 600;
-    angle = next;
+    const delta = Math.atan2(Math.sin(next-angle),Math.cos(next-angle));
+    ratchet+=Math.max(-.45,Math.min(.45,delta));
+    while(ratchet>=DETENT){ratchetStep(1);ratchet-=DETENT;}
+    while(ratchet<=-DETENT){ratchetStep(-1);ratchet+=DETENT;}
+    angle=next;
   });
   for (const type of ['pointerup','pointercancel','lostpointercapture','blur']) clock.addEventListener(type, release);
   clock.addEventListener('keydown', event => {
-    if (event.key === ' ' || event.key === 'Enter') { event.preventDefault(); wind(); }
+    lastKey=performance.now();
+    if(event.key==='ArrowRight'||event.key==='ArrowUp'){
+      event.preventDefault();if(paused)setPaused(false);ratchetStep();ratchetStep();
+    }
+    if (event.key === ' ' || event.key === 'Enter') {
+      event.preventDefault();if(!holding)wind();
+    }
   });
   clock.addEventListener('keyup', event => {
-    if (event.key === ' ' || event.key === 'Enter') { event.preventDefault(); release(); }
+    if (event.key === ' ' || event.key === 'Enter') {event.preventDefault();lastKey=performance.now();release();}
   });
-  // Supports assistive-technology activation without a physical key/pointer.
-  clock.addEventListener('click', event => { if (event.detail === 0 && !holding) { energy = 1; render(0); } });
+  clock.addEventListener('click', event => {
+    if(event.detail===0&&!holding&&performance.now()-lastKey>500){
+      if(paused)setPaused(false);for(let i=0;i<4;i++)ratchetStep();
+    }
+  });
   still.addEventListener('click', () => setPaused(!paused));
   motion.addEventListener('change', event => setPaused(event.matches));
   document.addEventListener('visibilitychange', () => {

@@ -53,3 +53,21 @@ Emulated reduced-motion: melt=0, pressed=true; reset emulation after check.
 No console errors/warnings; no horizontal overflow. Screenshot pair in chat
 workspace outputs. Browser rendering is tested in Chromium; Safari/Firefox
 have not been independently tested. Original HTML is retained as fallback.
+
+## Revision 3: quiet, localized surrealism and mechanical winding
+User rejected extreme, periodic full-page waves and instant hold recovery. Latest
+behavior supersedes previous rates and shape notes:
+- Seven deterministic irregular 2D soft spots (no periodic vertical columns),
+  maximum local shifts on the order of 12–37 px desktop, smaller on mobile.
+  Text stays legible at full melt; mountains/horizon remain recognizable.
+- Clock retains a baseline soft, asymmetrical shape at melt=0. Broad bend and
+  subtle fold shading replace the extreme hourglass pinch. Never fully circular.
+- Clockwise circular motion is primary: 7.5-degree detents, .021 charge/detent,
+  roughly one revolution to restore. Counterclockwise freewheels without winding.
+  Hands move per detent; case takes up slight torsion and springs back on release.
+- Hold: .7 s dwell then 18 s to full wind. Release: 6.5 s to melt, immediate onset.
+  Charge is smoothed over ~60 ms. Pointer angle center is fixed for the gesture;
+  spindle crossings are ignored. Right/Up keys advance two detents. Space/Enter
+  hold slowly, and no longer accidentally instant-wind through a synthetic click.
+- Validation: 1.8 s hold from full melt left melt=.955. One clockwise circular
+  gesture brought it to .029. Real pointer events, not direct state injection.
