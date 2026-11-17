@@ -31,9 +31,9 @@ Local server: `python3 -m http.server 8765` from this directory.
 
 ## Current published version
 
-User approved revision94 on 2026-11-17: stronger mountain curvature with skyline
-protection, shared ambient movement (including text) at1.61051x original speed,
-immediate melting after winding release, playback-state preservation, and tiny
-Snoopy seated on and deforming with the ridge while music plays.
+User approved revision96 on 2026-11-17: local-time clock with temporary winding
+hand offset that resets on release, additional gentle clock drift, and a more
+visible copper-red seconds hand. Clock face/case colors unchanged. Includes the
+previously approved mountain, motion, playback and Snoopy changes.
 Production and design share this approved version. Subsequent design pushes remain
 isolated because preview-branch builds are disabled.
