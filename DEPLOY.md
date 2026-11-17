@@ -24,6 +24,11 @@ remaining unchanged. This was discovered and corrected on 2026-11-17.
 - Publish only after user authorization, by fast-forwarding `main` to the
   approved commit. Do not include unapproved later design commits.
 - Verify the actual live HTML/script revision, not only the Git branch.
+- A successful Git push is not deployment confirmation. On 2026-11-17,
+  revision97 was on main but production still served94; no build checks existed
+  for the later commits. For releases push the new commit to main first, then
+  design after confirming a production build was created. Investigate/retry
+  from Cloudflare if the build does not appear.
 - When changing hosting configuration, verify branch builds cannot overwrite
   production before resuming design pushes.
 

@@ -612,3 +612,5 @@ Revision96 (DESIGN ONLY): Restored directional hand winding via temporary92-seco
 Release96: User approved production publication of clock drift, local time, brighter seconds hand and winding-to-local-time release behavior. Face/case colors unchanged.
 
 Revision97: Time button running-state label changed to pause time (initial HTML and dynamic update). Paused-state let time pass unchanged. User explicitly requests production push.
+
+Deployment follow-up: User noticed10:07 instead of11:07. Live source was still revision94 synthetic time despite main at97; no check runs for97. Triggering fresh production build and verifying actual served localClockSeconds code. Do not attribute this to dial geometry.
