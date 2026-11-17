@@ -361,3 +361,19 @@ Preview lake-hint-v39.jpg in outputs.
 Revision40: Weird Fishes now starts/restarts at7 seconds, including replay
 after ending. Lake accessible label updated. Verified actual playback7.02s,
 readyState4 and paused=false immediately after lake click.
+
+Revision41–44: Replaced TP-on-black favicon with code-native tilted melting
+clock SVG, ivory/gold on deep green. Browser reviewed192/64/32/16px sizes;
+preview clock-favicon-v41.jpg and melting-clock-favicon.svg in chat outputs.
+Both hill and peak frames/carets now text off-white#eee8d9.
+User explicitly requested fixing Sweet Trip preview: copied full opus from
+Nov17 https-www-youtube-com-watch-v/outputs/To All the Dancers...FseYuqzoLSQ.
+Initial42-second start was corrected by user to46 seconds. First play, replay
+and clock switch-back now46; Weird Fishes remains7. Verified actual46.018s
+playback, lake switch, clock return46→50.118s playing. No preview labels remain.
+All script syntax and geometry checks passed. Desktop frame and favicon reviewed.
+390px DOM check had no horizontal overflow, but browser emulation captures had
+scaling artifacts and tabs were closed during checks; don't claim full mobile
+visual verification for this revision. Earlier revisions had mobile checks.
+User asked “shall we push?” alongside favicon design; production main push has
+not been explicitly confirmed. Keep design branch, ask concrete release approval.

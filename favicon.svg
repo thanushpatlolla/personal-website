@@ -1,4 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="TP">
-  <circle cx="32" cy="32" r="32" fill="#0b0b0c"/>
-  <text x="32" y="41" fill="#e8e6e1" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="30" font-weight="650" text-anchor="middle">TP</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="A soft, melting clock">
+  <rect width="64" height="64" rx="17" fill="#183033"/>
+  <g transform="rotate(-32 32 32)">
+    <path d="M28 7C17 7 13 18 17 29C20 37 16 43 21 51C25 58 39 59 45 51C51 43 42 36 42 29C42 17 39 7 28 7Z" fill="#b4a072"/>
+    <path d="M28 11C20 11 18 19 21 28C24 37 20 43 25 49C29 54 37 54 41 49C45 43 37 36 38 28C39 19 36 11 28 11Z" fill="#eee8d9"/>
+    <g stroke="#58605a" stroke-width="2" stroke-linecap="round">
+      <path d="M28 15L29 18M22 25L25 26M35 22L33 24M27 46L29 43M39 45L36 43"/>
+      <path d="M30 32L27 22M30 32L36 37" stroke="#273a38" stroke-width="2.5"/>
+    </g>
+    <circle cx="30" cy="32" r="2" fill="#273a38"/>
+  </g>
 </svg>
