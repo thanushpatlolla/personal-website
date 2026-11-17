@@ -70,7 +70,7 @@
   const ctx=scene.getContext('2d'), brush=paint.getContext('2d');
   paint.width=paint.height=700;
   const photo=document.querySelector('#mountain-photo');
-  const watch=new Image(); watch.src='/assets/painted-crash-muted.png';
+  const watch=new Image(); watch.src='/assets/user-crash-clock.png';
   function loaded(img){return img.complete&&img.naturalWidth?Promise.resolve():new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=reject;});}
   const icons=[];
   async function prepareIcons(){
@@ -115,14 +115,21 @@
     const focus=document.activeElement;
     if(focus&&!focus.closest('.music')&&focus.matches('a:focus-visible,#still:focus-visible')){
       const b=focus.getBoundingClientRect();ctx.strokeStyle='#fff1c9';ctx.lineWidth=1;
-      ctx.strokeRect(b.left-4,b.top+scrollY-3,b.width+8,b.height+6);
+      if(focus===still){
+        ctx.beginPath();ctx.moveTo(b.left+12,b.bottom+scrollY-3);
+        ctx.lineTo(b.right,b.bottom+scrollY-3);ctx.stroke();
+      }else ctx.strokeRect(b.left-4,b.top+scrollY-3,b.width+8,b.height+6);
     }
     upload(sceneTexture,scene);
   }
   function paintWatch(){
-    brush.clearRect(0,0,700,700);brush.drawImage(watch,0,0,700,700);
+    brush.clearRect(0,0,700,700);
+    // Preserve the exact supplied PNG's aspect ratio and transparency.
+    const scale=Math.min(700/watch.naturalWidth,700/watch.naturalHeight);
+    const width=watch.naturalWidth*scale,height=watch.naturalHeight*scale;
+    brush.drawImage(watch,(700-width)/2,(700-height)/2,width,height);
     // Hands are painted into the same texture, so numerals AND hands fold with it.
-    brush.save();brush.translate(350,350);
+    brush.save();brush.translate(340,350);brush.scale(.63,1);
     for(const [a,len,width,color] of [[handTime/43200*2*Math.PI,105,7,'#28333b'],[handTime/3600*2*Math.PI,155,4,'#27323a'],[Math.floor(handTime)/60*2*Math.PI,168,1.5,'#7c422c']]){
       brush.save();brush.rotate(a);brush.strokeStyle=color;brush.lineWidth=width;brush.lineCap='round';brush.beginPath();brush.moveTo(0,17);brush.lineTo(0,-len);brush.stroke();brush.restore();
     }

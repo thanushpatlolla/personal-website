@@ -157,3 +157,18 @@ no Sweet Trip audio found in Downloads/Music. Do not claim full song now plays.
 Verified bio/name 16px, equal 44px desktop /24px mobile margins, no horizontal
 overflow, canvas height exactly844 in 390x844 viewport, time toggle and no logs.
 Screenshot compact-landscape-v7.jpg in chat outputs. No production push.
+
+## Revision 8: user's clock PNG and restored full bio
+User supplied clipboard-03a1c7e8...png (1093x1439, alpha); copied byte-for-byte to
+assets/user-crash-clock.png. Renderer now contains it at native aspect ratio in
+700-square texture instead of stretching it square. Hands centered at340,350
+with narrower x scale to remain inside the elongated face; shared flow retained.
+Restored BOTH original user-written bio paragraphs: prior compression had removed
+wording, which user noticed. Preserve all wording now; keep16px and upper-left
+layout. Music art increased40→48px, captions11→12px, artist10→11px. Bottom gap
+30→48px desktop and24→40px mobile; shared side margins retained.
+Time button's rectangular keyboard focus indicator replaced with underline in
+both CSS and canvas. No border/box. Verified focused label + outline:none,
+390x844 full text/no horizontal overflow/reading ends534.5/music starts752;
+keyboard clock interaction resumes flow, no warnings/errors. Final preview image
+supplied-clock-v8.jpg. Direct music remains30-second preview pending full audio.
