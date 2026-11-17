@@ -113,7 +113,7 @@ body:not([data-clock="original"]) #clock>img{filter:sepia(.12) saturate(.94);}
 .hill-close:hover{background:#d4d4cd;}
 .hill-close:active{border-color:#575953 #f4f4ef #f4f4ef #575953;box-shadow:none;padding-top:1px;padding-left:1px;}
 .hill-close:focus-visible{outline:1px dotted #171917;outline-offset:-5px;}
-.hill-target{stroke:transparent;stroke-width:64px;stroke-linejoin:round;}
+.hill-target{stroke:transparent;stroke-width:112px;stroke-linejoin:round;}
 .hill-outline{stroke:#eee8d9;}
 
 #peak-photo{background:#9da7a7;border-color:#929c9c;box-shadow:0 6px 18px #0003;}

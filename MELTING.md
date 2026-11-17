@@ -331,3 +331,10 @@ Script syntax checked; user handles visual testing. Saved on design branch.
 Revision51: Lower hill photo has “lake?” caption in12px Georgia, matching
 loss landscape hint. Added25px top frame area, retained charcoal background
 and beveled close button. Popup dimensions remain measured for positioning.
+
+Revision52: All four landscape easter eggs now share ?/down-caret hover/focus
+cue (valley visible loss landscape label replaced by ?, accessible name retained).
+Photo hints added at existing popup anchors. Hit padding56px each side, lake72px.
+Mouse displacement alone is reduced up to85% near each landmark with soft
+falloff; ambient/base distortion unchanged, including earlier lake steadiness.
+Caption lake? on lower photo remains. User does visual testing.

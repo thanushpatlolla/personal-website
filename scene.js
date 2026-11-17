@@ -17,7 +17,7 @@
     recoil=direction*.018;
   }
   let last = 0, elapsed = 0, handTime = 36540, frame;
-  let W = 1, H = 1, timeBounds=null, lakeRegion=null, clockBox, ready = false, rebuilding = false;
+  let W = 1, H = 1, timeBounds=null, lakeRegion=null, easterRegions=[], clockBox, ready = false, rebuilding = false;
   const material=new MeltField();
   let manualMelt=null,fluidActive=false,geometryDirty=true,pauseTween=null;
   const currentMelt=()=>pauseTween?pauseTween.from*(1-pauseTween.progress*pauseTween.progress*(3-2*pauseTween.progress)):(manualMelt===null?(paused?0:1-energy):manualMelt);
@@ -235,6 +235,10 @@
     lakeRegion={x:(W-photo.naturalWidth*photoScale)/2+.343*photo.naturalWidth*photoScale,
       y:(H-photo.naturalHeight*photoScale)/2+.863*photo.naturalHeight*photoScale,
       rx:.085*photo.naturalWidth*photoScale,ry:.065*photo.naturalHeight*photoScale};
+    easterRegions=[[.343,.863],[.725,.735],[.586,.545],[.770,.558]].map(([u,v])=>({
+      x:(W-photo.naturalWidth*photoScale)/2+u*photo.naturalWidth*photoScale,
+      y:(H-photo.naturalHeight*photoScale)/2+v*photo.naturalHeight*photoScale,
+      rx:Math.max(72,.065*photo.naturalWidth*photoScale),ry:Math.max(64,.055*photo.naturalHeight*photoScale)}));
     material.resize(W,H);
     const masks=[['.intro',.82],['.music',.70],['#still',.94]].map(([selector,strength])=>{
       const b=document.querySelector(selector).getBoundingClientRect();
@@ -369,12 +373,17 @@
     if(m===0)return [x,y,1];
     prepareBase(m);const p=basePoint(x,y);
     if(fluidActive){
+      const beforeX=p[0],beforeY=p[1];
       const step=m/4;
       for(let i=0;i<4;i++){
         interaction(p[0],p[1],dragA);
         interaction(p[0]+dragA[0]*step*.5,p[1]+dragA[1]*step*.5,dragB);
         p[0]+=dragB[0]*step;p[1]+=dragB[1]*step;
       }
+      let protection=0;
+      for(const b of easterRegions)protection=Math.max(protection,Math.exp(-(((x-b.x)/b.rx)**2+((y-b.y)/b.ry)**2)));
+      p[0]=beforeX+(p[0]-beforeX)*(1-.85*protection);
+      p[1]=beforeY+(p[1]-beforeY)*(1-.85*protection);
     }
     if(manualMelt===null&&(!paused||pauseTween)&&ambientBlend>0){
       const u=p[0]/W,v=p[1]/H;
