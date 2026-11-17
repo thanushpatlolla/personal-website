@@ -671,3 +671,5 @@ Revision116 (DESIGN ONLY): Reduce perceived wave onset delay. Fresh gestures aft
 Revision117 (DESIGN ONLY): Slow pause-time unmelting transition from2.2 to3 seconds (~27% slower). Clock winding and normal melt rate unchanged. Production remains102.
 
 Revision118 (DESIGN ONLY): Sampled supplied swatches by mean RGB. Lake frame/border/caret #1d2e3c; peak frame/border/caret #c0b49c. Production remains102.
+
+Revision119 (DESIGN ONLY): Replace peak/top frame, border and caret with new supplied swatch mean RGB #b8b3a5. Lake unchanged. Production remains102.
