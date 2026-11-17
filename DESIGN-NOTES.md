@@ -289,3 +289,8 @@ downward sag, feathered at block perimeter. Landscape and controls unchanged.
 
 Revision28: Hill hover outline now also draws a white lower contour across the
 mountain face below the hill, using same photo-space/melt mapping.
+
+Revision29: Time button restores over2.2s with smoothstep easing, then pauses.
+Existing mouse/ambient displacement freezes and scales down with melt during
+transition, avoiding a snap. Clicking again resumes from intermediate shape.
+Reduced-motion still restores instantly. Manual tuning cancels transition.

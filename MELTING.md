@@ -207,3 +207,8 @@ release, hill hover/click/keyboard open/Escape, and geometry45+18 cases.
 Revision27: User requests stronger text disruption and a different left-side
 stretch direction. Added localized upward/leftward pulls against central
 downward sag, feathered at block perimeter. Landscape and controls unchanged.
+
+Revision29: Time button restores over2.2s with smoothstep easing, then pauses.
+Existing mouse/ambient displacement freezes and scales down with melt during
+transition, avoiding a snap. Clicking again resumes from intermediate shape.
+Reduced-motion still restores instantly. Manual tuning cancels transition.

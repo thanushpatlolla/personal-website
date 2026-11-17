@@ -19,8 +19,8 @@
   let last = 0, elapsed = 0, handTime = 36540, frame;
   let W = 1, H = 1, timeBounds=null, clockBox, ready = false, rebuilding = false;
   const material=new MeltField();
-  let manualMelt=null,fluidActive=false,geometryDirty=true;
-  const currentMelt=()=>manualMelt===null?(paused?0:1-energy):manualMelt;
+  let manualMelt=null,fluidActive=false,geometryDirty=true,pauseTween=null;
+  const currentMelt=()=>pauseTween?pauseTween.from*(1-pauseTween.progress*pauseTween.progress*(3-2*pauseTween.progress)):(manualMelt===null?(paused?0:1-energy):manualMelt);
   const timing={frameMs:0,frames:0};
   let hoverPointer=null,clockHintDismissed=false;
   const hint=document.createElementNS('http://www.w3.org/2000/svg','svg');
@@ -366,7 +366,7 @@
         p[0]+=dragB[0]*step;p[1]+=dragB[1]*step;
       }
     }
-    if(manualMelt===null&&!paused&&ambientBlend>0){
+    if(manualMelt===null&&(!paused||pauseTween)&&ambientBlend>0){
       const u=p[0]/W,v=p[1]/H;
       p[0]+=ambientAt(ambientX,u,v)*m;p[1]+=ambientAt(ambientY,u,v)*m;
     }
@@ -486,6 +486,10 @@
   let lastSecond=-1, previousMelt=-1;
   function update(now){
     const dt=Math.min(.15,(now-(last||now))/1000);last=now;
+    if(pauseTween){
+      pauseTween.progress=Math.min(1,pauseTween.progress+dt/2.2);geometryDirty=true;
+      if(pauseTween.progress===1){pauseTween=null;charge=energy=1;resetFluid();resetAmbient();}
+    }
     if(!paused){
       if(advanceFluid(dt))geometryDirty=true;
       if(advanceAmbient(dt)&&currentMelt()>.001)geometryDirty=true;
@@ -503,10 +507,13 @@
       if(geometryDirty||tick||Math.abs(previousMelt-melt)>.0001||Math.abs(turn)>.0001||Math.abs(recoil)>.0001||paused){render(melt);previousMelt=melt;}
       elapsed=0;
     }
-    if(!paused)frame=requestAnimationFrame(update);
+    if(!paused||pauseTween)frame=requestAnimationFrame(update);
   }
   function start() { cancelAnimationFrame(frame); last = 0; frame = requestAnimationFrame(update); }
   function setPaused(value) {
+    const from=currentMelt(),wasTransitioning=!!pauseTween;
+    pauseTween=null;
+    if(!value&&wasTransitioning)charge=energy=1-from;
     manualMelt=null;
     paused = value;
     holding = false;
@@ -515,7 +522,11 @@
     still.textContent = paused ? 'let time pass' : 'time is passing';
     still.setAttribute('aria-pressed', String(paused));
     note.textContent = paused ? 'a moment, held' : 'time is passing';
-    if (paused) {charge = energy = 1;resetFluid();resetAmbient();geometryDirty=true;}
+    if(paused){
+      if(ready&&!motion.matches&&from>.001)pauseTween={from,progress:0};
+      else {charge=energy=1;resetFluid();resetAmbient();}
+      geometryDirty=true;
+    }
     render(currentMelt());
     if(ready)captureScene();
     start();
@@ -614,7 +625,7 @@
     configure(values){material.configure(values);geometryDirty=true;render(currentMelt());return {...material.options};},
     setMeltProgress(value){
       if(!Number.isFinite(Number(value)))return;
-      manualMelt=Math.max(0,Math.min(1,Number(value)));resetFluid();ambientBlend=0;geometryDirty=true;render(currentMelt());
+      pauseTween=null;manualMelt=Math.max(0,Math.min(1,Number(value)));resetFluid();ambientBlend=0;geometryDirty=true;render(currentMelt());
     },
     useClock(){useClock();if(paused)setPaused(false);start();},
     resetInteraction(){resetFluid();geometryDirty=true;render(currentMelt());},
