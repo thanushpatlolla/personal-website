@@ -429,3 +429,5 @@ to prior authorized production cue update.
 
 Revision67: Top photo caption changed from “peaks and...?” to “forest?”
 at user request during ongoing production update.
+
+Revision68: Peak photo now plays the user-supplied full Music Sounds Better With You opus by Stardust from0, with matching Apple iTunes artwork. Replaces Lift to Experience. User explicitly requests push to production.
