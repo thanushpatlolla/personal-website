@@ -28,7 +28,7 @@
     cover.src = '/assets/sweet-trip-cover.jpg';
     cover.alt = 'Velocity: Design: Comfort. album cover';
     audio.src = sweetSource;
-    audio.currentTime = 46.5;
+    audio.currentTime = 46;
     sync();
     try { await audio.play(); }
     catch { sync(); status.textContent = '· retry playback'; }
@@ -62,7 +62,7 @@
     pending = true;
     status.textContent = '· loading';
     try {
-      if (audio.ended || audio.currentTime < (sweetTrip ? 46.5 : 7)) audio.currentTime = sweetTrip ? 46.5 : 7;
+      if (audio.ended || audio.currentTime < (sweetTrip ? 46 : 7)) audio.currentTime = sweetTrip ? 46 : 7;
       await audio.play();
     } catch {
       sync();

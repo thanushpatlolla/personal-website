@@ -381,3 +381,8 @@ not been explicitly confirmed. Keep design branch, ask concrete release approval
 Revision45: User requested Sweet Trip start46.5 seconds and will test changes
 themselves. Updated first play, replay and clock return to46.5; no browser
 testing performed. Continue saving to design branch; no production push.
+
+Revision46: User explicitly authorized production push and restored Sweet Trip
+start to46 seconds (first play, replay, clock return). Publish current design
+branch commit to origin/main without force; Cloudflare Pages deploys main.
+User owns further interaction testing.
