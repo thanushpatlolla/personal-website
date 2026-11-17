@@ -61,3 +61,12 @@ body.paused .word { transform:none !important; }
 @media(max-width:760px){.clock-area{top:auto;bottom:38px;height:310px;}#clock{height:260px;}#clock-hint{top:8px;}}
 @media(max-width:760px) and (max-height:740px){.clock-area{top:auto;bottom:auto;height:310px;}#clock{height:255px;}}
 #clock>img{width:100%;height:100%;object-fit:contain;}
+/* The watch hangs in the sky, inside the same painted scene. */
+.clock-area{width:250px;height:290px;top:9.5%;right:16%;}
+#clock{height:290px;}
+@media(min-width:1600px){.clock-area{top:12%;right:21%;}}
+@media(max-width:760px){
+  .intro{margin-top:175px;}
+  .clock-area{position:absolute;top:85px;right:28px;bottom:auto;margin:0;width:180px;height:180px;}
+  #clock{height:180px;}
+}

@@ -11,7 +11,7 @@
   const DETENT=Math.PI/24; // 48 detents/revolution. Three full turns from empty.
   const CHARGE_PER_DETENT=1/(48*3);
   function ratchetStep(direction=1){
-    charge=Math.min(1,charge+Math.max(0,direction)*CHARGE_PER_DETENT);
+    charge=Math.min(1,charge+Math.abs(direction)*CHARGE_PER_DETENT);
     handTime-=direction*92;
     turn=Math.max(-.55,Math.min(.55,turn+direction*.035));
     recoil=direction*.018;
@@ -38,7 +38,13 @@
     precision mediump float; varying vec2 tex; varying float light;
     uniform sampler2D image; uniform float night; uniform float isClock;
     void main(){vec4 c=texture2D(image,tex);if(c.a<.005)discard;
-      c.rgb*=light; c.rgb=mix(c.rgb,c.rgb*vec3(.65,.75,.88),night*(1.-isClock));
+      c.rgb*=light;
+      if(isClock>.5){
+        float l=dot(c.rgb,vec3(.2126,.7152,.0722));
+        c.rgb=mix(vec3(l),c.rgb,.85);
+        c.rgb=mix(c.rgb,vec3(.51,.53,.50),.09);
+      }
+      c.rgb=mix(c.rgb,c.rgb*vec3(.65,.75,.88),night);
       gl_FragColor=c;}`));
   gl.linkProgram(program);
   if (!gl.getProgramParameter(program, gl.LINK_STATUS)) return;
@@ -64,7 +70,7 @@
   const ctx=scene.getContext('2d'), brush=paint.getContext('2d');
   paint.width=paint.height=700;
   const photo=document.querySelector('#mountain-photo');
-  const watch=new Image(); watch.src='/assets/painted-crash.png';
+  const watch=new Image(); watch.src='/assets/painted-crash-muted.png';
   function loaded(img){return img.complete&&img.naturalWidth?Promise.resolve():new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=reject;});}
   const icons=[];
   async function prepareIcons(){
@@ -194,14 +200,18 @@
     const wx=noise(px*2.3+11.7,py*2.3+3.8+time);
     const wy=noise(px*2.3+37.1+time*.63,py*2.3+18.2);
     const qx=px+wx*.21,qy=py+wy*.21;
-    const broadX=noise(qx*3.1+4.1,qy*3.1+9.6+time*.7);
-    const broadY=noise(qx*3.1+22.3+time*.8,qy*3.1+31.7);
-    const middleX=noise(qx*9.7+51.8,qy*9.7+8.3+time*.42);
-    const middleY=noise(qx*9.7+12.9+time*.35,qy*9.7+61.2);
-    const fineX=noise(qx*23.4+91.3,qy*23.4+4.9+time*.22);
-    const fineY=noise(qx*23.4+6.8+time*.28,qy*23.4+79.4);
-    let dx=54*broadX+21*middleX+6*fineX;
-    let dy=66*broadY+24*middleY+7*fineY;
+    const broadX=noise(qx*2.4+4.1,qy*2.4+9.6+time*.7);
+    const broadY=noise(qx*2.4+22.3+time*.8,qy*2.4+31.7);
+    const middleX=noise(qx*5.8+51.8,qy*5.8+8.3+time*.42);
+    const middleY=noise(qx*5.8+12.9+time*.35,qy*5.8+61.2);
+    const fineX=noise(qx*11.9+91.3,qy*11.9+4.9+time*.22);
+    const fineY=noise(qx*11.9+6.8+time*.28,qy*11.9+79.4);
+    // Viscous downward flow stretches longer painted contours; slow lateral
+    // refraction bends them without the previous fine-grained crumpling.
+    const pigment=.5+.5*noise(qx*6.2+18.4,qy*.85+54.1+time*.18);
+    const gravity=90*Math.pow(pigment,2.3)*Math.pow(Math.max(0,Math.sin(Math.PI*v)),.7);
+    let dx=36*broadX+11*middleX+2*fineX;
+    let dy=34*broadY+13*middleY+3*fineY+gravity;
     // Refraction follows surface slopes. Nothing tracks or sticks to the cursor.
     dx+=(waterAt(u+1/WATER_N,v)-waterAt(u-1/WATER_N,v))*15;
     dy+=(waterAt(u,v+1/waterH)-waterAt(u,v-1/waterH))*15;
@@ -230,18 +240,17 @@
   },{passive:true});
   document.addEventListener('pointerleave',()=>{previousPointer=null;});
   function watchPoint(u,v,m){
-    // The painted asset already has a Crash silhouette at m=0; motion merely
-    // loosens the enamel further, never tries to make a round face look melted.
-    const lower=smooth(.36,.97,v);
-    const restore=(1-m)*.08*gauss(v,.55,.19)*smooth(.45,.80,u);
-    let x=u+restore+m*(.12*lower*lower-.065*gauss(v,.50,.20))*(1+.15*noise(u*3,v*3+dreamTime*.015));
-    let y=v-(1-m)*.035*lower+m*(.22*lower+.045*gauss(u,.30,.24)*gauss(v,.64,.22));
-    const tilt=-.12+turn*.14+recoil;
+    // A restrained painted Crash is the resting shape. The watch then enters
+    // precisely the same world-space paint/water field as the mountain and type.
+    const lower=smooth(.34,.96,v);
+    let x=u+m*(.035*lower*lower-.020*gauss(v,.51,.22));
+    let y=v+m*.10*lower;
+    const tilt=-.08+turn*.12+recoil;
     const px=x-.5,py=y-.5;
     x=.5+px*Math.cos(tilt)-py*Math.sin(tilt);
     y=.5+px*Math.sin(tilt)+py*Math.cos(tilt);
-    return [clockBox.x+x*clockBox.size,clockBox.y+y*clockBox.size,
-      1-m*.13*gauss(v,.60,.13)+m*.04*gauss(v,.44,.08)];
+    const world=flow(clockBox.x+x*clockBox.size,clockBox.y+y*clockBox.size,m);
+    return [world[0],world[1],1-m*.06*gauss(v,.60,.15)];
   }
   function mesh(tex,m,watchLayer){
     const nx=watchLayer?60:120,ny=watchLayer?70:100;
@@ -368,8 +377,8 @@
   for (const type of ['pointerup','pointercancel','lostpointercapture','blur']) clock.addEventListener(type, release);
   clock.addEventListener('keydown', event => {
     lastKey=performance.now();
-    if(event.key==='ArrowRight'||event.key==='ArrowUp'){
-      event.preventDefault();if(paused)setPaused(false);ratchetStep();ratchetStep();
+    if(['ArrowRight','ArrowUp','ArrowLeft','ArrowDown'].includes(event.key)){
+      event.preventDefault();if(paused)setPaused(false);const d=['ArrowLeft','ArrowDown'].includes(event.key)?-1:1;ratchetStep(d);ratchetStep(d);
     }
     if (event.key === ' ' || event.key === 'Enter') {
       event.preventDefault();if(!holding)wind();

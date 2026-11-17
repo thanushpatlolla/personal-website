@@ -100,3 +100,22 @@ overflow and clock remains in view. Cleared device override. Exercised mouse
 sweep and confirmed continuing scene motion, no application console errors.
 Updated deformation opens the clock's concave waist slightly at full wind and
 adds more hanging length at melt, preserving the approved painted design.
+
+## Revision 5: both directions / unified flowing paint / faded sky clock
+User requested retaining the approved painterly style, with a shape closer to
+Cartier Crash and colors faded into the photo. Final asset painted-crash-muted.png
+was edited from the approved blue/gold painted image using the Cartier/photo
+references. A first beige-heavy candidate was discarded (not in repo).
+Clock now smaller/higher in sky; mobile gives it its own sky area above bio.
+Clock vertices now pass through the exact same world-space flow as photograph
+and type, and receive the same atmospheric tint. Fine crumpling reduced; smoother
+low/mid-frequency refraction plus irregular downward pigment flow added.
+Both turn directions charge; all arrow keys supported. Verified real alternating
+counterclockwise/clockwise/counterclockwise turns: melt .680, .348, .027.
+Mobile 390x844 verified, no horizontal overflow. Hardware Lottery is now plain
+hardwarelottery.github.io above the After Work title link.
+
+Next user steering: add Sweet Trip “To All the Dancers of the World, a Round Form
+of Fantasy” playing with album icon bottom left. Replace pause time label with
+time is passing / let time pass as button. Move “somewhere, for a little while”
+to bottom right; user uncertain about phrase and wants to consider alternatives.
