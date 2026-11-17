@@ -11,7 +11,7 @@
   let windingOffset=0,keyWinding=false;
   const DETENT=Math.PI/24; // 48 detents/revolution. Three full turns from empty.
   const CHARGE_PER_DETENT=1/(48*3);
-  let windingGain=1; // Touch winding restores twice as much per turn.
+  let windingGain=1; // Touch winding restores three times as much per turn.
   function ratchetStep(direction=1){
     windingOffset-=direction*92;
     handTime=localClockSeconds()+windingOffset;
@@ -614,7 +614,7 @@
     start();
   }
   function wind(pointerType) {
-    windingGain=pointerType==='touch'?2:1;
+    windingGain=pointerType==='touch'?3:1;
     document.dispatchEvent(new Event('clockwind'));
     useClock();
     if (paused) setPaused(false);

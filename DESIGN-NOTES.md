@@ -622,3 +622,12 @@ Revision98: Pause time freezes clock hands as well as landscape; removed paused 
 Revision99 (DESIGN ONLY): Touch clock winding restores scene2x faster per detent (1.5 revolutions from empty instead of3); touch hold-to-wind also2x faster. Actual pointerType selects gain, leaving mouse/keyboard unchanged. Release resets gain. Hand winding and ambient speed unchanged.
 
 Release99: User explicitly approved production publication of2x touch winding. Publishing and verifying live revision99.
+
+Revision100 (DESIGN ONLY): loss landscape? is informational again; no song action.
+Mobile touch gain2→3 (one full revolution to restore from empty; hold charging
+also50% faster than revision99). User's broader questions about discovery order,
+melting feel, song wordplay and startup are discussion, not implemented changes.
+Friend's screenshot asks for slower propagation, gentler return and offscreen
+edge constraints. Current simulation uses diffusion/damping and.994 displacement
+retention per60Hz step, not a literal spring. Consider longer disturbance lifetime
+before changing overall intensity; no physics change made in this revision.
