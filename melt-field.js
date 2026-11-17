@@ -8,7 +8,10 @@
     [.19,.25,.14,.16,-11,35,.12], [.36,.39,.13,.19,19,57,-.12],
     [.10,.61,.13,.18,23,78,.13], [.51,.54,.18,.14,-20,48,-.10],
     [.76,.63,.17,.21,28,103,.14], [.34,.83,.12,.16,-21,62,-.12],
-    [.88,.88,.14,.14,-15,72,.10]
+    [.88,.88,.14,.14,-15,72,.10],
+    [.28,.20,.10,.12,13,18,.13], [.67,.28,.13,.11,-16,22,-.10],
+    [.44,.65,.10,.13,18,25,.16], [.81,.49,.12,.12,-15,27,-.12],
+    [.18,.79,.09,.12,12,23,.12]
   ];
   const anchors=[[.56,.40,.13,.10,.85],[.16,.13,.11,.07,.65],[.92,.38,.08,.12,.70]];
   const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
@@ -78,12 +81,15 @@
           // zero at block edges so the enclosing text footprint stays stable.
           const edge=smooth(0,.12,q)*(1-smooth(.88,1,q))*smooth(0,.12,r)*(1-smooth(.88,1,r));
           const patch=(cx,cy,rx,ry)=>Math.exp(-(((q-cx)/rx)**2+((r-cy)/ry)**2));
-          textX+=weight*edge*(19*patch(.30,.22,.15,.19)-16*patch(.70,.64,.16,.23));
-          textX+=weight*edge*12*patch(.40,.84,.18,.12);
-          textX+=weight*edge*(8*patch(.77,.25,.13,.13)-7*patch(.22,.53,.12,.15));
-          textY+=weight*edge*(10*patch(.76,.30,.14,.13)+9*patch(.25,.55,.14,.13)-7*patch(.76,.86,.12,.10))*o.gravity;
-          textY+=weight*edge*16*patch(.43,.82,.18,.12)*o.gravity;
-          textY+=weight*edge*(23*patch(.33,.25,.18,.16)-16*patch(.65,.68,.19,.18))*o.gravity;
+          textX+=weight*edge*1.35*(19*patch(.30,.22,.15,.19)-16*patch(.70,.64,.16,.23));
+          textX+=weight*edge*1.35*12*patch(.40,.84,.18,.12);
+          textX+=weight*edge*1.35*(8*patch(.77,.25,.13,.13)-7*patch(.22,.53,.12,.15));
+          textY+=weight*edge*1.35*(10*patch(.76,.30,.14,.13)+9*patch(.25,.55,.14,.13)-7*patch(.76,.86,.12,.10))*o.gravity;
+          // Correlated, nonperiodic waves vary by line as well as column.
+          textX+=weight*edge*11*this.noise(q*4.3+17,r*3.1+9);
+          textY+=weight*edge*15*this.noise(q*4.7+51,r*3.6+28)*o.gravity;
+          textY+=weight*edge*1.35*16*patch(.43,.82,.18,.12)*o.gravity;
+          textY+=weight*edge*1.35*(23*patch(.33,.25,.18,.16)-16*patch(.65,.68,.19,.18))*o.gravity;
         }
         textY+=weight*((copyArea?3:14)*Math.exp(-(((q-.55)/.34)**2))-3)*o.gravity*Math.min(1,(right-left)*this.width/330);
       }

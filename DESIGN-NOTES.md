@@ -248,3 +248,13 @@ file/start42sec remains outstanding. Continue on design/melting-landscape.
 Revision19: Added three quieter localized pulls in previously less-deformed
 upper-right, middle-left, and lower-right portions of the copy block, at user
 request. Existing strongest patches and block-edge falloff remain unchanged.
+
+Revision20–21: User requested barely readable text, more waves and scattered
+scene stretching. Copy patch amplitudes increased35%, added nonperiodic
+correlated waves; five additional localized landscape pulls. Geometry checks
+pass45+18 cases; max local copy stretch2.9912 (intentional stronger effect).
+Restoration verified melt0 and initial melt1. User then requested black arrow
+under clock, aligned closely, thin rather than thicker. Arrow now traces actual
+original PNG alpha silhouette at700px texture size, offset9 texture pixels,
+Catmull interpolated then mapped through exact watch geometry. No text label.
+GitHub social link/icon removed at user request. Latest preview checked, no logs.

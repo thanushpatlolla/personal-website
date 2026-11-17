@@ -25,7 +25,7 @@
   let hoverPointer=null;
   const hint=document.createElementNS('http://www.w3.org/2000/svg','svg');
   hint.id='interaction-hints';hint.setAttribute('aria-hidden','true');
-  hint.innerHTML='<defs><marker id="wind-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M1 1 L7 4 L1 7" fill="none" stroke="currentColor"/></marker></defs><path id="time-underline" fill="none" stroke="currentColor"/><g id="wind-hint"><path fill="none" stroke="currentColor" marker-end="url(#wind-arrow)"/></g>';
+  hint.innerHTML='<defs><marker id="wind-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M1 1 L7 4 L1 7" fill="none" stroke="#171b19"/></marker></defs><path id="time-underline" fill="none" stroke="currentColor"/><g id="wind-hint"><path fill="none" stroke="currentColor" marker-end="url(#wind-arrow)"/></g>';
   document.body.append(hint);
   const timeUnderline=hint.querySelector('#time-underline'),windHint=hint.querySelector('#wind-hint');
   function updateHints(m){
@@ -40,7 +40,8 @@
     if(onClock){
       // The arc is attached to UV points just outside the painted rim, so it
       // shares every deformation, perspective change and mouse pull of the dial.
-      const edge=[[.60,.018],[.68,.10],[.735,.24],[.745,.38],[.70,.54],[.71,.70],[.72,.84],[.68,.93]];
+      const edge=clockRimPoints;
+      if(edge.length<2)return;
       let d='';
       for(let j=0;j<edge.length-1;j++)for(let i=0;i<8;i++){
         const t=i/8,a=edge[Math.max(0,j-1)],b=edge[j],c=edge[j+1],e=edge[Math.min(edge.length-1,j+2)];
@@ -112,6 +113,7 @@
   const originalWatch=new Image();originalWatch.src='/assets/user-crash-clock.png';
   // Both warm treatments use the exact original pixels; only shader color changes.
   const warmWatch=originalWatch;
+  const clockRimPoints=[];
   const album=document.querySelector('.record-cover img');
   let watch=clockStyle==='original'?originalWatch:warmWatch;
   document.body.dataset.clock=clockStyle;
@@ -186,6 +188,16 @@
     const scale=Math.min(700/watch.naturalWidth,700/watch.naturalHeight);
     const width=watch.naturalWidth*scale,height=watch.naturalHeight*scale;
     brush.drawImage(watch,(700-width)/2,(700-height)/2,width,height);
+    if(!clockRimPoints.length){
+      // Trace the actual alpha silhouette, not an estimated oval. This side
+      // becomes the underside after banking the original dial to the left.
+      const pixels=brush.getImageData(0,0,700,700).data;
+      for(let y=42;y<665;y+=12){
+        for(let x=1;x<697;x++)if(pixels[(y*700+x)*4+3]>180&&pixels[(y*700+x+2)*4+3]>180){
+          clockRimPoints.push([(x-9)/700,y/700]);break;
+        }
+      }
+    }
     // Hands are painted into the same texture, so numerals AND hands fold with it.
     brush.save();brush.translate(340,350);brush.scale(.63,1);
     for(const [a,len,width,color] of [[handTime/43200*2*Math.PI,105,7,'#28333b'],[handTime/3600*2*Math.PI,155,4,'#27323a'],[Math.floor(handTime)/60*2*Math.PI,168,1.5,'#7c422c']]){
