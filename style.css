@@ -114,3 +114,6 @@ body:not([data-clock="original"]) #clock>img{filter:sepia(.12) saturate(.94);}
 .hill-close:focus-visible{outline:1px dotted #171917;outline-offset:-5px;}
 .hill-target{stroke:transparent;stroke-width:32px;stroke-linejoin:round;}
 .hill-outline{stroke:#eee8d9;}
+
+#peak-photo{background:#eee8d9;border-color:#d1c8b7;box-shadow:0 6px 18px #0004;}
+#peak-photo .hill-caret{background:#eee8d9;border-color:#d1c8b7;}

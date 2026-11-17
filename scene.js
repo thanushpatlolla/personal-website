@@ -319,6 +319,12 @@
       const waveY=t=>material.noise(u*2.4+71.3-t*.24,v*2.1+6.8+t)-material.noise(u*2.4+71.3,v*2.1+6.8);
       ambientX[i]=28*(waveX(time)*(1-copyWeight)+waveX(fastTime)*copyWeight)*strength;
       ambientY[i]=38*(waveY(time)*(1-copyWeight)+waveY(fastTime)*copyWeight)*strength;
+      // A low-amplitude traveling swell connects sky, landscape, clock and type.
+      const swell=ambientBlend*edge*material.options.intensity;
+      const phase=u*5.2+v*3.4-ambientTime*.42;
+      const crossPhase=u*2.6-v*4.1+ambientTime*.31;
+      ambientX[i]+=4.5*Math.sin(phase+.8)*swell;
+      ambientY[i]+=(6*Math.sin(phase)+2*Math.sin(crossPhase))*swell;
     }
     return true;
   }

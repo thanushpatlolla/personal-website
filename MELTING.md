@@ -234,3 +234,11 @@ Revision33: User clarified text should return to immediately before the
 “really fuck it up” request, with only a slight increase. Baseline is09cf02e
 (copy multiplier1.0); current multiplier is1.1, replacing2.0. Retained12-step
 integration for smooth geometry, current ambient motion and both photo popups.
+
+Revision34: Added a gentle broad traveling swell to ambient displacement across
+the scene (4.5px horizontal;6px+2px vertical, phases.42/.31 per second),
+feathered at viewport edges and still scaled by melt/pause/reduced-motion.
+Retained copy multiplier1.1. Peak popup alone now uses warm off-white#eee8d9
+frame/caret with#d1c8b7 border; original hill frame and beveled X unchanged.
+Browser visually checked popup/outline alignment and no console warnings/errors;
+scene syntax validated. Preview white-peak-frame-v34.jpg in chat outputs.
