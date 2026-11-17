@@ -601,3 +601,5 @@ Release128: User approves peak frame25% toward white (#c8c7be), clock30% (#babfc
 Revision129 (DESIGN ONLY): Start15% melted (energy/charge.85), retaining immediate startup decay at denominator8s. Full melt now about6.8s after ready, plus smoothing. Production remains128.
 
 Release130: User approves clock frame40% toward white (#c4c8cb), plus current15% starting melt, for production. Peak remains25%.
+
+Revision131 (DESIGN ONLY): User requests matching peak/clock frames with midpoint tone and50% white. Average original swatches#b6b4a9 and#9da4a8, then blend50% toward white →#d4d6d4; applied to both backgrounds,borders,carets. Production remains130.
