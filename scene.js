@@ -339,10 +339,10 @@
   function emitMouseWave(x,y,dx,dy){
     const distance=Math.hypot(dx,dy);
     waveDistance+=distance;
-    if(waveTime-lastWaveTime<.3||waveDistance<24||distance===0)return;
+    if(waveTime-lastWaveTime<.65||waveDistance<24||distance===0)return;
     mouseWaves.push({x,y,dx:dx/distance,dy:dy/distance,born:waveTime,strength:Math.min(1,waveDistance/65)});
     waveDistance=0;
-    if(mouseWaves.length>8)mouseWaves.shift();lastWaveTime=waveTime;
+    if(mouseWaves.length>5)mouseWaves.shift();lastWaveTime=waveTime;
   }
   let ambientH=32,ambientX,ambientY,ambientTime=0,ambientBlend=0;
   function resetAmbient(){
@@ -352,7 +352,7 @@
   }
   function advanceAmbient(dt){
     if(manualMelt!==null){ambientBlend=0;return false;}
-    waveTime+=dt;mouseWaves=mouseWaves.filter(w=>waveTime-w.born<7);
+    waveTime+=dt;mouseWaves=mouseWaves.filter(w=>waveTime-w.born<16);
     ambientTime+=dt*motionSettings.speed;ambientBlend+=(1-ambientBlend)*(1-Math.exp(-dt*2));
 
     const copy=document.querySelector('.intro').getBoundingClientRect();
@@ -378,14 +378,14 @@
       let rippleX=0,rippleY=0;
       for(const wave of mouseWaves){
         const age=waveTime-wave.born,rx=u*W-wave.x,ry=v*H-wave.y,r=Math.hypot(rx,ry);
-        const width=Math.max(90,Math.min(W,H)*.16),front=age*150;
+        const width=Math.max(65,Math.min(W,H)*.085),front=age*95;
         const q=(r-front)/width;
-        const pulse=4*wave.strength*(1-Math.exp(-age*5))*Math.exp(-age*.48)*Math.exp(-q*q*1.5)*Math.cos(q*2);
-        rippleX+=pulse*(wave.dx*.65+(r?rx/r:0)*.35);
-        rippleY+=pulse*(wave.dy*.65+(r?ry/r:0)*.35);
+        const pulse=16*wave.strength*(1-Math.exp(-age*2))*Math.exp(-age*.10)*(1-smooth(12,16,age))*Math.exp(-q*q*1.5)*Math.cos(q*2);
+        rippleX+=pulse*(wave.dx*.2+(r?rx/r:0)*.8);
+        rippleY+=pulse*(wave.dy*.2+(r?ry/r:0)*.8);
       }
-      ambientX[i]+=3*Math.tanh(rippleX/3)*edge*protection;
-      ambientY[i]+=3*Math.tanh(rippleY/3)*edge*protection;
+      ambientX[i]+=12*Math.tanh(rippleX/12)*edge*protection;
+      ambientY[i]+=12*Math.tanh(rippleY/12)*edge*protection;
       const response=motionSettings.smoothing>0?1-Math.exp(-dt/motionSettings.smoothing):1;
       ambientX[i]=oldX+(ambientX[i]-oldX)*response;ambientY[i]=oldY+(ambientY[i]-oldY)*response;
     }
