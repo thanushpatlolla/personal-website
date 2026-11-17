@@ -12,11 +12,13 @@
   const CHARGE_PER_DETENT=1/(48*3);
   function ratchetStep(direction=1){
     charge=Math.min(1,charge+Math.abs(direction)*CHARGE_PER_DETENT);
-    handTime-=direction*92;
     turn=Math.max(-.55,Math.min(.55,turn+direction*.035));
     recoil=direction*.018;
   }
-  let last = 0, elapsed = 0, handTime = 36540, frame;
+  function localClockSeconds(){
+    const now=new Date();return now.getHours()*3600+now.getMinutes()*60+now.getSeconds();
+  }
+  let last = 0, elapsed = 0, handTime = localClockSeconds(), frame;
   let W = 1, H = 1, timeBounds=null, lakeRegion=null, easterRegions=[], clockBox, ready = false, rebuilding = false;
   const material=new MeltField();
   let manualMelt=null,fluidActive=false,geometryDirty=true,pauseTween=null;
@@ -223,7 +225,7 @@
     }
     // Hands are painted into the same texture, so numerals AND hands fold with it.
     brush.save();brush.translate(340,350);brush.scale(.63,1);
-    for(const [a,len,width,color] of [[handTime/43200*2*Math.PI,105,7,'#28333b'],[handTime/3600*2*Math.PI,155,4,'#27323a'],[Math.floor(handTime)/60*2*Math.PI,168,3.2,'#b56d45']]){
+    for(const [a,len,width,color] of [[handTime/43200*2*Math.PI,105,7,'#28333b'],[handTime/3600*2*Math.PI,155,4,'#27323a'],[Math.floor(handTime)/60*2*Math.PI,182,5.5,'#d85b32']]){
       brush.save();brush.rotate(a);brush.strokeStyle=color;brush.lineWidth=width;brush.lineCap='round';brush.beginPath();brush.moveTo(0,17);brush.lineTo(0,-len);brush.stroke();brush.restore();
     }
     brush.fillStyle='#ac783d';brush.beginPath();brush.arc(0,0,8,0,7);brush.fill();brush.restore();
@@ -504,7 +506,13 @@
     const rigid=(clockStyle==='ridge'?0:material.options.anchoring*.75)*Math.exp(-((u-.5)**2+(v-.5)**2)/.038);
     const anchorX=originalX+center[0]-(clockBox.x+clockBox.size*.5);
     const anchorY=originalY+center[1]-(clockBox.y+clockBox.size*.5);
-    return [world[0]*(1-rigid)+anchorX*rigid,world[1]*(1-rigid)+anchorY*rigid,(clockStyle==='ridge'?.97-.13*smooth(.30,.95,v):1)-softness*.045*gauss(v,.72,.14)];
+    // A small extra wander of the whole case, shared by hands and hit targets.
+    const driftTime=typeof ambientTime==='number'?ambientTime:0;
+    const driftBlend=typeof ambientBlend==='number'?ambientBlend:0;
+    const driftScale=clockStyle==='ridge'?0:m*material.options.intensity*driftBlend*clockBox.size/265;
+    const driftX=(12*Math.sin(driftTime*.13)+5*Math.sin(driftTime*.23))*driftScale;
+    const driftY=(8*Math.sin(driftTime*.11)+3*Math.sin(driftTime*.19))*driftScale;
+    return [world[0]*(1-rigid)+anchorX*rigid+driftX,world[1]*(1-rigid)+anchorY*rigid+driftY,(clockStyle==='ridge'?.97-.13*smooth(.30,.95,v):1)-softness*.045*gauss(v,.72,.14)];
   }
   function createGrid(nx,ny){
     const vertices=new Float32Array((nx+1)*(ny+1)*5),indices=new Uint16Array(nx*ny*6);
@@ -549,21 +557,10 @@
     updateHints(melt);
     timing.frameMs=performance.now()-started;timing.frames++;
   }
-  // A slightly fast, unreliable escapement: uneven waits, an occasional
-  // skipped tooth, and brief double ticks. Independent of the landscape flow.
-  let tickSeed=0x1c10c, tickWait=.55;
-  const tickRandom=()=>{tickSeed=(Math.imul(tickSeed,1664525)+1013904223)>>>0;return tickSeed/4294967296;};
-  function advanceClock(dt){
-    tickWait-=dt;
-    while(tickWait<=0){
-      handTime+=tickRandom()<.06?2:1;
-      const temperament=tickRandom();
-      tickWait+=temperament<.12?.18+tickRandom()*.16:temperament>.93?1.20+tickRandom()*.24:.50+tickRandom()*.70;
-    }
-  }
   let lastSecond=-1, previousMelt=-1;
   function update(now){
     const dt=Math.min(.15,(now-(last||now))/1000);last=now;
+    handTime=localClockSeconds();
     if(pauseTween){
       pauseTween.progress=Math.min(1,pauseTween.progress+dt/2.2);geometryDirty=true;
       if(pauseTween.progress===1){pauseTween=null;charge=energy=1;resetFluid();resetAmbient();}
@@ -576,7 +573,7 @@
       charge=Math.max(0,Math.min(1,charge+(holding?(heldFor>.7&&!gestureTurned?dt/18:0):-motionDt/6.5)));
       energy+=(charge-energy)*(1-Math.exp(-dt*16));
       recoil*=Math.exp(-dt*19);
-      if(!holding){advanceClock(motionDt);turn*=Math.exp(-dt*10);}
+      if(!holding){turn*=Math.exp(-dt*10);}
       elapsed+=dt;
     }
     { // Render active deformation on every animation frame; idle geometry is cached.
@@ -738,6 +735,10 @@
   function toggleTime(){document.dispatchEvent(new Event('restoresweet'));setPaused(!paused);}
   still.addEventListener('click',toggleTime);
   motion.addEventListener('change', event => setPaused(event.matches));
+  // The landscape can be held still while the hands continue showing real time.
+  setInterval(()=>{
+    if(ready&&paused&&!document.hidden&&handTime!==localClockSeconds())start();
+  },250);
   document.addEventListener('visibilitychange', () => {
     release();
     if (document.hidden) cancelAnimationFrame(frame); else start();

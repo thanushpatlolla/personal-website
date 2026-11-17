@@ -513,3 +513,12 @@ Revision92 (DESIGN ONLY): Mountain-specific extra deformation strengthened15%: l
 Revision93 (DESIGN ONLY): Mountain-specific added displacement/curls increased another20% (.897 lateral gain,.483 vertical gain,.01656/.00828 curls). Shared ambient speed including text increased10%,1.331→1.4641x original. Skyline protection retained.
 
 Revision94: Shared ambient movement increased another10%,1.4641→1.61051x original. User explicitly approves production push, including accumulated mountain curvature and speed revisions88–94. Skyline protection retained.
+
+Revision95 (DESIGN ONLY): Clock hands now show visitor-local wall time from Date,
+resampled each frame and refreshed while landscape paused. Removed synthetic
+random ticks and winding-driven hand offset; winding still restores landscape.
+Added subtle whole-clock drift (~17px horizontal/11px vertical at standard size),
+using ambient time and melt intensity, shared by geometry/hit targets/cues.
+Ridge-clock variant stays seated. Seconds hand length168→182, width3.2→5.5,
+color brighter copper-red#d85b32. Syntax,45 geometry cases/18 clock cases and
+four local-time mapping cases pass. Browser preview checked; not published.
