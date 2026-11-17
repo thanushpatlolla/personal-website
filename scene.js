@@ -481,7 +481,10 @@
     }
     if(manualMelt===null&&(!paused||pauseTween)&&ambientBlend>0){
       const u=p[0]/W,v=p[1]/H;
-      p[0]+=ambientAt(ambientX,u,v)*m;p[1]+=ambientAt(ambientY,u,v)*m;
+      const cover=Math.max(W/photo.naturalWidth,H/photo.naturalHeight),photoHeight=photo.naturalHeight*cover;
+      const photoY=(y-(H-photoHeight)/2)/photoHeight;
+      const mountainMotion=1-.10*smooth(.46,.58,photoY);
+      p[0]+=ambientAt(ambientX,u,v)*m*mountainMotion;p[1]+=ambientAt(ambientY,u,v)*m*mountainMotion;
     }
     // Keep the lake recognizable and easier to catch as the surrounding paint moves.
     if(lakeRegion){

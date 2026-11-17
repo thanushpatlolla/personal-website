@@ -655,3 +655,5 @@ Revision108 (DESIGN ONLY): User requests restrained return toward original. Used
 Revision109 (DESIGN ONLY): User cannot feel mouse propagation. Emit based on accumulated pointer travel (24px threshold,65px full strength,300ms spacing), not individual event size. Broad fronts now4px nominal,3px/axis combined soft cap. Restrained ambient/shape revision108 preserved. Production remains102.
 
 Revision110 (DESIGN ONLY): User wants slow but clearly visible landscape propagation. Mouse fronts move95px/s (was150), remain up to16s with gentle.10/s damping and final fade, narrower65–84px typical bands, radial-dominant displacement,16px nominal amplitude with12px/axis soft cap. Emissions650ms apart, max5 fronts. Ambient settings unchanged. Production remains102.
+
+Revision111 (DESIGN ONLY): User requests a touch less mountain movement. Reduce shared ambient/wave displacement10% over terrain, smoothly feathered across photoY.46–.58. Static mountain shape, text/sky movement, propagation speed/lifetime and local viscous dragging unchanged. Production remains102.
