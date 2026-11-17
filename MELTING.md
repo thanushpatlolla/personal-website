@@ -344,3 +344,6 @@ Revision53: Seconds hand width1.5→3.2 texture pixels; brighter muted copper
 
 Revision54: Restored visible “loss landscape?” label on valley hint, retaining
 its downward caret. Other three retain ?/caret cues. User likes this distinction.
+
+Revision55: Valley informational target uses default arrow cursor instead of
+help/question-mark cursor. Visible loss landscape? hover label remains.

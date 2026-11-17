@@ -8,7 +8,7 @@
   const target=document.createElementNS(ns,'path');target.classList.add('hill-target');
   if(config.hitPadding)target.style.strokeWidth=String(config.hitPadding*2)+'px';
   target.setAttribute('tabindex','0');target.setAttribute('role',config.info?'img':'button');target.setAttribute('aria-label',hasCard?'Open '+config.label:config.label);
-  if(config.info)target.style.cursor='help';
+  if(config.info)target.style.cursor='default';
   if(config.action)target.setAttribute('aria-pressed','false');else if(hasCard){target.setAttribute('aria-expanded','false');target.setAttribute('aria-controls',config.id);}
   const outline=document.createElementNS(ns,'path');outline.classList.add('hill-outline');
   layer.append(target,outline);document.body.append(layer);
