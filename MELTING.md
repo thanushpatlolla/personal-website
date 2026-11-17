@@ -597,3 +597,5 @@ Release126: User requests half desktop turn50% restored and production push. Win
 Revision127 (DESIGN ONLY): User wants to try25% toward white instead of12%, measured from original peak#b6b4a9/clock#9da4a8 swatches. Production release126 retains12% until approved.
 
 Release128: User approves peak frame25% toward white (#c8c7be), clock30% (#babfc2), both relative to original swatches. Publish both to production.
+
+Revision129 (DESIGN ONLY): Start15% melted (energy/charge.85), retaining immediate startup decay at denominator8s. Full melt now about6.8s after ready, plus smoothing. Production remains128.

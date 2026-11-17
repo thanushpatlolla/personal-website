@@ -6,8 +6,8 @@
   const still = document.querySelector('#still');
   const note = document.querySelector('#time-note');
   const motion = matchMedia('(prefers-reduced-motion: reduce)');
-  // Start 30% melted; normal charge decay begins immediately when ready.
-  let paused = motion.matches, energy = .7, charge = .7, holding = false, angle = null;
+  // Start 15% melted; normal charge decay begins immediately when ready.
+  let paused = motion.matches, energy = .85, charge = .85, holding = false, angle = null;
   let initialMelt=true;
   let heldFor=0, ratchet=0, turn=0, recoil=0, lastKey=0, gestureCenter=null, gestureTurned=false;
   let windingOffset=0,keyWinding=false;
