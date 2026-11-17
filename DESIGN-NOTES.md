@@ -577,3 +577,5 @@ requested separation. Pushed only fad905e (revision83) to main. Snoopy stays
 design-only. DEPLOY.md now describes actual Worker setup rather than Pages.
 
 Revision85 (DESIGN ONLY): Snoopy shifted left to photo UV(.435,.549), feet seated on central ridge shoulder. Now drawn directly into scene texture before veil, so entire character deforms with mountain (base melt, ambient and pointer motion), rather than translating rigid overlay. Original30px size and playing-only visibility retained. Removed snoopy.js overlay and CSS. Syntax/browser preview checked.
+
+Release85: User explicitly requested push. Promoted revision85 (ba67073) to main for production. Future design pushes remain isolated by disabled preview-branch builds.

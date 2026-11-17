@@ -29,8 +29,9 @@ remaining unchanged. This was discovered and corrected on 2026-11-17.
 
 Local server: `python3 -m http.server 8765` from this directory.
 
-## Current split
+## Current published version
 
-Production approved through revision83 (`fad905e`): gentle terrain stretch and
-music selection that preserves paused/playing state.
-Design revision85 adds a tiny original-image Snoopy while music plays, painted into the terrain so he melts with it.
+User approved revision85 on 2026-11-17: gentle terrain stretch, playback-state
+preservation, and tiny Snoopy seated farther left, melting with the mountain.
+Production and design currently share this approved version. Subsequent design
+pushes remain isolated because preview-branch builds are disabled.
