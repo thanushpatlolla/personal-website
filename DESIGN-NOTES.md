@@ -593,3 +593,5 @@ Revision90 (DESIGN ONLY): Ambient speed increased another10%, from1.10x to1.21x 
 Revision91 (DESIGN ONLY): Increased shared ambient speed another10%,1.21x to1.331x original. Both text fastTime and landscape time/swell use ambientTime, so text and all scene regions accelerate together. Deformation amplitudes unchanged.
 
 Revision92 (DESIGN ONLY): Mountain-specific extra deformation strengthened15%: lateral gain.65→.7475, vertical gain.35→.4025, lateral curl.012→.0138 and vertical curl.006→.0069. Shared ambient speed and skyline protection unchanged.
+
+Revision93 (DESIGN ONLY): Mountain-specific added displacement/curls increased another20% (.897 lateral gain,.483 vertical gain,.01656/.00828 curls). Shared ambient speed including text increased10%,1.331→1.4641x original. Skyline protection retained.

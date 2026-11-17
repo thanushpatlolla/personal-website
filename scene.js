@@ -333,7 +333,7 @@
   }
   function advanceAmbient(dt){
     if(manualMelt!==null){ambientBlend=0;return false;}
-    ambientTime+=dt*1.331;ambientBlend+=(1-ambientBlend)*(1-Math.exp(-dt*2));
+    ambientTime+=dt*1.4641;ambientBlend+=(1-ambientBlend)*(1-Math.exp(-dt*2));
 
     const copy=document.querySelector('.intro').getBoundingClientRect();
     for(let y=0;y<ambientH;y++)for(let x=0;x<AMBIENT_N;x++){
@@ -401,16 +401,16 @@
       // Stronger mountain curvature, with opposing curls rather than a shared sag.
       const mountainBend=smooth(.46,.56,photoY)*(1-smooth(.84,1,photoY));
       const curl=m*material.options.intensity*mountainBend*edge;
-      data[i]=(p[0]-px)*(1+.7475*mountainBend)
-        +photoHeight*.0138*Math.sin((photoY-.5)*14+u*4)*curl;
+      data[i]=(p[0]-px)*(1+.897*mountainBend)
+        +photoHeight*.01656*Math.sin((photoY-.5)*14+u*4)*curl;
       const dy=p[1]-py;
       const terrain=smooth(.28,.44,photoY)*(1-smooth(.70,.96,photoY));
       const gentle=dy>0?dy*(1-.85*terrain):dy;
       const stretched=dy-.92*ridgeDrift[x]*ridgeWeight*smooth(0,.08,v)*smooth(0,.08,1-v)+stretch*edge;
       // Mostly the restrained mountain balance, with only a touch of stretch.
       const verticalBend=smooth(.56,.66,photoY)*(1-smooth(.84,1,photoY));
-      data[i+1]=(gentle+.15*(stretched-gentle))*(1+.4025*verticalBend)
-        +photoHeight*.0069*Math.sin(u*13+photoY*4)*curl;
+      data[i+1]=(gentle+.15*(stretched-gentle))*(1+.483*verticalBend)
+        +photoHeight*.00828*Math.sin(u*13+photoY*4)*curl;
     }
     baseMap={nx,ny,data,m,version:material.version};
   }
