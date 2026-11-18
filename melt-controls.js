@@ -29,9 +29,9 @@
   panel.querySelector('[data-action="clear"]').onclick=()=>api.clear();
   panel.querySelector('[data-action="melt"]').onclick=()=>api.melt();
   panel.querySelector('[data-action="full"]').onclick=()=>api.previewMelt(1);
-  panel.querySelector('[data-action="save"]').onclick=()=>{try{localStorage.setItem(key,JSON.stringify({feel:api.getFeel(),clock:clock.value,start:start.value}));status.textContent='Saved here. Tell me when to adopt it.';}catch{status.textContent='Could not save in this browser.';}};
+  panel.querySelector('[data-action="save"]').onclick=()=>{try{localStorage.setItem(key,JSON.stringify({feel:api.getFeel(),clock:clock.value,clockRevision:2,start:start.value}));status.textContent='Saved here. Tell me when to adopt it.';}catch{status.textContent='Could not save in this browser.';}};
   panel.querySelector('[data-action="reset"]').onclick=()=>{try{localStorage.removeItem(key);}catch{}api.presetFeel('wax');preset.value='wax';start.value='clear';api.clear();sync();status.textContent='Soft wax defaults restored.';};
-  try{const saved=JSON.parse(localStorage.getItem(key));if(saved){for(const name of ['text','sky','mountains'])if(saved.feel?.[name])api.configureFeel(name,saved.feel[name]);if(saved.clock)api.setClockStyle(saved.clock);if(['clear','auto','melted'].includes(saved.start))start.value=saved.start;applyStart();status.textContent='Loaded saved feel.';}}catch{}
+  try{const saved=JSON.parse(localStorage.getItem(key));if(saved){for(const name of ['text','sky','mountains'])if(saved.feel?.[name])api.configureFeel(name,saved.feel[name]);if(saved.clock&&(saved.clock!=='draped'||saved.clockRevision===2))api.setClockStyle(saved.clock);if(['clear','auto','melted'].includes(saved.start))start.value=saved.start;applyStart();status.textContent='Loaded saved feel.';}}catch{}
   sync();
   document.addEventListener('keydown',e=>{if(e.shiftKey&&e.key.toLowerCase()==='m'&&!e.target.matches('input,textarea,select')){e.preventDefault();panel.open=!panel.open;}});
 })();

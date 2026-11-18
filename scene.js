@@ -127,7 +127,7 @@
   const snoopy=new Image();snoopy.src='/assets/snoopy-headphones.png';
   const song=document.querySelector('#song');
   const clockModes=['original','warm','ridge','draped'];
-  let clockStyle=new URLSearchParams(location.search).get('clock')||'draped';
+  let clockStyle=new URLSearchParams(location.search).get('clock')||'warm';
   if(!clockModes.includes(clockStyle))clockStyle='warm';
   const originalWatch=new Image();originalWatch.src='/assets/user-crash-clock.png';
   // Both warm treatments use the exact original pixels; only shader color changes.
