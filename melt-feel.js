@@ -4,7 +4,7 @@
   const smooth=(a,b,v)=>{const t=clamp((v-a)/(b-a),0,1);return t*t*(3-2*t);};
   const presets={
     original:{text:{swirl:1,sag:0,drip:0,settle:0},sky:{swirl:1,sag:0,drip:0,settle:0},mountains:{swirl:1,sag:0,drip:0,settle:0}},
-    wax:{text:{swirl:.412,sag:.55,drip:1,settle:.45},sky:{swirl:.23,sag:.32,drip:.38,settle:.12},mountains:{swirl:.55,sag:.055,drip:.035,settle:.025}},
+    wax:{text:{swirl:.412,sag:.55,drip:1,settle:.22},sky:{swirl:.23,sag:.32,drip:.38,settle:.12},mountains:{swirl:.55,sag:.055,drip:.035,settle:.025}},
     syrup:{text:{swirl:.05,sag:.5,drip:.85,settle:.5},sky:{swirl:.08,sag:.2,drip:.25,settle:.25},mountains:{swirl:.12,sag:.6,drip:.5,settle:.45}},
     quiet:{text:{swirl:.08,sag:.12,drip:.25,settle:.1},sky:{swirl:.05,sag:.06,drip:0,settle:.05},mountains:{swirl:.12,sag:.2,drip:.15,settle:.12}}
   };
@@ -33,7 +33,7 @@
     materialAt(x,y,kind){
       const unit=Math.min(this.width,this.height),text=kind==='text';
       // Broad coherent soft patches keep words and ridges recognizable.
-      const length=text?Math.max(170,this.text.width*.68):Math.max(100,unit*.16);
+      const length=text?Math.max(170,this.text.width*.68):Math.max(80,unit*.12);
       const broad=this.noise(x/length+3.7,y/(length*1.4)+8.1);
       const detail=this.noise(x/(length*.57)+31.4,y/(length*.9)+17.2);
       return {mobility:.15+.85*smooth(.15,.85,.8*broad+.2*detail),side:this.noise(x/(length*1.3)+62,y/length+9)-.5,yield:.04+.20*(1-broad),unit:text?Math.min(400,unit):unit};
@@ -42,8 +42,8 @@
       const u=x/this.width,v=y/this.height,s=this.values(y,kind);
       if(s.swirl===1&&s.sag===0&&s.drip===0&&s.settle===0)return [dx,dy];
       const edge=smooth(0,.10,u)*smooth(0,.10,1-u)*smooth(0,.20,v)*smooth(0,.24,1-v);
-      const wax=this.materialAt(x,y,kind),progress=smooth(wax.yield,1,m);
-      // Each patch yields at a different point, then sags and settles. Vertical
+      const wax=this.materialAt(x,y,kind),progress=m*(.65+.35*m);
+      // Immediate deformation without a yield threshold. Vertical
       // displacement is bounded, not multiplied by height within the material.
       const sag=wax.unit*.10*s.sag*(.25+.75*wax.mobility);
       const run=wax.unit*.13*s.drip*wax.mobility*wax.mobility;
@@ -54,7 +54,7 @@
       const patch=this.noise(x/48+11,y/95+28);
       const drips=7*scale*terrain*Math.pow(smooth(.32,.78,patch),2);
       const hanging=kind==='text'?21.384*Math.pow(.5+.5*Math.sin(x/43+y/190),2):drips;
-      return [side*progress*edge,(limit*Math.tanh((sag+run)/limit)*(kind==='text'?4.0392:1)+hanging)*progress*edge];
+      return [side*progress*edge,(Math.max(0,limit*Math.tanh((sag+run)/limit)*(kind==='text'?4.0392:1)-(kind==='text'?wax.unit*.06:0))+hanging)*progress*edge];
     }
     drift(x,y,m,time,kind){
       const u=x/this.width,v=y/this.height;
@@ -63,8 +63,8 @@
       const terrain=this.weights(y),text=kind==='text';
       const amplitude=(text?10.3:11.33*terrain)*Math.min(1,this.width/900)*m*edge;
       const phase=time*.32,a=u*8+phase,b=v*7-phase*.73;
-      const sky=text?0:22*(1-terrain)*Math.min(1,this.width/900)*m*edge;
-      const fineA=x/105+phase*.7,fineB=y/135-phase*.5;
+      const sky=text?0:24*(1-terrain)*Math.min(1,this.width/900)*m*edge;
+      const fineA=x/80+phase*.7,fineB=y/95-phase*.5;
       return [amplitude*Math.sin(a)*Math.cos(b)+sky*Math.sin(fineA)*Math.cos(fineB),
         -amplitude*.72*Math.cos(a)*Math.sin(b)+sky*.9*Math.cos(fineA)*Math.sin(fineB)];
     }
