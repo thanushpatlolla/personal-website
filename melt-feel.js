@@ -49,12 +49,12 @@
       const run=wax.unit*.13*s.drip*wax.mobility*wax.mobility;
       const side=wax.unit*.055*s.swirl*wax.side;
       const limit=wax.unit*.045;
-      return [side*progress*edge,limit*Math.tanh((sag+run)/limit)*progress*edge];
+      return [side*progress*edge,limit*Math.tanh((sag+run)/limit)*progress*edge*(kind==='text'?1.35:1)];
     }
     settling(x,y,m,age,kind){
       const u=x/this.width,v=y/this.height,s=this.values(y,kind),wax=this.materialAt(x,y,kind);
       const edge=smooth(0,.10,u)*smooth(0,.10,1-u)*smooth(0,.20,v)*smooth(0,.24,1-v);
-      return wax.unit*.025*s.settle*wax.mobility*(1-Math.exp(-age/22))*edge*m;
+      return (kind==='text'?1.35:1)*wax.unit*.025*s.settle*wax.mobility*(1-Math.exp(-age/22))*edge*m;
     }
 
   }

@@ -648,3 +648,5 @@ Revision146 (DESIGN ONLY): Snoopy height30→31px with aspect ratio preserved. B
 Revision147 (DESIGN ONLY): Space toggles music playback from the page using existing music button action. Prevent page scrolling/repeated toggles; ignore modifiers and focused links/buttons/form/editable controls, preserving clock Space-to-wind and native keyboard activation. Production remains137.
 
 Revision149 (DESIGN ONLY): Fix whole close-button alignment within photo title bar, not only × glyph. Header32px with -7px top margin preserves image position/card height; centered caption. Button top8→4px gives4px above and4px below including1px shadow, verified in browser on peak photo. Shared styles apply to all captioned photo frames. Production remains137.
+
+Revision150 (DESIGN ONLY): User likes melt direction but wants more text melt. Increase automatic text downward sag/settling35%; sideways swirl, landscape and mouse unchanged. Remove parameter box script and styles entirely; saved browser tuning no longer loads. Iterate through chat. Production remains137.
