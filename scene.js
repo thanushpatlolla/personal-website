@@ -33,8 +33,6 @@
   let W = 1, H = 1, timeBounds=null, lakeRegion=null, easterRegions=[], clockBox, ready = false, rebuilding = false;
   const material=new MeltField();
   const feel=new MeltFeel();
-  const depthField=new DepthField();
-  let cursorDepth=4,cursorDepthTime=null,depthPress=null;
   const motionSettings={speed:1.633,sway:1,wave:1.0125,smoothing:0,persistence:1};
   let manualMelt=null,fluidActive=false,geometryDirty=true,pauseTween=null;
   const currentMelt=()=>pauseTween?pauseTween.from*(1-pauseTween.progress*pauseTween.progress*(3-2*pauseTween.progress)):(manualMelt===null?(paused?0:1-energy):manualMelt);
@@ -306,7 +304,6 @@
       y:(H-photo.naturalHeight*photoScale)/2+v*photo.naturalHeight*photoScale,
       rx:Math.max(72,.065*photo.naturalWidth*photoScale),ry:Math.max(64,.055*photo.naturalHeight*photoScale)}));
     material.resize(W,H);
-    depthField.resize(W,H,photo.naturalWidth,photo.naturalHeight);
     const intro=document.querySelector('.intro').getBoundingClientRect();
     feel.resize(W,H,(H-photo.naturalHeight*photoScale)/2,photo.naturalHeight*photoScale,{left:intro.left,top:intro.top+scrollY,width:intro.width,height:intro.height});
     const masks=[['.intro',.82],['.music',.70],['#still',.94]].map(([selector,strength])=>{
@@ -327,7 +324,7 @@
   function resetFluid(){
     fluidH=Math.max(40,Math.min(180,Math.round(FLUID_N*H/W)));
     [dragX,dragY,velX,velY,nextX,nextY,nextVX,nextVY]=Array.from({length:8},()=>new Float32Array(FLUID_N*fluidH));
-    previousPointer=null;fluidTime=0;fluidActive=false;cursorDepthTime=null;
+    previousPointer=null;fluidTime=0;fluidActive=false;
   }
   function dragPaint(px,py,dx,dy){
     const radius=Math.min(110,Math.max(70,W*.085));
@@ -375,30 +372,27 @@
   // shape; normal clock mode breathes without requiring pointer movement.
   const AMBIENT_N=32;
   // Broad, low-amplitude traveling disturbances, separate from local dragging.
-  let waveTime=0,lastWaveTime=-1,waveDistance=0,lastWaveInput=-1;
+  let mouseWaves=[],waveTime=0,lastWaveTime=-1,waveDistance=0,lastWaveInput=-1;
   function emitMouseWave(x,y,dx,dy){
     const distance=Math.hypot(dx,dy);
-    const source=depthSource(x,y),now=performance.now()/1000;
-    const depthDt=cursorDepthTime===null?Infinity:Math.max(0,now-cursorDepthTime);
-    cursorDepth+=(source.z-cursorDepth)*(1-Math.exp(-depthDt/.16));cursorDepthTime=now;
     const freshGesture=waveTime-lastWaveInput>.18;
     lastWaveInput=waveTime;
     if(freshGesture){waveDistance=0;lastWaveTime=-1;}
     waveDistance+=distance;
     if(waveTime-lastWaveTime<.15||waveDistance<1||distance===0)return;
-    depthField.emit(source.x,source.y,cursorDepth,dx,dy,Math.max(.4,Math.min(1,waveDistance/65)));
+    mouseWaves.push({x,y,dx:dx/distance,dy:dy/distance,born:waveTime,strength:Math.max(.4,Math.min(1,waveDistance/65))});
     waveDistance=0;
-    lastWaveTime=waveTime;
+    if(mouseWaves.length>5)mouseWaves.shift();lastWaveTime=waveTime;
   }
-  let ambientH=32,ambientX,ambientY,ambientTime=0,ambientBlend=0;
+  let ambientH=32,ambientX,ambientY,mouseWaveX,mouseWaveY,ambientTime=0,ambientBlend=0;
   function resetAmbient(){
-    waveTime=0;lastWaveTime=-1;waveDistance=0;lastWaveInput=-1;
+    mouseWaves=[];waveTime=0;lastWaveTime=-1;waveDistance=0;lastWaveInput=-1;
     ambientH=Math.max(24,Math.min(90,Math.round(AMBIENT_N*H/W)));
-    ambientX=new Float32Array(AMBIENT_N*ambientH);ambientY=new Float32Array(ambientX.length);ambientBlend=0;
+    ambientX=new Float32Array(AMBIENT_N*ambientH);ambientY=new Float32Array(ambientX.length);mouseWaveX=new Float32Array(ambientX.length);mouseWaveY=new Float32Array(ambientX.length);ambientBlend=0;
   }
   function advanceAmbient(dt){
     if(manualMelt!==null){ambientBlend=0;return false;}
-    waveTime+=dt;
+    waveTime+=dt;mouseWaves=mouseWaves.filter(w=>waveTime-w.born<16);
     ambientTime+=dt*motionSettings.speed;ambientBlend+=(1-ambientBlend)*(1-Math.exp(-dt*2));
 
     const copy=document.querySelector('.intro').getBoundingClientRect();
@@ -415,12 +409,20 @@
       const oldX=ambientX[i],oldY=ambientY[i];
       ambientX[i]=motionSettings.sway*28*(waveX(time)*(1-copyWeight)+waveX(fastTime)*copyWeight)*strength;
       ambientY[i]=motionSettings.sway*38*(waveY(time)*(1-copyWeight)+waveY(fastTime)*copyWeight)*strength;
-      // A low-amplitude traveling swell connects sky, landscape, clock and type.
-      const swell=ambientBlend*edge*material.options.intensity*motionSettings.wave;
-      const phase=u*5.2+v*3.4-ambientTime*.42;
-      const crossPhase=u*2.6-v*4.1+ambientTime*.31;
-      ambientX[i]+=4.5*Math.sin(phase+.8)*swell;
-      ambientY[i]+=(6*Math.sin(phase)+2*Math.sin(crossPhase))*swell;
+      // Quiet, non-periodic sideways drift; gravity-driven sag lives in MeltFeel.
+      // Keep the mouse-wave calculation below exactly as at checkpoint1bfb4fa.
+      ambientX[i]*=.18;ambientY[i]*=.08;
+      let rippleX=0,rippleY=0;
+      for(const wave of mouseWaves){
+        const age=waveTime-wave.born,rx=u*W-wave.x,ry=v*H-wave.y,r=Math.hypot(rx,ry);
+        const width=Math.max(65,Math.min(W,H)*.085),front=age*114;
+        const q=(r-front)/width;
+        const pulse=16*wave.strength*(1-Math.exp(-age*35))*Math.exp(-age*.10)*(1-smooth(12,16,age))*Math.exp(-q*q*1.5)*Math.cos(q*2);
+        rippleX+=pulse*(wave.dx*.2+(r?rx/r:0)*.8);
+        rippleY+=pulse*(wave.dy*.2+(r?ry/r:0)*.8);
+      }
+      mouseWaveX[i]=12*Math.tanh(rippleX/12)*edge*protection;
+      mouseWaveY[i]=12*Math.tanh(rippleY/12)*edge*protection;
       const response=motionSettings.smoothing>0?1-Math.exp(-dt/motionSettings.smoothing):1;
       ambientX[i]=oldX+(ambientX[i]-oldX)*response;ambientY[i]=oldY+(ambientY[i]-oldY)*response;
     }
@@ -451,12 +453,13 @@
     const photoTop=(H-photoHeight)/2;
     // Remove each column's shared ridge drift, not its vertical variation.
     // This leaves opposing pulls above/below the ridge instead of sinking land.
+    const legacyShape=Object.values(feel.settings).some(s=>s.swirl===1&&s.sag===0&&s.drip===0&&s.settle===0);
     const ridgeY=photoTop+photoHeight*.52;
     const ridgeDrift=Array.from({length:nx+1},(_,x)=>{
-      const px=x*W/nx;return material.map(px,ridgeY,m)[1]-ridgeY;
+      const px=x*W/nx;return legacyShape?material.map(px,ridgeY,m)[1]-ridgeY:0;
     });
     for(let y=0;y<=ny;y++)for(let x=0;x<=nx;x++){
-      const px=x*W/nx,py=y*H/ny,p=material.map(px,py,m),i=(y*(nx+1)+x)*2;
+      const px=x*W/nx,py=y*H/ny,p=legacyShape?material.map(px,py,m):[px,py],i=(y*(nx+1)+x)*2;
       const photoY=(py-photoTop)/photoHeight,u=px/W,v=py/H;
       const ridgeWeight=smooth(.10,.40,photoY)*(1-smooth(.70,1,photoY));
       const edge=smooth(0,.10,u)*smooth(0,.10,1-u)*smooth(0,.08,v)*smooth(0,.08,1-v);
@@ -495,12 +498,12 @@
       y+(a[i+1]*(1-fx)+a[i+3]*fx)*(1-fy)+(a[i+stride+1]*(1-fx)+a[i+stride+3]*fx)*fy,1];
   }
   function flow(x,y,m,kind='landscape'){
-    if(m===0){const d=depthField.sample(x,y,kind);return [x+d[0],y+d[1],1];}
+    if(m===0)return [x,y,1];
     prepareBase(m);const p=basePoint(x,y,kind);
     p[1]+=feel.settling(x,y,m,meltAge,kind);
     if(fluidActive){
       const beforeX=p[0],beforeY=p[1];
-      const step=m/4*depthField.cursorInfluence(x,y,kind,cursorDepth);
+      const step=m/4;
       for(let i=0;i<4;i++){
         interaction(p[0],p[1],dragA);
         interaction(p[0]+dragA[0]*step*.5,p[1]+dragA[1]*step*.5,dragB);
@@ -519,21 +522,19 @@
       }
     }
     if(manualMelt===null&&(!paused||pauseTween)&&ambientBlend>0){
-      const z=depthField.depth(x,y,kind);
-      const u=p[0]/W+z*.012,v=p[1]/H-z*.009;
+      const u=p[0]/W,v=p[1]/H;
       const cover=Math.max(W/photo.naturalWidth,H/photo.naturalHeight),photoHeight=photo.naturalHeight*cover;
       const photoY=(y-(H-photoHeight)/2)/photoHeight;
-      const mountainMotion=(1-.19*smooth(.46,.58,photoY))*(1.06-z*.045);
+      const mountainMotion=1-.19*smooth(.46,.58,photoY);
       const swirl=feel.values(y,kind).swirl;
-      p[0]+=(ambientAt(ambientX,u,v)*swirl)*m*mountainMotion;
-      p[1]+=(ambientAt(ambientY,u,v)*swirl)*m*mountainMotion;
+      p[0]+=(ambientAt(ambientX,u,v)*swirl+ambientAt(mouseWaveX,u,v))*m*mountainMotion;
+      p[1]+=(ambientAt(ambientY,u,v)*swirl+ambientAt(mouseWaveY,u,v))*m*mountainMotion;
     }
     // Keep the lake recognizable and easier to catch as the surrounding paint moves.
     if(lakeRegion){
       const b=lakeRegion,weight=Math.exp(-(((x-b.x)/b.rx)**2+((y-b.y)/b.ry)**2));
       p[0]=x+(p[0]-x)*(1-.75*weight);p[1]=y+(p[1]-y)*(1-.75*weight);
     }
-    const depthMotion=depthField.sample(x,y,kind);p[0]+=depthMotion[0];p[1]+=depthMotion[1];
     return p;
   }
   document.addEventListener('pointermove',event=>{
@@ -648,12 +649,11 @@
     if(!paused)handTime=localClockSeconds()+((holding||keyWinding)?windingOffset:0);
     if(pauseTween){
       pauseTween.progress=Math.min(1,pauseTween.progress+dt/3);geometryDirty=true;
-      if(pauseTween.progress===1){pauseTween=null;charge=energy=1;resetFluid();resetAmbient();depthField.clear();}
+      if(pauseTween.progress===1){pauseTween=null;charge=energy=1;resetFluid();resetAmbient();}
     }
     if(!paused){
       const motionDt=dt;
       if(currentMelt()>.001&&!holding)meltAge+=dt;else if(currentMelt()<=.001)meltAge=0;
-      if(motionDt>0&&depthField.advance(motionDt))geometryDirty=true;
       if(motionDt>0&&advanceFluid(motionDt))geometryDirty=true;
       if(motionDt>0&&advanceAmbient(motionDt)&&currentMelt()>.001)geometryDirty=true;
       heldFor=holding?heldFor+dt:0;
@@ -674,6 +674,12 @@
     if(!paused||pauseTween)frame=requestAnimationFrame(update);
   }
   function start() { cancelAnimationFrame(frame); last = 0; frame = requestAnimationFrame(update); }
+  function syncTimeControl(){
+    const stopped=paused||(!meltEnabled&&currentMelt()<.001);
+    still.textContent=stopped?'let time pass':'pause time';
+    still.setAttribute('aria-pressed',String(stopped));
+  }
+  function refreshTimeControl(){syncTimeControl();if(ready){captureScene();geometryDirty=true;}}
   function setPaused(value) {
     const from=currentMelt(),wasTransitioning=!!pauseTween;
     pauseTween=null;
@@ -685,16 +691,15 @@
     holding = false;
     angle = null;
     document.body.classList.toggle('paused', paused);
-    still.textContent = paused ? 'let time pass' : 'pause time';
-    still.setAttribute('aria-pressed', String(paused));
+    syncTimeControl();
     note.textContent = paused ? 'a moment, held' : 'time is passing';
     if(paused){
       if(ready&&!motion.matches&&from>.001)pauseTween={from,progress:0};
-      else {charge=energy=1;resetFluid();resetAmbient();depthField.clear();}
+      else {charge=energy=1;resetFluid();resetAmbient();}
       geometryDirty=true;
     }
-    render(currentMelt());
     if(ready)captureScene();
+    render(currentMelt());
     start();
   }
   function wind(pointerType) {
@@ -709,11 +714,11 @@
   function beginMelting(){
     initialMelt=false;manualMelt=null;meltEnabled=true;
     if(paused)setPaused(false);
-    clockHintDismissed=true;geometryDirty=true;start();
+    clockHintDismissed=true;geometryDirty=true;refreshTimeControl();start();
   }
   function showClear(){
     meltEnabled=false;initialMelt=false;manualMelt=null;pauseTween=null;
-    charge=energy=1;meltAge=0;resetFluid();resetAmbient();depthField.clear();geometryDirty=true;
+    charge=energy=1;meltAge=0;resetFluid();resetAmbient();geometryDirty=true;refreshTimeControl();
     if(paused&&!motion.matches)setPaused(false);else {render(0);start();}
   }
   function release(event) {
@@ -723,7 +728,7 @@
     windingGain=1.5;windingOffset=0;keyWinding=false;
     if(!paused)handTime=localClockSeconds();
     clockHintDismissed=true;windHint.style.display='none';holding=false;angle=null;gestureCenter=null;
-    if(wasWinding&&charge>=.999){charge=energy=1;meltEnabled=false;}
+    if(wasWinding&&charge>=.999){charge=energy=1;meltEnabled=false;refreshTimeControl();}
     if(clickedClear)beginMelting();
     note.textContent=paused?'a moment, held':meltEnabled?'time is passing':'click the clock to melt';
   }
@@ -756,17 +761,6 @@
     for(let i=1;i<16;i++)points.push(map(x0,y1-(y1-y0)*i/16));
     return points;
   }
-  function depthSource(x,y){
-    // Cursor depth belongs to a continuous ramp, never to a selected mask.
-    // Only invert the landscape warp: crossing text must not switch surfaces.
-    let sx=x,sy=y;
-    for(let i=0;i<5;i++){const p=flow(sx,sy,currentMelt(),'landscape');sx+=x-p[0];sy+=y-p[1];}
-    return {x:sx,y:sy,z:depthField.cursorDepth(sx,sy),kind:'landscape'};
-  }
-
-  document.addEventListener('pointerdown',event=>{depthPress=event.isPrimary&&event.button===0?{x:event.clientX,y:event.clientY,time:performance.now(),moved:false}:null;},true);
-  document.addEventListener('pointermove',event=>{if(depthPress&&Math.hypot(event.clientX-depthPress.x,event.clientY-depthPress.y)>7)depthPress.moved=true;},true);
-  document.addEventListener('pointercancel',()=>{depthPress=null;},true);
   document.addEventListener('pointerdown',event=>{
     if(!ready||!event.isPrimary||event.button!==0||event.target.closest('.melt-ui,.hill-ui'))return;
     const m=currentMelt();
@@ -790,11 +784,6 @@
         return;
       }
     }
-    if(depthPress&&!depthPress.moved&&!holding&&!paused&&performance.now()-depthPress.time<600&&!event.target.closest('a,button,input,select,summary')){
-      const source=depthSource(event.clientX,event.clientY+scrollY);
-      if(!nearShape(boundary((u,v)=>watchPoint(u,v,m),.09,.01,.91,.99),event.clientX,event.clientY+scrollY,14)){depthField.emit(source.x,source.y,source.z,0,1,1.3);geometryDirty=true;}
-    }
-    depthPress=null;
     document.dispatchEvent(new CustomEvent('skyclick',{detail:{x:event.clientX,y:event.clientY+scrollY,target:event.target}}));
   },true);
   clock.addEventListener('pointermove', event => {
@@ -835,9 +824,6 @@
     if(manualMelt!==null){charge=energy=1-manualMelt;manualMelt=null;}
   }
   window.melting={
-    getDepthState(){return {spacing:depthField.spacing,speed:depthField.speed,waves:depthField.waves.map(w=>({x:w.x,y:w.y,z:w.z,age:depthField.time-w.born}))};},
-    getDepthAt(x,y,kind='landscape'){return {depth:depthField.depth(x,y,kind),weights:depthField.weights(x,y,kind)};},
-    getDepthSource(x,y){return depthSource(x,y);},
     getFeel(){return feel.snapshot();},
     configureFeel(region,values){feel.configure(region,values);baseMap=null;geometryDirty=true;if(ready)render(currentMelt());return feel.snapshot();},
     presetFeel(name){feel.preset(name);baseMap=null;geometryDirty=true;if(ready)render(currentMelt());return feel.snapshot();},
@@ -872,7 +858,7 @@
     setRegions(regions){material.setRegions(regions);geometryDirty=true;render(currentMelt());},
     getState(){return {ready,paused,meltEnabled,clockStyle,meltProgress:currentMelt(),manual:manualMelt!==null,options:{...material.options},fluidActive,ambientTime,ambientActive:manualMelt===null&&!paused,renderMs:timing.frameMs};},
     mapPoint(x,y,progress=currentMelt()){return material.map(x,y,progress);},
-    samplePoint(x,y,kind='landscape'){return flow(x,y,currentMelt(),kind);},
+    samplePoint(x,y){return flow(x,y,currentMelt());},
     getClockCue(){
       if(!ready)return null;
       const m=currentMelt(),p=hoverPointer;
@@ -886,7 +872,11 @@
     },
     defaults:{...MeltField.defaults},limits:MeltField.limits
   };
-  function toggleTime(){initialMelt=false;meltEnabled=paused;document.dispatchEvent(new Event('restoresweet'));setPaused(!paused);}
+  function toggleTime(){
+    initialMelt=false;document.dispatchEvent(new Event('restoresweet'));
+    if(paused||(!meltEnabled&&currentMelt()<.001)){beginMelting();}
+    else {meltEnabled=false;setPaused(true);}
+  }
   still.addEventListener('click',toggleTime);
   motion.addEventListener('change', event => setPaused(event.matches));
   document.addEventListener('visibilitychange', () => {
