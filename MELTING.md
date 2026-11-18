@@ -646,3 +646,5 @@ Revision145 (DESIGN ONLY): Reduce mouse-wave output amplitude10% (12→10.8 coef
 Revision146 (DESIGN ONLY): Snoopy height30→31px with aspect ratio preserved. Bottom anchored at previous seatY+0.9px, so added height grows upward. Production remains137.
 
 Revision147 (DESIGN ONLY): Space toggles music playback from the page using existing music button action. Prevent page scrolling/repeated toggles; ignore modifiers and focused links/buttons/form/editable controls, preserving clock Space-to-wind and native keyboard activation. Production remains137.
+
+Revision149 (DESIGN ONLY): Fix whole close-button alignment within photo title bar, not only × glyph. Header32px with -7px top margin preserves image position/card height; centered caption. Button top8→4px gives4px above and4px below including1px shadow, verified in browser on peak photo. Shared styles apply to all captioned photo frames. Production remains137.
