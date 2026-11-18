@@ -76,7 +76,7 @@
   landmark({id:'valley-hint',info:true,label:'loss landscape?',hintLabel:'loss landscape?',hint:[.770,.558],
     ridge:[[.697,.547],[.717,.551],[.738,.556],[.756,.559],[.770,.558],[.786,.554],[.802,.547],[.817,.538],[.833,.528]],
     bottom:[[.825,.588],[.713,.590]]});
-  landmark({id:'lake-song',hitPadding:72,hint:[.343,.847],anchor:[.343,.847],caption:'time?',src:'/assets/lake-time.jpg',alt:'Vintage computers, game consoles and controllers scattered across a room',label:'time photograph and play Weird Fishes',action:()=>window.playLakeSong(),
+  landmark({id:'lake-song',hitPadding:72,hint:[.343,.847],anchor:[.343,.847],caption:'time?',src:'/assets/lake-time.jpg',alt:'Vintage computers, game consoles and controllers scattered across a room',label:'time photograph and play Biscuit',action:()=>window.playLakeSong(),
     ridge:[[.300,.866],[.310,.860],[.322,.856],[.332,.850],[.343,.847],[.349,.852],[.359,.855],[.369,.862],[.380,.865]],
     bottom:[[.380,.886],[.300,.887]]});
   landmark({id:'hill-photo',action:()=>window.playValleySong(),hint:[.725,.713],caption:'lake?',label:'hiking photograph',src:'/assets/hill-memory.jpg',alt:'Hikers following a trail through a green mountain valley',

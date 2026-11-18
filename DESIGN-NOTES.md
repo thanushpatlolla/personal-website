@@ -748,3 +748,8 @@ Revision150 (DESIGN ONLY): User likes melt direction but wants more text melt. I
 Revision151 (DESIGN ONLY): User selected supplied Westside Gunn Why I Do Em Like That opus for peak. Replace Oscar Peterson track, start at0; matching square album art from official auto-generated YouTube SPHiol5-upY thumbnail. Other song choices still under discussion; do not change them implicitly. Production remains137.
 
 Revision152 (DESIGN ONLY): Start fully melted except reduced-motion preference. Text sag multiplier1.35→1.9, stronger sag/drip and slight swirl. Mountains sag/drip/settling sharply reduced; bounded opposing circular ambient pulls add side-to-side/up-down movement with no cumulative droop. Mouse interaction unchanged. User supplied Pink Moon for peak from0; confirmed forest means lower hiking/valley discovery, now Westside Gunn from0. Pink Moon title artwork from supplied YouTube thumbnail (not album cover). Production remains137.
+
+Revision153 (DESIGN ONLY): Restore Oscar Peterson Trio The Girl From Ipanema at peak from0. Bottom time/computers picture (lake-song) now supplied Portishead Biscuit from0, Dummy art from iTunes; accessible label updated. Forest/hiking remains Westside Gunn. Melting unchanged. Production remains137.
+
+Revision154 (DESIGN ONLY): User requests much more distorted/droopy text with swirl and motion. Text scale cap320→400, sag multiplier1.9→3.4, stronger sag/drip/settling, swirl.4 and ambient circular amplitude3.5→10px. Terrain unchanged. Text gradient guard permits intentional heavier distortion (<.75px per pixel; still no fold), terrain retains.3 limit.
+Text also has18px uneven hanging lobes across lines, so deformation bends words locally rather than only moving whole paragraphs downward.
