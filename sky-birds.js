@@ -23,14 +23,14 @@
       const b=flock[i];b.age+=dt;b.x+=b.speed*dt;
       b.wanderTimer-=dt;
       if(b.wanderTimer<=0){
-        b.wanderGoal=Math.max(-8,Math.min(8,b.wanderGoal+(Math.random()-.5)*6));
-        b.wanderTimer=.7+Math.random()*.7;
+        b.wander=Math.max(-6,Math.min(6,b.wander+(Math.random()<.5?-1:1)*(1+Math.floor(Math.random()*2))));
+        b.wanderTimer=.09+Math.random()*.07;
       }
-      b.wander+=(b.wanderGoal-b.wander)*(1-Math.exp(-dt*2));
       const y=b.y+b.wander;
       b.el.style.transform=`translate(${Math.round(b.x)}px,${Math.round(y)}px)`;
       if(b.x>innerWidth+40||b.age>35){b.el.remove();flock.splice(i,1);}
     }
+    api.setBirds(flock.map((b,i)=>({x:Math.round(b.x),y:Math.round(b.y+b.wander),frame:Math.floor((b.age+i*.23)*10)%8})));
     frame=flock.length?requestAnimationFrame(tick):0;
   }
   document.addEventListener('skyclick',e=>{
@@ -43,7 +43,7 @@
     for(let i=0;i<2;i++){
       const el=document.createElement('span');el.className='sky-bird';
       const sprite=document.createElement('span');sprite.className='sky-bird-sprite';sprite.style.animationDelay=`-${i*.23}s`;el.append(sprite);layer.append(el);
-      const b={el,x:x-12-i*30,y:Math.max(8,y-scrollY-12+i*17),speed:63+i*3,age:0,wander:0,wanderGoal:0,wanderTimer:.2+i*.35};
+      const b={el,x:x-12-i*30,y:Math.max(8,y-scrollY-12+i*17),speed:63+i*3,age:0,wander:0,wanderTimer:.08+i*.05};
       el.style.transform=`translate(${b.x}px,${b.y}px)`;flock.push(b);
     }
     if(!frame){last=performance.now();frame=requestAnimationFrame(tick);}

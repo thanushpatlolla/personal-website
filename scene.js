@@ -119,7 +119,14 @@
     gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);return t;
   }
-  const sceneTexture=texture(), textTexture=texture(), watchTexture=texture();
+  const sceneTexture=texture(), textTexture=texture(), watchTexture=texture(), birdTexture=texture();
+  let birdSprites=[],birdsDirty=false,birdAtlasReady=false;
+  const birdAtlas=new Image();birdAtlas.src='/assets/bird-sprite.png';
+  birdAtlas.onload=()=>{
+    const c=document.createElement('canvas');c.width=128;c.height=48;const b=c.getContext('2d');
+    b.filter='saturate(.22) sepia(.15) brightness(1.15)';b.drawImage(birdAtlas,0,0);upload(birdTexture,c);
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.NEAREST);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.NEAREST);birdAtlasReady=true;birdsDirty=true;
+  };
   const scene=document.createElement('canvas'), paint=document.createElement('canvas');
   const ctx=scene.getContext('2d'), brush=paint.getContext('2d');
   paint.width=paint.height=700;
@@ -611,6 +618,20 @@
     return {nx,ny,vertices,vb,ib,count:indices.length};
   }
   const sceneGrid=createGrid(128,112),textGrid=createGrid(128,112),watchGrid=createGrid(64,80);
+  const birdGrid=createGrid(1,1);
+  function drawBirds(){
+    if(!birdAtlasReady||!birdSprites.length)return;
+    const {vertices,vb,ib,count}=birdGrid;gl.bindBuffer(gl.ARRAY_BUFFER,vb);
+    for(const [loc,size,offset] of [[pos,2,0],[uv,2,8],[shade,1,16]]){gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,size,gl.FLOAT,false,20,offset);}
+    gl.bindTexture(gl.TEXTURE_2D,birdTexture);gl.uniform1f(isClock,0);gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,ib);
+    for(const bird of birdSprites){let k=0;
+      for(let j=0;j<2;j++)for(let i=0;i<2;i++){
+        vertices[k++]=(bird.x+i*32)/W*2-1;vertices[k++]=1-(bird.y+scrollY+j*32)/H*2;
+        vertices[k++]=((motion.matches?0:bird.frame)*16+(i?0:16))/128;vertices[k++]=(16+j*16)/48;vertices[k++]=1;
+      }
+      gl.bufferSubData(gl.ARRAY_BUFFER,0,vertices);gl.drawElements(gl.TRIANGLES,count,gl.UNSIGNED_SHORT,0);
+    }
+  }
   let lastGeometryMelt=-1,lastTurn=-1,lastRecoil=-1;
   function mesh(tex,m,watchLayer,dirty,textLayer=false){
     const grid=watchLayer?watchGrid:textLayer?textGrid:sceneGrid,{nx,ny,vertices}=grid;
@@ -638,6 +659,7 @@
     gl.uniform1f(night,melt*.12);gl.uniform1f(clockWarm,clockStyle==='original'||clockStyle==='draped'?0:.45);
     mesh(sceneTexture,melt,false,dirty);
     mesh(textTexture,melt,false,dirty,true);
+    drawBirds();birdsDirty=false;
     mesh(watchTexture,melt,true,dirty||turn!==lastTurn||recoil!==lastRecoil);
     lastGeometryMelt=melt;lastTurn=turn;lastRecoil=recoil;geometryDirty=false;
     updateHints(melt);
@@ -668,7 +690,7 @@
       const melt=currentMelt();
       const tick=Math.floor(handTime)!==lastSecond;
       if(ready&&(holding||tick)){paintWatch();lastSecond=Math.floor(handTime);}
-      if(geometryDirty||tick||Math.abs(previousMelt-melt)>.0001||Math.abs(turn)>.0001||Math.abs(recoil)>.0001||paused){render(melt);previousMelt=melt;}
+      if(geometryDirty||birdsDirty||tick||Math.abs(previousMelt-melt)>.0001||Math.abs(turn)>.0001||Math.abs(recoil)>.0001||paused){render(melt);previousMelt=melt;}
       elapsed=0;
     }
     if(!paused||pauseTween)frame=requestAnimationFrame(update);
@@ -824,6 +846,7 @@
     if(manualMelt!==null){charge=energy=1-manualMelt;manualMelt=null;}
   }
   window.melting={
+    setBirds(sprites){birdSprites=sprites;birdsDirty=true;if(ready&&paused)render(currentMelt());},
     getFeel(){return feel.snapshot();},
     configureFeel(region,values){feel.configure(region,values);baseMap=null;geometryDirty=true;if(ready)render(currentMelt());return feel.snapshot();},
     presetFeel(name){feel.preset(name);baseMap=null;geometryDirty=true;if(ready)render(currentMelt());return feel.snapshot();},
