@@ -34,11 +34,7 @@ remaining unchanged. This was discovered and corrected on 2026-11-17.
 
 Local server: `python3 -m http.server 8765` from this directory.
 
-## Current published version
+## Current approved release
 
-User approved all current design changes through revision130 on 2026-11-17.
-Includes 15% starting melt with gentler initial decay, two-turn desktop winding with50% restoration in the first half turn, tuned mountain/ambient motion,
-propagating mouse waves with immediate onset, 3-second pause restoration,
-free photo discovery with lake unlocking clock, and sampled photo-frame colors.
-Gradient experiment and preview controls are removed. Preview-branch builds
-remain disabled. Verify live revision130 after the production push.
+User authorized all current design through revision155 on 2026-11-17.
+Includes stronger default text melting, gentler swirling terrain, removed birds and tuning panel, revised songs (Ipanema peak, Westside Gunn forest, Biscuit bottom), protected music/time controls, and removed Spotify social link. Preview-branch builds remain disabled. Verify live revision155 after pushing main.

@@ -30,7 +30,7 @@
     const now=new Date();return now.getHours()*3600+now.getMinutes()*60+now.getSeconds();
   }
   let last = 0, elapsed = 0, handTime = localClockSeconds(), frame;
-  let W = 1, H = 1, timeBounds=null, lakeRegion=null, easterRegions=[], clockBox, ready = false, rebuilding = false;
+  let W = 1, H = 1, timeBounds=null, controlRegions=[], lakeRegion=null, easterRegions=[], clockBox, ready = false, rebuilding = false;
   const material=new MeltField();
   const feel=new MeltFeel();
   const motionSettings={speed:1.633,sway:1,wave:1.0125,smoothing:0,persistence:1};
@@ -313,6 +313,7 @@
     });
     material.setMasks(masks);
     const tb=still.getBoundingClientRect();timeBounds={left:tb.left,right:tb.right,top:tb.top+scrollY,bottom:tb.bottom+scrollY};
+    controlRegions=['.music','#still'].map(selector=>{const b=document.querySelector(selector).getBoundingClientRect();return {left:b.left-16,right:b.right+16,top:b.top+scrollY-16,bottom:b.bottom+scrollY+16};});
     resetFluid();resetAmbient();geometryDirty=true;captureScene();paintWatch();rebuilding=false;render(currentMelt());
   }
   const smooth=(a,b,x)=>{let t=Math.min(1,Math.max(0,(x-a)/(b-a)));return t*t*(3-2*t);};
@@ -542,6 +543,10 @@
     if(lakeRegion){
       const b=lakeRegion,weight=Math.exp(-(((x-b.x)/b.rx)**2+((y-b.y)/b.ry)**2));
       p[0]=x+(p[0]-x)*(1-.75*weight);p[1]=y+(p[1]-y)*(1-.75*weight);
+    }
+    if(kind==='text')for(const b of controlRegions){
+      const weight=smooth(b.left-35,b.left,x)*(1-smooth(b.right,b.right+35,x))*smooth(b.top-35,b.top,y)*(1-smooth(b.bottom,b.bottom+35,y));
+      p[0]=x+(p[0]-x)*(1-.88*weight);p[1]=y+(p[1]-y)*(1-.88*weight);
     }
     return p;
   }

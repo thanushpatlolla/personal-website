@@ -659,3 +659,5 @@ Revision153 (DESIGN ONLY): Restore Oscar Peterson Trio The Girl From Ipanema at 
 
 Revision154 (DESIGN ONLY): User requests much more distorted/droopy text with swirl and motion. Text scale cap320→400, sag multiplier1.9→3.4, stronger sag/drip/settling, swirl.4 and ambient circular amplitude3.5→10px. Terrain unchanged. Text gradient guard permits intentional heavier distortion (<.75px per pixel; still no fold), terrain retains.3 limit.
 Text also has18px uneven hanging lobes across lines, so deformation bends words locally rather than only moving whole paragraphs downward.
+
+Revision155: User authorizes all current design to production. Remove Spotify social link/icon. Reduce final text-layer deformation88% across music player and time control, with feathered boundaries shared by painting/hit testing. Strong intro text melt and terrain unchanged.
