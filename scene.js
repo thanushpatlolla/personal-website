@@ -191,7 +191,7 @@
     if(!song.paused&&!song.ended&&snoopy.complete&&snoopy.naturalWidth){
       // Seat the original cutout on this small ridge shoulder, in photo space.
       // Painting into the scene makes every pixel share the mountain's melt.
-      const height=31,width=height*snoopy.naturalWidth/snoopy.naturalHeight;
+      const height=32,width=height*snoopy.naturalWidth/snoopy.naturalHeight;
       const seatX=(W-photo.naturalWidth*scale)/2+photo.naturalWidth*.435*scale;
       const seatY=(H-photo.naturalHeight*scale)/2+photo.naturalHeight*.549*scale;
       // Preserve the former 30px sprite bottom at seatY + 0.9px.
