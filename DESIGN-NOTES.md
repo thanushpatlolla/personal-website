@@ -755,3 +755,5 @@ Revision154 (DESIGN ONLY): User requests much more distorted/droopy text with sw
 Text also has18px uneven hanging lobes across lines, so deformation bends words locally rather than only moving whole paragraphs downward.
 
 Revision155: User authorizes all current design to production. Remove Spotify social link/icon. Reduce final text-layer deformation88% across music player and time control, with feathered boundaries shared by painting/hit testing. Strong intro text melt and terrain unchanged.
+
+Revision156: User requests unmelted default after production release. Start fully charged with melting disabled; clock click or let-time-pass activates existing melt. Publish to production.
