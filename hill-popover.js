@@ -82,7 +82,7 @@
   landmark({id:'hill-photo',action:()=>window.playValleySong(),hint:[.725,.713],caption:'lake?',label:'hiking photograph',src:'/assets/hill-memory.jpg',alt:'Hikers following a trail through a green mountain valley',
     ridge:[[.695,.752],[.709,.731],[.716,.718],[.718,.706],[.722,.703],[.728,.706],[.736,.710],[.746,.710],[.759,.703],[.773,.695]],
     face:[[.682,.799],[.699,.787],[.717,.773],[.736,.760],[.755,.745],[.773,.730]],bottom:[[.775,.755],[.695,.79]],anchor:[.725,.713]});
-  landmark({id:'peak-photo',action:()=>window.playPeakSong(),caption:'peaks and…?',hint:[.586,.529],label:'summit photograph',src:'/assets/peak-memory.jpg',alt:'The moon above a rocky summit with backpacks and weathered timbers',
+  landmark({id:'peak-photo',action:()=>window.playPeakSong(),caption:'forest?',hint:[.586,.529],label:'summit photograph',src:'/assets/peak-memory.jpg',alt:'The moon above a rocky summit with backpacks and weathered timbers',
     ridge:[[.497,.542],[.508,.547],[.522,.549],[.537,.547],[.551,.542],[.565,.536],[.574,.534],[.581,.528],[.586,.525],[.593,.529],[.601,.534],[.617,.537],[.638,.540]],
     bottom:[[.638,.590],[.510,.590]],anchor:[.586,.529]});
 })();

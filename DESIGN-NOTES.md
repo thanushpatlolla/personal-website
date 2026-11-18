@@ -695,3 +695,5 @@ Release128: User approves peak frame25% toward white (#c8c7be), clock30% (#babfc
 Revision129 (DESIGN ONLY): Start15% melted (energy/charge.85), retaining immediate startup decay at denominator8s. Full melt now about6.8s after ready, plus smoothing. Production remains128.
 
 Release130: User approves clock frame40% toward white (#c4c8cb), plus current15% starting melt, for production. Peak remains25%.
+
+Release137: Publish only confirmed congratulations YouTube link with blue OS styling, shared peak/clock frame color #d4d6d4, and peak caption "forest?". Based on production130; no dashboard, clock appearance/behavior, melt-feel, or mouse changes.
