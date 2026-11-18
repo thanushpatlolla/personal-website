@@ -11,11 +11,13 @@
     <div id="feel-sliders"></div>
     <label>Starting view <select id="feel-start" aria-label="Starting view"><option value="clear">Clear · click clock to melt</option><option value="auto">15% melted · melt on load</option><option value="melted">Fully melted</option></select></label>
     <label>Clock <select id="feel-clock" aria-label="Clock placement"><option value="warm">Floating original</option><option value="ridge">Original on ridge</option><option value="draped">Draped at right ridge</option></select></label>
+    <label><input id="depth-mask-toggle" type="checkbox"> show depth masks</label>
     <div class="feel-actions"><button type="button" data-action="clear">clear</button><button type="button" data-action="melt">melt</button><button type="button" data-action="full">full melt</button><button type="button" data-action="save">save</button><button type="button" data-action="reset">reset</button></div>
-    <p id="feel-status" role="status">Mouse feel stays as-is.</p>
+    <p id="feel-status" role="status">Linked motion across five depths.</p>
   </div>`;
   document.body.append(panel);
   const region=panel.querySelector('#feel-region'),preset=panel.querySelector('#feel-preset'),clock=panel.querySelector('#feel-clock'),start=panel.querySelector('#feel-start'),status=panel.querySelector('#feel-status');
+  panel.querySelector('#depth-mask-toggle').onchange=e=>document.dispatchEvent(new CustomEvent('depthmaskchange',{detail:e.target.checked}));
   const inputs={};
   for(const [name,label,max,help] of [['swirl','Swirl',1,'Sideways bends and idle oscillation'],['sag','Sag',1.25,'Broad downward droop'],['drip','Drips',1.25,'Narrow trails pulled downward'],['settle','Slow settling',1.25,'Gradual downward flow after melting']]){
     const row=document.createElement('label');row.className='feel-slider';row.title=help;
