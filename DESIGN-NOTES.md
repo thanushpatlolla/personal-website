@@ -740,5 +740,3 @@ Revision145 (DESIGN ONLY): Reduce mouse-wave output amplitude10% (12→10.8 coef
 Revision146 (DESIGN ONLY): Snoopy height30→31px with aspect ratio preserved. Bottom anchored at previous seatY+0.9px, so added height grows upward. Production remains137.
 
 Revision147 (DESIGN ONLY): Space toggles music playback from the page using existing music button action. Prevent page scrolling/repeated toggles; ignore modifiers and focused links/buttons/form/editable controls, preserving clock Space-to-wind and native keyboard activation. Production remains137.
-
-Revision148 (DESIGN ONLY): Snoopy height31→32px, proportional width; bottom stays fixed at seatY+0.9px. Production remains137.
