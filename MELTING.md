@@ -640,3 +640,5 @@ Revision142 (DESIGN ONLY): Birds rendered as nearest-filtered atlas quads in the
 
 Revision144 (DESIGN ONLY): User reports fast mouse transitions snapping. Verified current preview had no depth scripts. Found hard eviction of oldest active mouse wave at5 fronts caused discontinuous deformation. Retire outgoing fronts over450ms, retain at most5 active plus brief retirees; smooth combined wave displacement with80ms time constant. Local drag injection/diffusion/damping/sampling unchanged. Synthetic rapid alternating screen crossings reduced max per-frame vector displacement jump9.997px→1.535px; bounded8 total fronts. New tests/mouse-wave-continuity.test.cjs covers continuity and cap.
 User then requested bird removal: removed all bird scripts/CSS/assets/credits, WebGL bird atlas/quads and setBirds API, skyclick dispatch and HTML loads. Browser confirmed zero bird elements/scripts and no console errors. Production remains137.
+
+Revision145 (DESIGN ONLY): Reduce mouse-wave output amplitude10% (12→10.8 coefficient with unchanged tanh input). Propagation speed, retirement/smoothing, ambient melt and local drag unchanged. Production remains137.

@@ -426,8 +426,8 @@
         rippleY+=pulse*(wave.dy*.2+(r?ry/r:0)*.8);
       }
       const waveResponse=1-Math.exp(-dt/.08);
-      mouseWaveX[i]+=(12*Math.tanh(rippleX/12)*edge*protection-mouseWaveX[i])*waveResponse;
-      mouseWaveY[i]+=(12*Math.tanh(rippleY/12)*edge*protection-mouseWaveY[i])*waveResponse;
+      mouseWaveX[i]+=(10.8*Math.tanh(rippleX/12)*edge*protection-mouseWaveX[i])*waveResponse;
+      mouseWaveY[i]+=(10.8*Math.tanh(rippleY/12)*edge*protection-mouseWaveY[i])*waveResponse;
       const response=motionSettings.smoothing>0?1-Math.exp(-dt/motionSettings.smoothing):1;
       ambientX[i]=oldX+(ambientX[i]-oldX)*response;ambientY[i]=oldY+(ambientY[i]-oldY)*response;
     }
