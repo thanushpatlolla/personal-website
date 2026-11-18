@@ -5,7 +5,7 @@
   const tracks={
     stardust:{title:'Music Sounds Better With You',artist:'Stardust',src:'music-sounds-better-with-you.opus',cover:'stardust-cover.jpg',alt:'Music Sounds Better With You cover',start:0},
     sweet:{title:'To All the Dancers of the World, a Round Form of Fantasy',artist:'Sweet Trip',src:'sweet-trip.opus',cover:'sweet-trip-cover.jpg',alt:'Velocity: Design: Comfort. album cover',start:46},
-    peak:{title:'The Girl From Ipanema',artist:'Oscar Peterson Trio',src:'girl-from-ipanema.opus',cover:'we-get-requests-cover.jpg',alt:'We Get Requests album cover',start:0},
+    peak:{title:'Nardis',artist:'Bill Evans Trio',src:'nardis.opus',cover:'explorations-cover.jpg',alt:'Explorations album cover',start:0},
     valley:{title:'Why I Do Em Like That',artist:'Westside Gunn',src:'why-i-do-em-like-that.opus',cover:'westside-gunn-cover.jpg',alt:'Westside Gunn album cover',start:0},
     weird:{title:'Weird Fishes / Arpeggi',artist:'Radiohead',src:'weird-fishes.opus',cover:'in-rainbows-cover.jpg',alt:'In Rainbows album cover',start:7},
     daft:{title:'One More Time',artist:'Daft Punk',src:'one-more-time.opus',cover:'discovery-cover.jpg',alt:'Discovery album cover',start:27.4}

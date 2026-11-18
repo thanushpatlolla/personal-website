@@ -689,3 +689,5 @@ Revision165 (DESIGN): Add small "Stuff I think is cool:" heading above reading l
 Revision166 (DESIGN): Narrow-screen time button was fixed in DOM but painted into scrolling canvas. Render native fixed control at<=760px, skip duplicate canvas text/focus/underline and transformed hit interception. Bottom24px safe-area aware,44px target. Heading revision165 separately approved/pushed to production; this responsive fix remains design.
 
 2026-11-18: User explicitly approved narrow-screen fix166 for production; pushed source commit7561a0b to main.
+
+Revision167: User supplied Bill Evans Trio Nardis opus for top/peak photo, replacing Ipanema, and explicitly requests production. Start0; Explorations cover matches supplied visualizer. Photo autoplay retained.
