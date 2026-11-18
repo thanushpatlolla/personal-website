@@ -4,7 +4,7 @@
   const smooth=(a,b,v)=>{const t=clamp((v-a)/(b-a),0,1);return t*t*(3-2*t);};
   const presets={
     original:{text:{swirl:1,sag:0,drip:0,settle:0},sky:{swirl:1,sag:0,drip:0,settle:0},mountains:{swirl:1,sag:0,drip:0,settle:0}},
-    wax:{text:{swirl:.4,sag:.55,drip:1,settle:.45},sky:{swirl:.15,sag:.12,drip:.1,settle:.12},mountains:{swirl:.55,sag:.055,drip:.035,settle:.025}},
+    wax:{text:{swirl:.412,sag:.55,drip:1,settle:.45},sky:{swirl:.15,sag:.12,drip:.1,settle:.12},mountains:{swirl:.55,sag:.055,drip:.035,settle:.025}},
     syrup:{text:{swirl:.05,sag:.5,drip:.85,settle:.5},sky:{swirl:.08,sag:.2,drip:.25,settle:.25},mountains:{swirl:.12,sag:.6,drip:.5,settle:.45}},
     quiet:{text:{swirl:.08,sag:.12,drip:.25,settle:.1},sky:{swirl:.05,sag:.06,drip:0,settle:.05},mountains:{swirl:.12,sag:.2,drip:.15,settle:.12}}
   };
@@ -49,22 +49,22 @@
       const run=wax.unit*.13*s.drip*wax.mobility*wax.mobility;
       const side=wax.unit*.055*s.swirl*wax.side;
       const limit=wax.unit*.045;
-      const hanging=kind==='text'?18*Math.pow(.5+.5*Math.sin(x/43+y/190),2):0;
-      return [side*progress*edge,(limit*Math.tanh((sag+run)/limit)*(kind==='text'?3.4:1)+hanging)*progress*edge];
+      const hanging=kind==='text'?19.44*Math.pow(.5+.5*Math.sin(x/43+y/190),2):0;
+      return [side*progress*edge,(limit*Math.tanh((sag+run)/limit)*(kind==='text'?3.672:1)+hanging)*progress*edge];
     }
     drift(x,y,m,time,kind){
       const u=x/this.width,v=y/this.height;
       const edge=smooth(0,.10,u)*smooth(0,.10,1-u)*smooth(0,.20,v)*smooth(0,.24,1-v);
       // Opposing circular pulls: bounded motion in both axes, no accumulated sag.
       const terrain=this.weights(y),text=kind==='text';
-      const amplitude=(text?10:11*terrain)*Math.min(1,this.width/900)*m*edge;
+      const amplitude=(text?10.3:11.33*terrain)*Math.min(1,this.width/900)*m*edge;
       const phase=time*.32,a=u*8+phase,b=v*7-phase*.73;
       return [amplitude*Math.sin(a)*Math.cos(b),-amplitude*.72*Math.cos(a)*Math.sin(b)];
     }
     settling(x,y,m,age,kind){
       const u=x/this.width,v=y/this.height,s=this.values(y,kind),wax=this.materialAt(x,y,kind);
       const edge=smooth(0,.10,u)*smooth(0,.10,1-u)*smooth(0,.20,v)*smooth(0,.24,1-v);
-      return (kind==='text'?3.4:1)*wax.unit*.025*s.settle*wax.mobility*(1-Math.exp(-age/22))*edge*m;
+      return (kind==='text'?3.672:1)*wax.unit*.025*s.settle*wax.mobility*(1-Math.exp(-age/22))*edge*m;
     }
 
   }

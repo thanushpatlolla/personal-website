@@ -759,3 +759,5 @@ Revision155: User authorizes all current design to production. Remove Spotify so
 Revision156: User requests unmelted default after production release. Start fully charged with melting disabled; clock click or let-time-pass activates existing melt. Publish to production.
 
 Revision157: User requests Weird Fishes restored for lake and production deployment. Restore Radiohead audio/art and previous7s start; accessible label updated. Other songs and unmelted startup unchanged.
+
+Revision158 (DESIGN): Slight tuning requested: text downward melt/settling and hanging lobes +8%; text swirl and ambient circular motion +3%. Mountain sag unchanged to preserve prior anti-droop request; clear startup and control protection unchanged. Text gradient bound .85 retains no-fold margin for increased melt. Production remains157.
