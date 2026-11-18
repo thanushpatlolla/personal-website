@@ -36,7 +36,9 @@ Local server: `python3 -m http.server 8765` from this directory.
 
 ## Current approved release
 
-User authorized all current design through revision162 on 2026-11-17.
-Includes unmelted startup with stronger activated text melting, gentler swirling terrain, removed birds and tuning panel, revised songs (Ipanema peak, Westside Gunn forest, Weird Fishes lake), protected music/time controls, and removed Spotify social link. Preview-branch builds remain disabled. Verify live revision162 after pushing main.
+User authorized all current design through revision163 on 2026-11-17.
+Includes unmelted startup with stronger activated text melting, gentler swirling terrain, removed birds and tuning panel, revised songs (Ipanema peak, Westside Gunn forest, Weird Fishes lake), protected music/time controls, and removed Spotify social link. Preview-branch builds remain disabled. Verify live revision163 after pushing main.
 
 Release162 also includes finer stronger sky melt, localized mountain drips, reduced text descent, immediate5.5s melting, and state-dependent click/wind cue tracking a more restrained clock.
+
+Revision163 approved for production:15% more variation in word melt heights with unchanged mean descent; source commit a6ebf8f.

@@ -677,3 +677,5 @@ Revision161 (DESIGN): Clock cue shows click when clear and wind once activated. 
 Revision162: Reduce clock deformation input25%, including softening, shared sky displacement and wandering; hands and hit targets remain on same mapping. Position click/wind cue24px below transformed traced underside each frame, so melting cannot overtake static label. User authorizes all design changes through162 for production.
 
 Revision163 (DESIGN): User requests slightly more uneven text heights. Increase hanging-lobe variation15% around unchanged mean descent; no extra shared downward shift. Production remains162.
+
+User explicitly approved revision163 for production; pushed source commit a6ebf8f to main.
