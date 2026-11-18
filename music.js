@@ -52,6 +52,13 @@
     try{if(audio.ended||audio.currentTime<tracks[current].start)audio.currentTime=tracks[current].start;await audio.play();}
     catch{sync();status.textContent='· retry playback';}finally{pending=false;}
   });
+  // Space toggles playback on the page; focused controls keep their own keys.
+  document.addEventListener('keydown',event=>{
+    if(event.key!==' '||event.defaultPrevented||event.ctrlKey||event.metaKey||event.altKey||event.shiftKey)return;
+    if(event.target.closest('button,a,input,textarea,select,summary,[contenteditable]:not([contenteditable="false"]),[role="button"],[role="slider"]'))return;
+    event.preventDefault();
+    if(!event.repeat)button.click();
+  });
   for(const event of ['playing','pause','ended'])audio.addEventListener(event,sync);
   audio.addEventListener('error',()=>{sync();status.textContent='· audio unavailable';});
 })();

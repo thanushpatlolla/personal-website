@@ -738,3 +738,5 @@ User then requested bird removal: removed all bird scripts/CSS/assets/credits, W
 Revision145 (DESIGN ONLY): Reduce mouse-wave output amplitude10% (12→10.8 coefficient with unchanged tanh input). Propagation speed, retirement/smoothing, ambient melt and local drag unchanged. Production remains137.
 
 Revision146 (DESIGN ONLY): Snoopy height30→31px with aspect ratio preserved. Bottom anchored at previous seatY+0.9px, so added height grows upward. Production remains137.
+
+Revision147 (DESIGN ONLY): Space toggles music playback from the page using existing music button action. Prevent page scrolling/repeated toggles; ignore modifiers and focused links/buttons/form/editable controls, preserving clock Space-to-wind and native keyboard activation. Production remains137.
