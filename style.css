@@ -129,3 +129,9 @@ body:not([data-clock="original"]) #clock>img{filter:sepia(.12) saturate(.94);}
 body[data-clock="draped"] #clock>img{transform:none;filter:none;}
 
 #clock-cue{font:12px Georgia,serif;letter-spacing:.04em;}
+
+/* Keep the narrow-screen time control in the viewport, outside the scene paint. */
+@media(max-width:760px){
+  .liquid-ready .masthead{opacity:1;}
+  #still{z-index:10;bottom:max(24px,env(safe-area-inset-bottom));min-height:44px;padding:12px 0 12px 12px;text-shadow:0 1px 7px #061820;}
+}

@@ -685,3 +685,5 @@ Revision164 (DESIGN): Photo discoveries now explicitly start playback even when 
 User explicitly approved revision164 for production; pushed source commit4bde115 to main.
 
 Revision165 (DESIGN): Add small "Stuff I think is cool:" heading above reading links, matching12px type and used as the section accessible label. Production remains164.
+
+Revision166 (DESIGN): Narrow-screen time button was fixed in DOM but painted into scrolling canvas. Render native fixed control at<=760px, skip duplicate canvas text/focus/underline and transformed hit interception. Bottom24px safe-area aware,44px target. Heading revision165 separately approved/pushed to production; this responsive fix remains design.

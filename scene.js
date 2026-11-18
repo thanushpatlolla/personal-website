@@ -58,7 +58,7 @@
     const onClock=holding||(!clockHintDismissed&&((focus===clock&&clock.matches(':focus-visible'))||pointerOnClock));
     const b=still.getBoundingClientRect();
     const onTime=(focus===still&&still.matches(':focus-visible'))||(p&&contains(boundary((x,y)=>flow(x,y,m,'text'),b.left-28,b.top+scrollY-22,b.right+28,b.bottom+scrollY+22),p.x,p.y));
-    timeUnderline.style.display=onTime?'':'none';windHint.style.display=onClock?'':'none';
+    timeUnderline.style.display=onTime&&W>760?'':'none';windHint.style.display=onClock?'':'none';
     if(onTime){let d='';for(let i=0;i<=16;i++){const a=flow(b.left+12+(b.width-12)*i/16,b.bottom+scrollY+3,m,'text');d+=(i?'L':'M')+a[0]+','+a[1];}timeUnderline.setAttribute('d',d);}
     if(onClock){
       // The arc is attached to UV points just outside the painted rim, so it
@@ -172,6 +172,7 @@
     let n;
     while((n=walker.nextNode())){
       const el=n.parentElement;
+      if(W<=760&&el.closest('#still'))continue;
       if(!n.textContent.trim()||el.closest('script,style,svg,.landscape,#clock,.visually-hidden,.melt-ui,.hill-ui')||el.namespaceURI!=='http://www.w3.org/1999/xhtml')continue;
       const style=getComputedStyle(el);if(style.display==='none'||style.visibility==='hidden')continue;
       const range=document.createRange();let line='',left=0,top=0,height=0;
@@ -221,7 +222,7 @@
     paintText();
     for(const {svg,img} of icons){const b=svg.getBoundingClientRect();ctx.drawImage(img,b.left,b.top+scrollY,b.width,b.height);}
     const focus=document.activeElement;
-    if(focus&&!focus.closest('.melt-ui,.hill-ui')&&focus.matches('a:focus-visible,#still:focus-visible,#music-toggle:focus-visible')){
+    if(!(W<=760&&focus===still)&&focus&&!focus.closest('.melt-ui,.hill-ui')&&focus.matches('a:focus-visible,#still:focus-visible,#music-toggle:focus-visible')){
       const b=focus.getBoundingClientRect();ctx.strokeStyle='#fff1c9';ctx.lineWidth=1;
       if(focus===still){
         ctx.beginPath();ctx.moveTo(b.left+12,b.bottom+scrollY-3);
@@ -793,10 +794,11 @@
   });
   // Hit-test the painted link/control outlines, not their unmelted DOM boxes.
   document.addEventListener('click',event=>{
-    if(!ready||event.detail===0||event.target.closest('.melt-ui,.hill-ui'))return;
+    if(!ready||event.detail===0||event.target.closest('.melt-ui,.hill-ui')||(W<=760&&event.target.closest('#still')))return;
     event.preventDefault();event.stopPropagation();
     const m=currentMelt();
     for(const el of document.querySelectorAll('a:not(.music a):not(.melt-ui a):not(.hill-ui a),#still,#music-toggle')){
+      if(W<=760&&el===still)continue;
       const b=el.getBoundingClientRect();
       const padX=el===still?28:0,padY=el===still?22:0;
       const shape=boundary((x,y)=>flow(x,y,m,'text'),b.left-padX,b.top+scrollY-padY,b.right+padX,b.bottom+scrollY+padY);
