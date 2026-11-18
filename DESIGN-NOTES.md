@@ -708,3 +708,5 @@ Draped clock prototype: generated against the landscape, isolated as transparent
 Validation: browser clear start, click-to-melt, panel controls and restored clear view checked. terrain-balance, image-loading, melt-field and clock-activation regressions passed; original mouse functions compared unchanged. Private feedback compilation at ../../outputs/website-feedback-2026-11-17.txt stays outside public repo. Loss-landscape/Snoopy redesign deferred. Production remains revision130; do not publish without instruction.
 
 Revision135 (DESIGN ONLY): User dislikes generated draped clock. Restore previous warm original clock as default with its original floating placement and live hands. Preserve click-to-melt, regional controls and mouse response. Ignore old saved draped selection while retaining saved regional settings; newly explicit saved choices carry clockRevision2. Draped prototype remains an optional comparison. Production remains130.
+
+Revision136 (DESIGN ONLY): Peak photograph caption changed to "forest?" at user request. Production remains130.
