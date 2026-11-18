@@ -22,6 +22,14 @@
       return [0,c,b-c,a-b,1-a];
     }
     depth(x,y,kind){return this.weights(x,y,kind).reduce((sum,w,i)=>sum+w*i,0);}
+    cursorDepth(x,y){
+      // A continuous photo-space ramp, independent of ridges and text hit boxes.
+      const v=(y-this.top)/this.ph;
+      return Math.max(1,Math.min(4,4-3*(v-.28)/.62));
+    }
+    cursorInfluence(x,y,kind,z){
+      return this.weights(x,y,kind).reduce((sum,w,i)=>sum+w*(1-smooth(0,1.6,Math.abs(i-z))),0);
+    }
     emit(x,y,z,dx=0,dy=1,strength=1){const n=Math.hypot(dx,dy)||1;this.waves.push({x,y,z,dx:dx/n,dy:dy/n,strength,born:this.time});if(this.waves.length>8)this.waves.shift();}
     pulse(w,x,y,z){
       const age=this.time-w.born,dx=x-w.x,dy=y-w.y,dz=(z-w.z)*this.spacing,r=Math.hypot(dx,dy,dz),arrival=r/this.speed;

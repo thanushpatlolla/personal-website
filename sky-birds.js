@@ -21,7 +21,13 @@
     const dt=Math.min((now-last)/1000,.05);last=now;
     for(let i=flock.length-1;i>=0;i--){
       const b=flock[i];b.age+=dt;b.x+=b.speed*dt;
-      const y=b.y-Math.min(30,b.age*3)+Math.sin(b.age*2+b.phase)*3;
+      b.wanderTimer-=dt;
+      if(b.wanderTimer<=0){
+        b.wanderGoal=Math.max(-8,Math.min(8,b.wanderGoal+(Math.random()-.5)*6));
+        b.wanderTimer=.7+Math.random()*.7;
+      }
+      b.wander+=(b.wanderGoal-b.wander)*(1-Math.exp(-dt*2));
+      const y=b.y+b.wander;
       b.el.style.transform=`translate(${Math.round(b.x)}px,${Math.round(y)}px)`;
       if(b.x>innerWidth+40||b.age>35){b.el.remove();flock.splice(i,1);}
     }
@@ -33,14 +39,13 @@
     press=null;
     const clock=api.getClockBounds();
     if(clock&&x>clock.left-12&&x<clock.right+12&&y>clock.top-12&&y<clock.bottom+12)return;
-    if(!api.getState().ready||!isSky(x,y))return;
+    if(!api.getState().ready||!isSky(x,y)||flock.length)return;
     for(let i=0;i<2;i++){
       const el=document.createElement('span');el.className='sky-bird';
       const sprite=document.createElement('span');sprite.className='sky-bird-sprite';sprite.style.animationDelay=`-${i*.23}s`;el.append(sprite);layer.append(el);
-      const b={el,x:x-12-i*30,y:Math.max(8,y-scrollY-12+i*17),speed:63+i*3,age:0,phase:i*1.7};
+      const b={el,x:x-12-i*30,y:Math.max(8,y-scrollY-12+i*17),speed:63+i*3,age:0,wander:0,wanderGoal:0,wanderTimer:.2+i*.35};
       el.style.transform=`translate(${b.x}px,${b.y}px)`;flock.push(b);
     }
-    while(flock.length>48)flock.shift().el.remove();
     if(!frame){last=performance.now();frame=requestAnimationFrame(tick);}
   });
 })();

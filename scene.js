@@ -34,7 +34,7 @@
   const material=new MeltField();
   const feel=new MeltFeel();
   const depthField=new DepthField();
-  let localDragLayer=4,depthPress=null;
+  let cursorDepth=4,cursorDepthTime=null,depthPress=null;
   const motionSettings={speed:1.633,sway:1,wave:1.0125,smoothing:0,persistence:1};
   let manualMelt=null,fluidActive=false,geometryDirty=true,pauseTween=null;
   const currentMelt=()=>pauseTween?pauseTween.from*(1-pauseTween.progress*pauseTween.progress*(3-2*pauseTween.progress)):(manualMelt===null?(paused?0:1-energy):manualMelt);
@@ -327,7 +327,7 @@
   function resetFluid(){
     fluidH=Math.max(40,Math.min(180,Math.round(FLUID_N*H/W)));
     [dragX,dragY,velX,velY,nextX,nextY,nextVX,nextVY]=Array.from({length:8},()=>new Float32Array(FLUID_N*fluidH));
-    previousPointer=null;fluidTime=0;fluidActive=false;
+    previousPointer=null;fluidTime=0;fluidActive=false;cursorDepthTime=null;
   }
   function dragPaint(px,py,dx,dy){
     const radius=Math.min(110,Math.max(70,W*.085));
@@ -378,13 +378,15 @@
   let waveTime=0,lastWaveTime=-1,waveDistance=0,lastWaveInput=-1;
   function emitMouseWave(x,y,dx,dy){
     const distance=Math.hypot(dx,dy);
+    const source=depthSource(x,y),now=performance.now()/1000;
+    const depthDt=cursorDepthTime===null?Infinity:Math.max(0,now-cursorDepthTime);
+    cursorDepth+=(source.z-cursorDepth)*(1-Math.exp(-depthDt/.16));cursorDepthTime=now;
     const freshGesture=waveTime-lastWaveInput>.18;
     lastWaveInput=waveTime;
     if(freshGesture){waveDistance=0;lastWaveTime=-1;}
     waveDistance+=distance;
     if(waveTime-lastWaveTime<.15||waveDistance<1||distance===0)return;
-    const source=depthSource(x,y);localDragLayer=Math.round(source.z);
-    depthField.emit(source.x,source.y,source.z,dx,dy,Math.max(.4,Math.min(1,waveDistance/65)));
+    depthField.emit(source.x,source.y,cursorDepth,dx,dy,Math.max(.4,Math.min(1,waveDistance/65)));
     waveDistance=0;
     lastWaveTime=waveTime;
   }
@@ -498,7 +500,7 @@
     p[1]+=feel.settling(x,y,m,meltAge,kind);
     if(fluidActive){
       const beforeX=p[0],beforeY=p[1];
-      const step=m/4*depthField.weights(x,y,kind)[localDragLayer];
+      const step=m/4*depthField.cursorInfluence(x,y,kind,cursorDepth);
       for(let i=0;i<4;i++){
         interaction(p[0],p[1],dragA);
         interaction(p[0]+dragA[0]*step*.5,p[1]+dragA[1]*step*.5,dragB);
@@ -755,16 +757,13 @@
     return points;
   }
   function depthSource(x,y){
-    // Invert the visible warp so clicks address the material under the cursor.
-    let kind='landscape';
-    for(const el of document.querySelectorAll('.intro,.music,#still')){
-      const b=el.getBoundingClientRect();
-      if(contains(boundary((a,c)=>flow(a,c,currentMelt(),'text'),b.left,b.top+scrollY,b.right,b.bottom+scrollY),x,y)){kind='text';break;}
-    }
+    // Cursor depth belongs to a continuous ramp, never to a selected mask.
+    // Only invert the landscape warp: crossing text must not switch surfaces.
     let sx=x,sy=y;
-    for(let i=0;i<5;i++){const p=flow(sx,sy,currentMelt(),kind);sx+=x-p[0];sy+=y-p[1];}
-    return {x:sx,y:sy,z:depthField.depth(sx,sy,kind),kind};
+    for(let i=0;i<5;i++){const p=flow(sx,sy,currentMelt(),'landscape');sx+=x-p[0];sy+=y-p[1];}
+    return {x:sx,y:sy,z:depthField.cursorDepth(sx,sy),kind:'landscape'};
   }
+
   document.addEventListener('pointerdown',event=>{depthPress=event.isPrimary&&event.button===0?{x:event.clientX,y:event.clientY,time:performance.now(),moved:false}:null;},true);
   document.addEventListener('pointermove',event=>{if(depthPress&&Math.hypot(event.clientX-depthPress.x,event.clientY-depthPress.y)>7)depthPress.moved=true;},true);
   document.addEventListener('pointercancel',()=>{depthPress=null;},true);
