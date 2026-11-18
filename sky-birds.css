@@ -1,5 +1,0 @@
-#sky-birds{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:9;visibility:hidden;}
-.sky-bird{position:absolute;left:0;top:0;width:32px;height:32px;will-change:transform;}
-.sky-bird-sprite{display:block;width:32px;height:32px;background:url('/assets/bird-sprite.png') 0 -32px/256px 96px no-repeat;image-rendering:pixelated;transform:scaleX(-1);filter:saturate(.22) sepia(.15) brightness(1.15);animation:bird-flap .8s steps(8) infinite;}
-@keyframes bird-flap{to{background-position-x:-256px;}}
-@media(prefers-reduced-motion:reduce){.sky-bird-sprite{animation:none;}}

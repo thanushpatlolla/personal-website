@@ -1,6 +1,0 @@
-Pixel Art Bird 16x16 — ma9ici4n
-https://ma9ici4n.itch.io/pixel-art-bird-16x16
-Original BirdSprite.png from author's free downloadable ZIP, downloaded 2026-11-17.
-Author permits free use without required credit (credit appreciated).
-Original pixels retained. Flying animation: eight 16x16 frames on second row.
-Website applies CSS desaturation and horizontal mirroring.
