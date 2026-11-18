@@ -775,3 +775,5 @@ Revision163 (DESIGN): User requests slightly more uneven text heights. Increase 
 User explicitly approved revision163 for production; pushed source commit a6ebf8f to main.
 
 Revision164 (DESIGN): Photo discoveries now explicitly start playback even when paused; switching photos keeps playing. Reopening same selected song resumes without restarting. Clock reward also resumes when already selected. Closing cards still leaves music running; explicit player pause remains. Sweet Trip restore preserves existing playback preference. Production remains163.
+
+User explicitly approved revision164 for production; pushed source commit4bde115 to main.
