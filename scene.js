@@ -6,9 +6,9 @@
   const still = document.querySelector('#still');
   const note = document.querySelector('#time-note');
   const motion = matchMedia('(prefers-reduced-motion: reduce)');
-  // Start clear; clicking the clock or letting time pass begins melting.
-  let paused = motion.matches, energy = 1, charge = 1, holding = false, angle = null;
-  let initialMelt=false,meltEnabled=false,meltAge=0,clockGesture=null;
+  // Start melted; retain a still, clear scene for reduced-motion preference.
+  let paused = motion.matches, energy = motion.matches?1:0, charge = motion.matches?1:0, holding = false, angle = null;
+  let initialMelt=false,meltEnabled=!motion.matches,meltAge=0,clockGesture=null;
   let heldFor=0, ratchet=0, turn=0, recoil=0, lastKey=0, gestureCenter=null, gestureTurned=false;
   let windingOffset=0,keyWinding=false;
   const DETENT=Math.PI/24; // 48 detents/revolution. Desktop: two full turns; touch: one.

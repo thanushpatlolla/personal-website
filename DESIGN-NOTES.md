@@ -785,3 +785,5 @@ Revision166 (DESIGN): Narrow-screen time button was fixed in DOM but painted int
 2026-11-18: User explicitly approved narrow-screen fix166 for production; pushed source commit7561a0b to main.
 
 Revision167: User supplied Bill Evans Trio Nardis opus for top/peak photo, replacing Ipanema, and explicitly requests production. Start0; Explorations cover matches supplied visualizer. Photo autoplay retained.
+
+Revision168: User additionally requests melted startup as part of current production update. Start fully melted and active; retain reduced-motion clear/paused behavior. Nardis peak change167 included.
