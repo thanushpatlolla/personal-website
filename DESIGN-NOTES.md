@@ -767,3 +767,5 @@ Revision159 (DESIGN): +10% text melt and settling relative158. Sky uses smaller1
 Revision160 (DESIGN): User chose minimal visible clock cue "click · wind". Add subtle persistent SVG text beneath clock, outside melted text surface so it stays legible. No interaction changes. Production remains157.
 
 Revision161 (DESIGN): Clock cue shows click when clear and wind once activated. Melt duration6.5→5.5s; remove material yield threshold and use immediate nonzero-slope progress. Reduce common text descent by up to24px (400px unit cap) while keeping hanging lobes; halve slow text settling. Sky detail scale16%→12% viewport minimum dimension (floor100→80px), fine motion22→24px and smaller80/95px wave coordinates. Production remains157.
+
+Revision162: Reduce clock deformation input25%, including softening, shared sky displacement and wandering; hands and hit targets remain on same mapping. Position click/wind cue24px below transformed traced underside each frame, so melting cannot overtake static label. User authorizes all design changes through162 for production.

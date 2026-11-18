@@ -47,8 +47,11 @@
     if(!ready)return;
     hint.setAttribute('viewBox',`0 0 ${W} ${H}`);hint.style.height=H+'px';
     clockCue.textContent=meltEnabled||m>.025?'wind':'click';
-    clockCue.setAttribute('x',clockBox.x+(clockBox.width||clockBox.size)*.5);
-    clockCue.setAttribute('y',clockBox.y+(clockBox.height||clockBox.size)*.8+12);
+    const cueRim=clockRimPoints.map(([u,v])=>watchPoint(u,v,m));
+    if(cueRim.length){
+      clockCue.setAttribute('x',(Math.min(...cueRim.map(p=>p[0]))+Math.max(...cueRim.map(p=>p[0])))/2);
+      clockCue.setAttribute('y',Math.max(...cueRim.map(p=>p[1]))+24);
+    }
     const p=hoverPointer,focus=document.activeElement;
     const pointerOnClock=p&&nearShape(boundary((u,v)=>watchPoint(u,v,m),.09,.01,.91,.99),p.x,p.y,24);
     if(p&&!pointerOnClock)clockHintDismissed=false;
@@ -569,6 +572,8 @@
   document.addEventListener('pointerleave',()=>{previousPointer=null;});
   let centerCache=null;
   function watchPoint(u,v,m){
+    // Keep clock softening and world-space descent gentler than the landscape.
+    m*=.75;
     if(clockStyle==='draped'){
       // No independent wandering: the cutout, hands, shadow, and terrain share flow.
       return flow(clockBox.x+u*clockBox.width,clockBox.y+v*clockBox.height,m);
