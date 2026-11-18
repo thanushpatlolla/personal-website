@@ -781,6 +781,7 @@
         return;
       }
     }
+    document.dispatchEvent(new CustomEvent('skyclick',{detail:{x:event.clientX,y:event.clientY+scrollY,target:event.target}}));
   },true);
   clock.addEventListener('pointermove', event => {
     if (!holding || angle === null) return;
