@@ -126,3 +126,5 @@ body:not([data-clock="original"]) #clock>img{filter:sepia(.12) saturate(.94);}
 
 @media(max-width:760px){body[data-clock="draped"] .intro{margin-top:48px;}}
 body[data-clock="draped"] #clock>img{transform:none;filter:none;}
+
+#clock-cue{font:12px Georgia,serif;letter-spacing:.04em;}

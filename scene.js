@@ -40,12 +40,14 @@
   let hoverPointer=null,clockHintDismissed=false;
   const hint=document.createElementNS('http://www.w3.org/2000/svg','svg');
   hint.id='interaction-hints';hint.setAttribute('aria-hidden','true');
-  hint.innerHTML='<defs><marker id="wind-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M1 1 L7 4 L1 7" fill="none" stroke="#171b19"/></marker></defs><path id="time-underline" fill="none" stroke="currentColor"/><g id="wind-hint"><path fill="none" stroke="currentColor" marker-end="url(#wind-arrow)"/></g>';
+  hint.innerHTML='<defs><marker id="wind-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M1 1 L7 4 L1 7" fill="none" stroke="#171b19"/></marker></defs><path id="time-underline" fill="none" stroke="currentColor"/><g id="wind-hint"><path fill="none" stroke="currentColor" marker-end="url(#wind-arrow)"/></g><text id="clock-cue" text-anchor="middle" fill="currentColor">click · wind</text>';
   document.body.append(hint);
-  const timeUnderline=hint.querySelector('#time-underline'),windHint=hint.querySelector('#wind-hint');
+  const timeUnderline=hint.querySelector('#time-underline'),windHint=hint.querySelector('#wind-hint'),clockCue=hint.querySelector('#clock-cue');
   function updateHints(m){
     if(!ready)return;
     hint.setAttribute('viewBox',`0 0 ${W} ${H}`);hint.style.height=H+'px';
+    clockCue.setAttribute('x',clockBox.x+(clockBox.width||clockBox.size)*.5);
+    clockCue.setAttribute('y',clockBox.y+(clockBox.height||clockBox.size)*.8+12);
     const p=hoverPointer,focus=document.activeElement;
     const pointerOnClock=p&&nearShape(boundary((u,v)=>watchPoint(u,v,m),.09,.01,.91,.99),p.x,p.y,24);
     if(p&&!pointerOnClock)clockHintDismissed=false;
