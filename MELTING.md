@@ -616,3 +616,5 @@ Validation: browser clear start, click-to-melt, panel controls and restored clea
 Revision135 (DESIGN ONLY): User dislikes generated draped clock. Restore previous warm original clock as default with its original floating placement and live hands. Preserve click-to-melt, regional controls and mouse response. Ignore old saved draped selection while retaining saved regional settings; newly explicit saved choices carry clockRevision2. Draped prototype remains an optional comparison. Production remains130.
 
 Revision136 (DESIGN ONLY): Peak photograph caption changed to "forest?" at user request. Production remains130.
+
+Production release137 / 5c3e6d0: User explicitly approved only congratulations link, shared frame colors #d4d6d4, and forest? caption. Published from isolated origin/main130 worktree ../personal-website-release. Main retains original scene/clock/startup behavior and no feel dashboard. Design remains experimental; do not merge wholesale.
