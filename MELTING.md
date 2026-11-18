@@ -697,3 +697,5 @@ Revision168: User additionally requests melted startup as part of current produc
 Revision169: User supplied Mysterons opus and authorizes production. Replace Westside Gunn at forest/hiking discovery with Portishead Mysterons, start0, existing Dummy art. Nardis peak, Weird Fishes lake, photo autoplay and melted startup retained.
 
 Revision170: User requests clear initial load that automatically melts into resting state. Start energy/charge1 with melting enabled (except reduced-motion). Existing immediate-onset5.5s decay applies. Include alongside Mysterons169 in approved production update.
+
+Revision171: User requests automatic melting on winding release, including full restoration. Release preserves full charge but enables decay when not explicitly paused; pointer and keyboard covered, duplicate capture-loss remains harmless. Production approved.

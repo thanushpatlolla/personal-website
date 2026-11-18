@@ -750,7 +750,8 @@
     windingGain=1.5;windingOffset=0;keyWinding=false;
     if(!paused)handTime=localClockSeconds();
     clockHintDismissed=true;windHint.style.display='none';holding=false;angle=null;gestureCenter=null;
-    if(wasWinding&&charge>=.999){charge=energy=1;meltEnabled=false;refreshTimeControl();}
+    if(wasWinding&&charge>=.999)charge=energy=1;
+    if(wasWinding&&!paused){meltEnabled=true;refreshTimeControl();}
     if(clickedClear)beginMelting();
     note.textContent=paused?'a moment, held':meltEnabled?'time is passing':'click the clock to melt';
   }
