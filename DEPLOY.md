@@ -36,8 +36,8 @@ Local server: `python3 -m http.server 8765` from this directory.
 
 ## Current approved release
 
-User authorized all current design through revision168 on 2026-11-17.
-Includes melted startup with stronger activated text melting, gentler swirling terrain, removed birds and tuning panel, revised songs (Nardis peak, Westside Gunn forest, Weird Fishes lake), protected music/time controls, and removed Spotify social link. Preview-branch builds remain disabled. Verify live revision168 after pushing main.
+User authorized all current design through revision170 on 2026-11-17.
+Includes clear startup that automatically melts with stronger activated text melting, gentler swirling terrain, removed birds and tuning panel, revised songs (Nardis peak, Mysterons forest, Weird Fishes lake), protected music/time controls, and removed Spotify social link. Preview-branch builds remain disabled. Verify live revision170 after pushing main.
 
 Release162 also includes finer stronger sky melt, localized mountain drips, reduced text descent, immediate5.5s melting, and state-dependent click/wind cue tracking a more restrained clock.
 
@@ -50,3 +50,7 @@ Revision166 approved for production on2026-11-18: narrow-screen time control sta
 Revision167: Nardis by Bill Evans Trio replaces Ipanema at the peak; approved for production.
 
 Revision168: Start fully melted (except reduced-motion preference), approved alongside Nardis update.
+
+Revision169: Mysterons by Portishead replaces Westside Gunn at the forest photo; approved for production.
+
+Revision170: Load unmelted and immediately animate into melted state; reduced-motion stays still. Approved with Mysterons update.

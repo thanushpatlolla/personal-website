@@ -693,3 +693,7 @@ Revision166 (DESIGN): Narrow-screen time button was fixed in DOM but painted int
 Revision167: User supplied Bill Evans Trio Nardis opus for top/peak photo, replacing Ipanema, and explicitly requests production. Start0; Explorations cover matches supplied visualizer. Photo autoplay retained.
 
 Revision168: User additionally requests melted startup as part of current production update. Start fully melted and active; retain reduced-motion clear/paused behavior. Nardis peak change167 included.
+
+Revision169: User supplied Mysterons opus and authorizes production. Replace Westside Gunn at forest/hiking discovery with Portishead Mysterons, start0, existing Dummy art. Nardis peak, Weird Fishes lake, photo autoplay and melted startup retained.
+
+Revision170: User requests clear initial load that automatically melts into resting state. Start energy/charge1 with melting enabled (except reduced-motion). Existing immediate-onset5.5s decay applies. Include alongside Mysterons169 in approved production update.
