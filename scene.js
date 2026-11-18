@@ -6,9 +6,9 @@
   const still = document.querySelector('#still');
   const note = document.querySelector('#time-note');
   const motion = matchMedia('(prefers-reduced-motion: reduce)');
-  // Design experiment: a readable photograph until the clock invites melting.
-  let paused = motion.matches, energy = 1, charge = 1, holding = false, angle = null;
-  let initialMelt=false,meltEnabled=false,meltAge=0,clockGesture=null;
+  // Start melted; winding restores the scene. Respect reduced-motion preference.
+  let paused = motion.matches, energy = motion.matches?1:0, charge = motion.matches?1:0, holding = false, angle = null;
+  let initialMelt=false,meltEnabled=!motion.matches,meltAge=0,clockGesture=null;
   let heldFor=0, ratchet=0, turn=0, recoil=0, lastKey=0, gestureCenter=null, gestureTurned=false;
   let windingOffset=0,keyWinding=false;
   const DETENT=Math.PI/24; // 48 detents/revolution. Desktop: two full turns; touch: one.
@@ -533,6 +533,8 @@
       const photoY=(y-(H-photoHeight)/2)/photoHeight;
       const mountainMotion=1-.19*smooth(.46,.58,photoY);
       const swirl=feel.values(y,kind).swirl;
+      const drift=feel.drift(x,y,m,ambientTime,kind);
+      p[0]+=drift[0]*ambientBlend;p[1]+=drift[1]*ambientBlend;
       p[0]+=(ambientAt(ambientX,u,v)*swirl+ambientAt(mouseWaveX,u,v))*m*mountainMotion;
       p[1]+=(ambientAt(ambientY,u,v)*swirl+ambientAt(mouseWaveY,u,v))*m*mountainMotion;
     }
