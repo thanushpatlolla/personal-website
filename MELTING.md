@@ -667,3 +667,5 @@ Revision156: User requests unmelted default after production release. Start full
 Revision157: User requests Weird Fishes restored for lake and production deployment. Restore Radiohead audio/art and previous7s start; accessible label updated. Other songs and unmelted startup unchanged.
 
 Revision158 (DESIGN): Slight tuning requested: text downward melt/settling and hanging lobes +8%; text swirl and ambient circular motion +3%. Mountain sag unchanged to preserve prior anti-droop request; clear startup and control protection unchanged. Text gradient bound .85 retains no-fold margin for increased melt. Production remains157.
+
+Revision159 (DESIGN): +10% text melt and settling relative158. Sky uses smaller100px/min16% patches, stronger sag/drip and22px fine ambient curls. Mountains retain low baseline sag plus localized downward pulls capped7px (smaller on mobile), preserving overall presence. Updated gradient guards for intentional extra text/sky deformation; terrain no-fold grid check remains. Clock UX recommendation only: state-dependent visible click/drag cue and fade after successful winding; not implemented pending direction. Production remains157.

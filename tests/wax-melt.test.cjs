@@ -7,7 +7,7 @@ for(const [w,h] of [[390,844],[1280,800],[1920,1080]]){
   for(const m of [0,.2,.4,.6,.8,1]){
    const p=f.displacement(x,y,80,-80,m,kind);assert(p[1]>=last-1e-8,'Melt should settle downward monotonically');last=p[1];
    const q=f.displacement(x,y+1,80,-80,m,kind);maxStretch=Math.max(maxStretch,1+q[1]-p[1]);
-   assert(Math.abs(q[1]-p[1])<(kind==='text'?.85:.3),'Melt must remain smooth and avoid vertical folds');
+   assert(Math.abs(q[1]-p[1])<(kind==='text'?.95:.6),'Melt must remain smooth and avoid vertical folds');
   }
  }
  checks++;
