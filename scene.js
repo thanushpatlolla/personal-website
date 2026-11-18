@@ -6,9 +6,9 @@
   const still = document.querySelector('#still');
   const note = document.querySelector('#time-note');
   const motion = matchMedia('(prefers-reduced-motion: reduce)');
-  // Start 15% melted; normal charge decay begins immediately when ready.
-  let paused = motion.matches, energy = .85, charge = .85, holding = false, angle = null;
-  let initialMelt=true;
+  // Design experiment: a readable photograph until the clock invites melting.
+  let paused = motion.matches, energy = 1, charge = 1, holding = false, angle = null;
+  let initialMelt=false,meltEnabled=false,meltAge=0,clockGesture=null;
   let heldFor=0, ratchet=0, turn=0, recoil=0, lastKey=0, gestureCenter=null, gestureTurned=false;
   let windingOffset=0,keyWinding=false;
   const DETENT=Math.PI/24; // 48 detents/revolution. Desktop: two full turns; touch: one.
@@ -32,6 +32,7 @@
   let last = 0, elapsed = 0, handTime = localClockSeconds(), frame;
   let W = 1, H = 1, timeBounds=null, lakeRegion=null, easterRegions=[], clockBox, ready = false, rebuilding = false;
   const material=new MeltField();
+  const feel=new MeltFeel();
   const motionSettings={speed:1.633,sway:1,wave:1.0125,smoothing:0,persistence:1};
   let manualMelt=null,fluidActive=false,geometryDirty=true,pauseTween=null;
   const currentMelt=()=>pauseTween?pauseTween.from*(1-pauseTween.progress*pauseTween.progress*(3-2*pauseTween.progress)):(manualMelt===null?(paused?0:1-energy):manualMelt);
@@ -50,9 +51,9 @@
     if(p&&!pointerOnClock)clockHintDismissed=false;
     const onClock=holding||(!clockHintDismissed&&((focus===clock&&clock.matches(':focus-visible'))||pointerOnClock));
     const b=still.getBoundingClientRect();
-    const onTime=(focus===still&&still.matches(':focus-visible'))||(p&&contains(boundary((x,y)=>flow(x,y,m),b.left-28,b.top+scrollY-22,b.right+28,b.bottom+scrollY+22),p.x,p.y));
+    const onTime=(focus===still&&still.matches(':focus-visible'))||(p&&contains(boundary((x,y)=>flow(x,y,m,'text'),b.left-28,b.top+scrollY-22,b.right+28,b.bottom+scrollY+22),p.x,p.y));
     timeUnderline.style.display=onTime?'':'none';windHint.style.display=onClock?'':'none';
-    if(onTime){let d='';for(let i=0;i<=16;i++){const a=flow(b.left+12+(b.width-12)*i/16,b.bottom+scrollY+3,m);d+=(i?'L':'M')+a[0]+','+a[1];}timeUnderline.setAttribute('d',d);}
+    if(onTime){let d='';for(let i=0;i<=16;i++){const a=flow(b.left+12+(b.width-12)*i/16,b.bottom+scrollY+3,m,'text');d+=(i?'L':'M')+a[0]+','+a[1];}timeUnderline.setAttribute('d',d);}
     if(onClock){
       // The arc is attached to UV points just outside the painted rim, so it
       // shares every deformation, perspective change and mouse pull of the dial.
@@ -118,22 +119,23 @@
     gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);return t;
   }
-  const sceneTexture=texture(), watchTexture=texture();
+  const sceneTexture=texture(), textTexture=texture(), watchTexture=texture();
   const scene=document.createElement('canvas'), paint=document.createElement('canvas');
   const ctx=scene.getContext('2d'), brush=paint.getContext('2d');
   paint.width=paint.height=700;
   const photo=document.querySelector('#mountain-photo');
   const snoopy=new Image();snoopy.src='/assets/snoopy-headphones.png';
   const song=document.querySelector('#song');
-  const clockModes=['original','warm','ridge'];
-  let clockStyle=new URLSearchParams(location.search).get('clock')||'warm';
+  const clockModes=['original','warm','ridge','draped'];
+  let clockStyle=new URLSearchParams(location.search).get('clock')||'draped';
   if(!clockModes.includes(clockStyle))clockStyle='warm';
   const originalWatch=new Image();originalWatch.src='/assets/user-crash-clock.png';
   // Both warm treatments use the exact original pixels; only shader color changes.
   const warmWatch=originalWatch;
+  const drapedWatch=new Image();drapedWatch.src='/assets/draped-clock-v1.png';
   const clockRimPoints=[];
   const album=document.querySelector('.record-cover img');
-  let watch=clockStyle==='original'?originalWatch:warmWatch;
+  let watch=clockStyle==='draped'?drapedWatch:originalWatch;
   document.body.dataset.clock=clockStyle;
   clock.querySelector('img').src=watch.src;
   function loaded(img){
@@ -204,6 +206,8 @@
       shadow.addColorStop(0,'#12201d66');shadow.addColorStop(1,'#12201d00');
       ctx.fillStyle=shadow;ctx.fillRect(-1,-1,2,2);ctx.restore();
     }
+    upload(sceneTexture,scene);
+    ctx.clearRect(0,0,W,H);
     const cover=album.getBoundingClientRect();
     ctx.save();ctx.globalAlpha=.85;ctx.filter='saturate(.6)';
     if(album.complete&&album.naturalWidth)ctx.drawImage(album,cover.left,cover.top+scrollY,cover.width,cover.height);ctx.restore();
@@ -217,9 +221,25 @@
         ctx.lineTo(b.right,b.bottom+scrollY-3);ctx.stroke();
       }else ctx.strokeRect(b.left-4,b.top+scrollY-3,b.width+8,b.height+6);
     }
-    upload(sceneTexture,scene);
+    upload(textTexture,scene);
   }
   function paintWatch(){
+    if(clockStyle==='draped'){
+      if(paint.width!==900||paint.height!==300){paint.width=900;paint.height=300;clockRimPoints.length=0;}
+      brush.clearRect(0,0,900,300);brush.drawImage(drapedWatch,0,0,900,300);
+      // Project live hands toward the numeral positions of the flattened face.
+      const dial=[[.53,.34],[.64,.40],[.72,.36],[.82,.35],[.76,.46],[.65,.61],[.535,.67],[.39,.58],[.27,.52],[.21,.45],[.355,.40],[.45,.34]];
+      const center=[.53,.47];
+      for(const [hour,length,width,color] of [[handTime/3600%12,.58,4,'#28333b'],[handTime/300%12,.85,2.7,'#27323a'],[(Math.floor(handTime)%60)/5,.94,2.5,'#bc593b']]){
+        const h=(hour+12)%12,a=dial[Math.floor(h)],b=dial[(Math.floor(h)+1)%12],t=h%1;
+        const end=[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t];
+        brush.strokeStyle=color;brush.lineWidth=width;brush.lineCap='round';brush.beginPath();brush.moveTo(center[0]*900,center[1]*300);brush.lineTo((center[0]+(end[0]-center[0])*length)*900,(center[1]+(end[1]-center[1])*length)*300);brush.stroke();
+      }
+      brush.fillStyle='#8f754c';brush.beginPath();brush.arc(center[0]*900,center[1]*300,3,0,Math.PI*2);brush.fill();
+      if(!clockRimPoints.length)clockRimPoints.push([.10,.66],[.3,.77],[.52,.84],[.7,.69],[.9,.55]);
+      upload(watchTexture,paint);return;
+    }
+    if(paint.width!==700||paint.height!==700){paint.width=paint.height=700;clockRimPoints.length=0;}
     brush.clearRect(0,0,700,700);
     // Preserve the exact supplied PNG's aspect ratio and transparency.
     const scale=Math.min(700/watch.naturalWidth,700/watch.naturalHeight);
@@ -267,6 +287,15 @@
       clock.style.height=ridgeSize+'px';
     }
     const photoScale=Math.max(W/photo.naturalWidth,H/photo.naturalHeight);
+    if(clockStyle==='draped'){
+      const width=W<761?Math.min(220,W*.56):photo.naturalWidth*photoScale*.145;
+      const height=width/3;
+      const rawX=(W-photo.naturalWidth*photoScale)/2+photo.naturalWidth*.770*photoScale;
+      const seatX=Math.max(width*.52+8,Math.min(W-width*.48-8,rawX));
+      const seatY=(H-photo.naturalHeight*photoScale)/2+photo.naturalHeight*.558*photoScale;
+      clockBox={x:seatX-width*.53,y:seatY-height*.48,width,height,size:width};
+      Object.assign(area.style,{left:clockBox.x+'px',top:clockBox.y+'px',right:'auto',width:width+'px',height:height+'px'});clock.style.height=height+'px';
+    }
     lakeRegion={x:(W-photo.naturalWidth*photoScale)/2+.343*photo.naturalWidth*photoScale,
       y:(H-photo.naturalHeight*photoScale)/2+.863*photo.naturalHeight*photoScale,
       rx:.085*photo.naturalWidth*photoScale,ry:.065*photo.naturalHeight*photoScale};
@@ -275,6 +304,8 @@
       y:(H-photo.naturalHeight*photoScale)/2+v*photo.naturalHeight*photoScale,
       rx:Math.max(72,.065*photo.naturalWidth*photoScale),ry:Math.max(64,.055*photo.naturalHeight*photoScale)}));
     material.resize(W,H);
+    const intro=document.querySelector('.intro').getBoundingClientRect();
+    feel.resize(W,H,(H-photo.naturalHeight*photoScale)/2,photo.naturalHeight*photoScale,{left:intro.left,top:intro.top+scrollY,width:intro.width,height:intro.height});
     const masks=[['.intro',.82],['.music',.70],['#still',.94]].map(([selector,strength])=>{
       const b=document.querySelector(selector).getBoundingClientRect();
       return [(b.left-12)/W,(b.top+scrollY-12)/H,(b.right+12)/W,(b.bottom+scrollY+12)/H,strength,65/W,65/H];
@@ -353,11 +384,11 @@
     waveDistance=0;
     if(mouseWaves.length>5)mouseWaves.shift();lastWaveTime=waveTime;
   }
-  let ambientH=32,ambientX,ambientY,ambientTime=0,ambientBlend=0;
+  let ambientH=32,ambientX,ambientY,mouseWaveX,mouseWaveY,ambientTime=0,ambientBlend=0;
   function resetAmbient(){
     mouseWaves=[];waveTime=0;lastWaveTime=-1;waveDistance=0;lastWaveInput=-1;
     ambientH=Math.max(24,Math.min(90,Math.round(AMBIENT_N*H/W)));
-    ambientX=new Float32Array(AMBIENT_N*ambientH);ambientY=new Float32Array(ambientX.length);ambientBlend=0;
+    ambientX=new Float32Array(AMBIENT_N*ambientH);ambientY=new Float32Array(ambientX.length);mouseWaveX=new Float32Array(ambientX.length);mouseWaveY=new Float32Array(ambientX.length);ambientBlend=0;
   }
   function advanceAmbient(dt){
     if(manualMelt!==null){ambientBlend=0;return false;}
@@ -393,8 +424,8 @@
         rippleX+=pulse*(wave.dx*.2+(r?rx/r:0)*.8);
         rippleY+=pulse*(wave.dy*.2+(r?ry/r:0)*.8);
       }
-      ambientX[i]+=12*Math.tanh(rippleX/12)*edge*protection;
-      ambientY[i]+=12*Math.tanh(rippleY/12)*edge*protection;
+      mouseWaveX[i]=12*Math.tanh(rippleX/12)*edge*protection;
+      mouseWaveY[i]=12*Math.tanh(rippleY/12)*edge*protection;
       const response=motionSettings.smoothing>0?1-Math.exp(-dt/motionSettings.smoothing):1;
       ambientX[i]=oldX+(ambientX[i]-oldX)*response;ambientY[i]=oldY+(ambientY[i]-oldY)*response;
     }
@@ -418,9 +449,9 @@
   let baseMap=null;
   const dragA=new Float64Array(2),dragB=new Float64Array(2);
   function prepareBase(m){
-    if(baseMap&&baseMap.m===m&&baseMap.version===material.version)return;
+    if(baseMap&&baseMap.m===m&&baseMap.version===material.version&&baseMap.feelVersion===feel.version)return;
     const nx=96,ny=Math.max(48,Math.min(144,Math.round(96*H/W)));
-    const data=new Float32Array((nx+1)*(ny+1)*2);
+    const data=new Float32Array((nx+1)*(ny+1)*2),textData=new Float32Array(data.length);
     const photoHeight=photo.naturalHeight*Math.max(W/photo.naturalWidth,H/photo.naturalHeight);
     const photoTop=(H-photoHeight)/2;
     // Remove each column's shared ridge drift, not its vertical variation.
@@ -455,19 +486,23 @@
       const verticalBend=smooth(.56,.66,photoY)*(1-smooth(.84,1,photoY));
       data[i+1]=(gentle+mountainSettings.stretch*(stretched-gentle))*(1+mountainSettings.vertical*verticalBend)
         +photoHeight*mountainSettings.curlY*Math.sin(u*13+photoY*4)*curl;
+      const landscape=feel.displacement(px,py,data[i],data[i+1],m,'landscape');
+      const type=feel.displacement(px,py,data[i],data[i+1],m,'text');
+      data[i]=landscape[0];data[i+1]=landscape[1];textData[i]=type[0];textData[i+1]=type[1];
     }
-    baseMap={nx,ny,data,m,version:material.version};
+    baseMap={nx,ny,data,textData,m,version:material.version,feelVersion:feel.version};
   }
-  function basePoint(x,y){
-    const {nx,ny,data:a}=baseMap;
+  function basePoint(x,y,kind){
+    const {nx,ny}=baseMap,a=kind==='text'?baseMap.textData:baseMap.data;
     const gx=Math.max(0,Math.min(nx-1e-6,x/W*nx)),gy=Math.max(0,Math.min(ny-1e-6,y/H*ny));
     const ix=Math.floor(gx),iy=Math.floor(gy),fx=gx-ix,fy=gy-iy,i=(iy*(nx+1)+ix)*2,stride=(nx+1)*2;
     return [x+(a[i]*(1-fx)+a[i+2]*fx)*(1-fy)+(a[i+stride]*(1-fx)+a[i+stride+2]*fx)*fy,
       y+(a[i+1]*(1-fx)+a[i+3]*fx)*(1-fy)+(a[i+stride+1]*(1-fx)+a[i+stride+3]*fx)*fy,1];
   }
-  function flow(x,y,m){
+  function flow(x,y,m,kind='landscape'){
     if(m===0)return [x,y,1];
-    prepareBase(m);const p=basePoint(x,y);
+    prepareBase(m);const p=basePoint(x,y,kind);
+    p[1]+=feel.settling(x,y,m,meltAge,kind);
     if(fluidActive){
       const beforeX=p[0],beforeY=p[1];
       const step=m/4;
@@ -493,7 +528,9 @@
       const cover=Math.max(W/photo.naturalWidth,H/photo.naturalHeight),photoHeight=photo.naturalHeight*cover;
       const photoY=(y-(H-photoHeight)/2)/photoHeight;
       const mountainMotion=1-.19*smooth(.46,.58,photoY);
-      p[0]+=ambientAt(ambientX,u,v)*m*mountainMotion;p[1]+=ambientAt(ambientY,u,v)*m*mountainMotion;
+      const swirl=feel.values(y,kind).swirl;
+      p[0]+=(ambientAt(ambientX,u,v)*swirl+ambientAt(mouseWaveX,u,v))*m*mountainMotion;
+      p[1]+=(ambientAt(ambientY,u,v)*swirl+ambientAt(mouseWaveY,u,v))*m*mountainMotion;
     }
     // Keep the lake recognizable and easier to catch as the surrounding paint moves.
     if(lakeRegion){
@@ -518,6 +555,10 @@
   document.addEventListener('pointerleave',()=>{previousPointer=null;});
   let centerCache=null;
   function watchPoint(u,v,m){
+    if(clockStyle==='draped'){
+      // No independent wandering: the cutout, hands, shadow, and terrain share flow.
+      return flow(clockBox.x+u*clockBox.width,clockBox.y+v*clockBox.height,m);
+    }
     // A restrained painted Crash is the resting shape. The watch then enters
     // precisely the same world-space paint/water field as the mountain and type.
     const softness=m*material.options.intensity;
@@ -571,14 +612,14 @@
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,ib);gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,indices,gl.STATIC_DRAW);
     return {nx,ny,vertices,vb,ib,count:indices.length};
   }
-  const sceneGrid=createGrid(128,112),watchGrid=createGrid(64,80);
+  const sceneGrid=createGrid(128,112),textGrid=createGrid(128,112),watchGrid=createGrid(64,80);
   let lastGeometryMelt=-1,lastTurn=-1,lastRecoil=-1;
-  function mesh(tex,m,watchLayer,dirty){
-    const grid=watchLayer?watchGrid:sceneGrid,{nx,ny,vertices}=grid;
+  function mesh(tex,m,watchLayer,dirty,textLayer=false){
+    const grid=watchLayer?watchGrid:textLayer?textGrid:sceneGrid,{nx,ny,vertices}=grid;
     gl.bindBuffer(gl.ARRAY_BUFFER,grid.vb);
     if(dirty){
       let k=0;for(let j=0;j<=ny;j++)for(let i=0;i<=nx;i++){
-        const u=i/nx,v=j/ny,p=watchLayer?watchPoint(u,v,m):flow(u*W,v*H,m);
+        const u=i/nx,v=j/ny,p=watchLayer?watchPoint(u,v,m):flow(u*W,v*H,m,textLayer?'text':'landscape');
         vertices[k++]=p[0]/W*2-1;vertices[k++]=1-p[1]/H*2;vertices[k++]=u;vertices[k++]=v;vertices[k++]=p[2];
       }
       gl.bufferSubData(gl.ARRAY_BUFFER,0,vertices);
@@ -596,8 +637,9 @@
     const started=performance.now();centerCache=null;
     const dirty=geometryDirty||melt!==lastGeometryMelt;
     gl.clearColor(.035,.075,.09,1);gl.clear(gl.COLOR_BUFFER_BIT);
-    gl.uniform1f(night,melt*.12);gl.uniform1f(clockWarm,clockStyle==='original'?0:.45);
+    gl.uniform1f(night,melt*.12);gl.uniform1f(clockWarm,clockStyle==='original'||clockStyle==='draped'?0:.45);
     mesh(sceneTexture,melt,false,dirty);
+    mesh(textTexture,melt,false,dirty,true);
     mesh(watchTexture,melt,true,dirty||turn!==lastTurn||recoil!==lastRecoil);
     lastGeometryMelt=melt;lastTurn=turn;lastRecoil=recoil;geometryDirty=false;
     updateHints(melt);
@@ -613,10 +655,11 @@
     }
     if(!paused){
       const motionDt=dt;
+      if(currentMelt()>.001&&!holding)meltAge+=dt;else if(currentMelt()<=.001)meltAge=0;
       if(motionDt>0&&advanceFluid(motionDt))geometryDirty=true;
       if(motionDt>0&&advanceAmbient(motionDt)&&currentMelt()>.001)geometryDirty=true;
       heldFor=holding?heldFor+dt:0;
-      charge=Math.max(0,Math.min(1,charge+(holding?(heldFor>.7&&!gestureTurned?dt*windingGain/18:0):-motionDt/(initialMelt?8:6.5))));
+      charge=Math.max(0,Math.min(1,charge+(holding?(heldFor>.7&&!gestureTurned?dt*windingGain/18:0):meltEnabled?-motionDt/(initialMelt?8:6.5):0)));
       if(charge===0)initialMelt=false;
       energy+=(charge-energy)*(1-Math.exp(-dt*16));
       recoil*=Math.exp(-dt*19);
@@ -659,12 +702,33 @@
   function wind(pointerType) {
     windingGain=pointerType==='touch'?3:1.5;
     document.dispatchEvent(new Event('clockwind'));
+    if(currentMelt()>.025)meltEnabled=true;
     useClock();
     if (paused) setPaused(false);
     holding = true;heldFor=0;gestureTurned=false;
     note.textContent = 'turning back time';
   }
-  function release() { windingGain=1.5;windingOffset=0;keyWinding=false;if(!paused)handTime=localClockSeconds();clockHintDismissed=true;windHint.style.display='none';holding = false; angle = null; gestureCenter=null; note.textContent = paused ? 'a moment, held' : 'time is passing'; }
+  function beginMelting(){
+    initialMelt=false;manualMelt=null;meltEnabled=true;
+    if(paused)setPaused(false);
+    clockHintDismissed=true;geometryDirty=true;start();
+  }
+  function showClear(){
+    meltEnabled=false;initialMelt=false;manualMelt=null;pauseTween=null;
+    charge=energy=1;meltAge=0;resetFluid();resetAmbient();geometryDirty=true;
+    if(paused&&!motion.matches)setPaused(false);else {render(0);start();}
+  }
+  function release(event) {
+    const wasWinding=holding||keyWinding;
+    const gesture=clockGesture;clockGesture=null;
+    const clickedClear=event?.type==='pointerup'&&gesture?.startedClear&&!gesture.moved&&!gestureTurned&&performance.now()-gesture.startedAt<500;
+    windingGain=1.5;windingOffset=0;keyWinding=false;
+    if(!paused)handTime=localClockSeconds();
+    clockHintDismissed=true;windHint.style.display='none';holding=false;angle=null;gestureCenter=null;
+    if(wasWinding&&charge>=.999){charge=energy=1;meltEnabled=false;}
+    if(clickedClear)beginMelting();
+    note.textContent=paused?'a moment, held':meltEnabled?'time is passing':'click the clock to melt';
+  }
   function pointerAngle(event) {
     const center=gestureCenter||watchPoint(.5,.5,currentMelt());
     return Math.atan2(event.clientY+scrollY-center[1],event.clientX-center[0]);
@@ -700,6 +764,7 @@
     const outline=boundary((u,v)=>watchPoint(u,v,m),.09,.01,.91,.99);
     if(!nearShape(outline,event.clientX,event.clientY+scrollY,24))return;
     event.preventDefault();clock.focus({preventScroll:true});
+    clockGesture={startedClear:m<.025&&!pauseTween,startedAt:performance.now(),x:event.clientX,y:event.clientY,moved:false};
     gestureCenter=watchPoint(.5,.5,m);clock.setPointerCapture(event.pointerId);wind(event.pointerType);angle=pointerAngle(event);
   });
   // Hit-test the painted link/control outlines, not their unmelted DOM boxes.
@@ -707,10 +772,10 @@
     if(!ready||event.detail===0||event.target.closest('.melt-ui,.hill-ui'))return;
     event.preventDefault();event.stopPropagation();
     const m=currentMelt();
-    for(const el of document.querySelectorAll('a:not(.music a):not(.melt-ui a),#still,#music-toggle')){
+    for(const el of document.querySelectorAll('a:not(.music a):not(.melt-ui a):not(.hill-ui a),#still,#music-toggle')){
       const b=el.getBoundingClientRect();
       const padX=el===still?28:0,padY=el===still?22:0;
-      const shape=boundary((x,y)=>flow(x,y,m),b.left-padX,b.top+scrollY-padY,b.right+padX,b.bottom+scrollY+padY);
+      const shape=boundary((x,y)=>flow(x,y,m,'text'),b.left-padX,b.top+scrollY-padY,b.right+padX,b.bottom+scrollY+padY);
       if(contains(shape,event.clientX,event.clientY+scrollY)){
         if(el===still)toggleTime();else if(el.id==='music-toggle')el.click();else window.open(el.href,'_blank','noopener,noreferrer');
         return;
@@ -719,6 +784,7 @@
   },true);
   clock.addEventListener('pointermove', event => {
     if (!holding || angle === null) return;
+    if(clockGesture&&Math.hypot(event.clientX-clockGesture.x,event.clientY-clockGesture.y)>6)clockGesture.moved=true;
     const center=gestureCenter;
     // Ignore the singularity at the spindle; crossing it is not a turn.
     if(Math.hypot(event.clientX-center[0],event.clientY+scrollY-center[1])<clockBox.size*.10){angle=pointerAngle(event);return;}
@@ -737,7 +803,7 @@
       event.preventDefault();useClock();if(paused)setPaused(false);keyWinding=true;const d=['ArrowLeft','ArrowDown'].includes(event.key)?-1:1;ratchetStep(d);ratchetStep(d);
     }
     if (event.key === ' ' || event.key === 'Enter') {
-      event.preventDefault();if(!holding)wind();
+      event.preventDefault();if(currentMelt()<.025&&!holding){beginMelting();return;}if(!holding)wind();
     }
   });
   clock.addEventListener('keyup', event => {
@@ -745,6 +811,7 @@
   });
   clock.addEventListener('click', event => {
     if(event.detail===0&&!holding&&performance.now()-lastKey>500){
+      if(currentMelt()<.025){beginMelting();return;}
       useClock();if(paused)setPaused(false);for(let i=0;i<4;i++)ratchetStep();
     }
   });
@@ -753,6 +820,11 @@
     if(manualMelt!==null){charge=energy=1-manualMelt;manualMelt=null;}
   }
   window.melting={
+    getFeel(){return feel.snapshot();},
+    configureFeel(region,values){feel.configure(region,values);baseMap=null;geometryDirty=true;if(ready)render(currentMelt());return feel.snapshot();},
+    presetFeel(name){feel.preset(name);baseMap=null;geometryDirty=true;if(ready)render(currentMelt());return feel.snapshot();},
+    melt:beginMelting,clear:showClear,
+    previewMelt(value){pauseTween=null;manualMelt=null;meltEnabled=false;charge=energy=1-Math.max(0,Math.min(1,Number(value)||0));geometryDirty=true;if(paused&&!motion.matches)setPaused(false);start();},
     getMotionSettings(){return {...motionSettings,viscosity:material.options.viscosity,damping:material.options.damping};},
     setMotionSettings(values){
       const limits={speed:[.1,4],sway:[0,3],wave:[0,3],smoothing:[0,3],persistence:[.25,5]};
@@ -768,7 +840,7 @@
     },
     setClockStyle(value){
       if(!clockModes.includes(value))return;
-      release();clockStyle=value;watch=value==='original'?originalWatch:warmWatch;
+      release();clockStyle=value;watch=value==='draped'?drapedWatch:originalWatch;clockRimPoints.length=0;
       document.body.dataset.clock=value;clock.querySelector('img').src=watch.src;
       centerCache=null;if(ready)resize();
     },
@@ -780,7 +852,7 @@
     useClock(){useClock();if(paused)setPaused(false);start();},
     resetInteraction(){resetFluid();geometryDirty=true;render(currentMelt());},
     setRegions(regions){material.setRegions(regions);geometryDirty=true;render(currentMelt());},
-    getState(){return {ready,clockStyle,meltProgress:currentMelt(),manual:manualMelt!==null,options:{...material.options},fluidActive,ambientTime,ambientActive:manualMelt===null&&!paused,renderMs:timing.frameMs};},
+    getState(){return {ready,paused,meltEnabled,clockStyle,meltProgress:currentMelt(),manual:manualMelt!==null,options:{...material.options},fluidActive,ambientTime,ambientActive:manualMelt===null&&!paused,renderMs:timing.frameMs};},
     mapPoint(x,y,progress=currentMelt()){return material.map(x,y,progress);},
     samplePoint(x,y){return flow(x,y,currentMelt());},
     getClockCue(){
@@ -796,7 +868,7 @@
     },
     defaults:{...MeltField.defaults},limits:MeltField.limits
   };
-  function toggleTime(){initialMelt=false;document.dispatchEvent(new Event('restoresweet'));setPaused(!paused);}
+  function toggleTime(){initialMelt=false;meltEnabled=paused;document.dispatchEvent(new Event('restoresweet'));setPaused(!paused);}
   still.addEventListener('click',toggleTime);
   motion.addEventListener('change', event => setPaused(event.matches));
   document.addEventListener('visibilitychange', () => {
@@ -805,7 +877,7 @@
   });
   document.querySelector('.clock-area').hidden = false;
   still.hidden = false;
-  Promise.all([loaded(photo),loaded(originalWatch),loaded(warmWatch),loaded(album),prepareIcons()]).then(()=>{
+  Promise.all([loaded(photo),loaded(originalWatch),loaded(warmWatch),loaded(drapedWatch),loaded(album),prepareIcons()]).then(()=>{
     ready=true;resize();document.body.classList.add('liquid-ready');setPaused(paused);
   }).catch(error=>{console.warn('Painting unavailable; readable HTML retained.',error);document.querySelector('.clock-area').hidden=true;still.hidden=true;});
   snoopy.addEventListener('load',()=>{if(ready){captureScene();render(currentMelt());}});

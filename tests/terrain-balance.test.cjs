@@ -3,7 +3,8 @@ const src=fs.readFileSync(require('node:path').join(__dirname,'../scene.js'),'ut
 let checks=0;
 for(const [W,H] of [[390,844],[1037,974],[1280,800],[1920,1080]]){
  const material=new Field();material.resize(W,H);
- const context={W,H,material,photo:{naturalWidth:2200,naturalHeight:1650},smooth:(a,b,x)=>{let t=Math.max(0,Math.min(1,(x-a)/(b-a)));return t*t*(3-2*t)}};
+ const Feel=require('../melt-feel.js'),feel=new Feel();feel.resize(W,H,(H-1650*Math.max(W/2200,H/1650))/2,1650*Math.max(W/2200,H/1650),{left:W*.09,top:125,width:330,height:250});
+ const context={W,H,material,feel,mountainSettings:{sideways:.897,vertical:.483,curlX:.01632,curlY:.00856,stretch:.1575},photo:{naturalWidth:2200,naturalHeight:1650},smooth:(a,b,x)=>{let t=Math.max(0,Math.min(1,(x-a)/(b-a)));return t*t*(3-2*t)}};
  vm.runInNewContext('let baseMap=null;'+src.slice(src.indexOf('  function prepareBase('),src.indexOf('  function flow('))+';this.sample=(m)=>{prepareBase(m);return baseMap;}',context);
  for(const m of [0,.5,1]){
   const b=context.sample(m);

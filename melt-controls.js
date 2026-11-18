@@ -1,64 +1,37 @@
-/* Optional tuning UI: ?tune=1 or Shift+M. Normal visitors see only the landscape. */
+/* Compact, local-only art-direction controls. Pointer physics remain untouched. */
 (() => {
   const api=window.melting;if(!api)return;
-  const panel=document.createElement('aside');panel.className='melt-ui';panel.hidden=true;
-  panel.setAttribute('aria-label','Melt tuning');
-  panel.innerHTML=`<div class="tune-heading"><strong>Melt studio</strong><button type="button" id="tune-close" aria-label="Close melt tuning">×</button></div>
-    <label class="tune-row" for="tune-progress">Melt progress <output id="progress-value">0</output></label>
-    <input id="tune-progress" aria-label="Melt progress" type="range" min="0" max="1" step=".01">
-    <p class="tune-note" id="tune-mode">Following the clock</p>
-    <label class="tune-row" for="tune-clock-style">Clock</label>
-    <select id="tune-clock-style"><option value="original">Original painted clock</option><option value="warm">Warm painted clock · sky</option><option value="ridge">Warm painted clock · mountains</option></select>
-    <div id="tune-settings"></div>
-    <div class="tune-actions"><button type="button" id="tune-clock">Use clock</button><button type="button" id="tune-clear">Clear paint</button><button type="button" id="tune-reset">Reset</button><button type="button" id="tune-save">Save settings</button></div>
-    <p class="tune-note" id="tune-status" role="status">Drag the image with your mouse. Shift+M hides these controls.</p>`;
+  const local=['localhost','127.0.0.1','[::1]'].includes(location.hostname);
+  if(!local&&new URLSearchParams(location.search).get('tune')!=='1')return;
+  const key='melt-feel-preview-v1';
+  const panel=document.createElement('details');panel.className='melt-ui feel-panel';
+  panel.innerHTML=`<summary>feel <span>↘</span></summary><div class="feel-body">
+    <label>Try <select id="feel-preset" aria-label="Melt preset"><option value="wax">Soft wax</option><option value="quiet">Gentle sag</option><option value="syrup">Slow syrup</option><option value="original">Previous swirl</option></select></label>
+    <label>Area <select id="feel-region" aria-label="Region to tune"><option value="text">Text</option><option value="sky">Sky</option><option value="mountains">Mountains</option></select></label>
+    <div id="feel-sliders"></div>
+    <label>Starting view <select id="feel-start" aria-label="Starting view"><option value="clear">Clear · click clock to melt</option><option value="auto">15% melted · melt on load</option><option value="melted">Fully melted</option></select></label>
+    <label>Clock <select id="feel-clock" aria-label="Clock placement"><option value="warm">Floating original</option><option value="ridge">Original on ridge</option><option value="draped">Draped at right ridge</option></select></label>
+    <div class="feel-actions"><button type="button" data-action="clear">clear</button><button type="button" data-action="melt">melt</button><button type="button" data-action="full">full melt</button><button type="button" data-action="save">save</button><button type="button" data-action="reset">reset</button></div>
+    <p id="feel-status" role="status">Mouse feel stays as-is.</p>
+  </div>`;
   document.body.append(panel);
-  const labels={intensity:'Intensity',scale:'Bend scale',gravity:'Gravity',direction:'Gravity direction',anchoring:'Anchoring',noiseFrequency:'Noise frequency',detail:'Organic detail',viscosity:'Mouse viscosity',damping:'Mouse damping',drag:'Mouse strength'};
-  const settings=panel.querySelector('#tune-settings');
-  const advanced=document.createElement('details');advanced.innerHTML='<summary>Detail & mouse feel</summary>';settings.append(advanced);
-  for(const [key,label] of Object.entries(labels)){
-    const [min,max]=api.limits[key],step=key==='direction'?1:.01;
-    const row=document.createElement('div');row.className='tune-setting';
-    row.innerHTML=`<label class="tune-row" for="tune-${key}">${label}<output id="value-${key}"></output></label><input id="tune-${key}" type="range" min="${min}" max="${max}" step="${step}" aria-label="${label}">`;
-    const input=row.querySelector('input');
-    input.addEventListener('input',()=>{api.configure({[key]:Number(input.value)});syncSettings();});
-    if(['noiseFrequency','detail','viscosity','damping','drag'].includes(key))advanced.append(row);else settings.insertBefore(row,advanced);
+  const region=panel.querySelector('#feel-region'),preset=panel.querySelector('#feel-preset'),clock=panel.querySelector('#feel-clock'),start=panel.querySelector('#feel-start'),status=panel.querySelector('#feel-status');
+  const inputs={};
+  for(const [name,label,max,help] of [['swirl','Swirl',1,'Sideways bends and idle oscillation'],['sag','Sag',1.25,'Broad downward droop'],['drip','Drips',1.25,'Narrow trails pulled downward'],['settle','Slow settling',1.25,'Gradual downward flow after melting']]){
+    const row=document.createElement('label');row.className='feel-slider';row.title=help;
+    row.innerHTML=`${label}<output></output><input type="range" min="0" max="${max}" step=".01" aria-label="${label}">`;
+    const input=row.querySelector('input'),output=row.querySelector('output');inputs[name]={input,output};
+    input.oninput=()=>{api.configureFeel(region.value,{[name]:input.value});preset.value='';sync();};panel.querySelector('#feel-sliders').append(row);
   }
-  const clockStyle=panel.querySelector('#tune-clock-style');
-  clockStyle.addEventListener('change',()=>{api.setClockStyle(clockStyle.value);});
-  const progress=panel.querySelector('#tune-progress');
-  progress.addEventListener('input',()=>{api.setMeltProgress(Number(progress.value));syncProgress();});
-  function syncSettings(){
-    clockStyle.value=api.getState().clockStyle;
-    for(const [key,value] of Object.entries(api.getState().options)){
-      const input=panel.querySelector(`#tune-${key}`);if(!input)continue;
-      input.value=value;panel.querySelector(`#value-${key}`).textContent=Number(value.toFixed(2))+(key==='direction'?'°':'');
-    }
-  }
-  function syncProgress(){
-    const state=api.getState();progress.value=state.meltProgress;
-    panel.querySelector('#progress-value').textContent=state.meltProgress.toFixed(2);
-    panel.querySelector('#tune-mode').textContent=state.manual?'Holding this shape · wind the clock to resume':'Following the clock';
-  }
-  const show=value=>{panel.hidden=!value;if(value){syncSettings();syncProgress();}};
-  panel.querySelector('#tune-close').addEventListener('click',()=>show(false));
-  panel.querySelector('#tune-clock').addEventListener('click',()=>{api.useClock();syncProgress();});
-  panel.querySelector('#tune-clear').addEventListener('click',()=>api.resetInteraction());
-  panel.querySelector('#tune-reset').addEventListener('click',()=>{
-    api.configure(api.defaults);api.setClockStyle('warm');api.resetInteraction();api.useClock();
-    try{localStorage.removeItem('melting-settings-v1');localStorage.removeItem('melting-clock-v1');}catch{}
-    syncSettings();syncProgress();panel.querySelector('#tune-status').textContent='Default settings restored.';
-  });
-  panel.querySelector('#tune-save').addEventListener('click',()=>{
-    try{localStorage.setItem('melting-settings-v1',JSON.stringify(api.getState().options));localStorage.setItem('melting-clock-v1',api.getState().clockStyle);panel.querySelector('#tune-status').textContent='Saved in this browser.';}
-    catch{panel.querySelector('#tune-status').textContent='This browser could not save the settings.';}
-  });
-  try{const saved=JSON.parse(localStorage.getItem('melting-settings-v1')||'null');if(saved&&typeof saved==='object')api.configure(saved);}catch{}
-  try{if(!new URLSearchParams(location.search).has('clock'))api.setClockStyle(localStorage.getItem('melting-clock-v1'));}catch{}
-  document.addEventListener('keydown',event=>{
-    if(event.shiftKey&&event.key.toLowerCase()==='m'&&!event.target.matches('input,textarea')){event.preventDefault();show(panel.hidden);}
-    if(event.key==='Escape'&&!panel.hidden)show(false);
-  });
-  setInterval(()=>{if(!panel.hidden&&!document.hidden)syncProgress();},120);
-  show(new URLSearchParams(location.search).get('tune')==='1');
+  function sync(){for(const [name,{input,output}] of Object.entries(inputs)){const v=api.getFeel()[region.value][name];input.value=v;output.value=v.toFixed(2);}clock.value=api.getState().clockStyle;}
+  function applyStart(){if(start.value==='clear')api.clear();else if(start.value==='melted')api.previewMelt(1);else {api.previewMelt(.15);api.melt();}}
+  region.onchange=sync;preset.onchange=()=>{api.presetFeel(preset.value);sync();};clock.onchange=()=>api.setClockStyle(clock.value);start.onchange=applyStart;
+  panel.querySelector('[data-action="clear"]').onclick=()=>api.clear();
+  panel.querySelector('[data-action="melt"]').onclick=()=>api.melt();
+  panel.querySelector('[data-action="full"]').onclick=()=>api.previewMelt(1);
+  panel.querySelector('[data-action="save"]').onclick=()=>{try{localStorage.setItem(key,JSON.stringify({feel:api.getFeel(),clock:clock.value,start:start.value}));status.textContent='Saved here. Tell me when to adopt it.';}catch{status.textContent='Could not save in this browser.';}};
+  panel.querySelector('[data-action="reset"]').onclick=()=>{try{localStorage.removeItem(key);}catch{}api.presetFeel('wax');preset.value='wax';start.value='clear';api.clear();sync();status.textContent='Soft wax defaults restored.';};
+  try{const saved=JSON.parse(localStorage.getItem(key));if(saved){for(const name of ['text','sky','mountains'])if(saved.feel?.[name])api.configureFeel(name,saved.feel[name]);if(saved.clock)api.setClockStyle(saved.clock);if(['clear','auto','melted'].includes(saved.start))start.value=saved.start;applyStart();status.textContent='Loaded saved feel.';}}catch{}
+  sync();
+  document.addEventListener('keydown',e=>{if(e.shiftKey&&e.key.toLowerCase()==='m'&&!e.target.matches('input,textarea,select')){e.preventDefault();panel.open=!panel.open;}});
 })();

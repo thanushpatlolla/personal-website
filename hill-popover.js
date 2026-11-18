@@ -42,7 +42,7 @@
   document.addEventListener('click',e=>{if(open&&!card.contains(e.target)&&e.target!==target)show(false);},true);
   function update(){
     const unlocked=window.photoJourney.canOpen(config.id);
-    layer.style.display=unlocked?'':'none';
+    layer.style.display=unlocked&&!(config.id==='valley-hint'&&api.getState().clockStyle==='draped')?'':'none';
     target.setAttribute('tabindex',unlocked?'0':'-1');
     if(!unlocked)return;
     if(!api.getState().ready)return;
