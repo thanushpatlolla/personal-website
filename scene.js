@@ -191,10 +191,11 @@
     if(!song.paused&&!song.ended&&snoopy.complete&&snoopy.naturalWidth){
       // Seat the original cutout on this small ridge shoulder, in photo space.
       // Painting into the scene makes every pixel share the mountain's melt.
-      const height=30,width=height*snoopy.naturalWidth/snoopy.naturalHeight;
+      const height=31,width=height*snoopy.naturalWidth/snoopy.naturalHeight;
       const seatX=(W-photo.naturalWidth*scale)/2+photo.naturalWidth*.435*scale;
       const seatY=(H-photo.naturalHeight*scale)/2+photo.naturalHeight*.549*scale;
-      ctx.drawImage(snoopy,seatX-width*.62,seatY-height*.97,width,height);
+      // Preserve the former 30px sprite bottom at seatY + 0.9px.
+      ctx.drawImage(snoopy,seatX-width*.62,seatY+.9-height,width,height);
     }
     const veil=ctx.createLinearGradient(0,0,0,H);veil.addColorStop(0,'#12212a30');veil.addColorStop(.5,'#10233318');veil.addColorStop(1,'#03151e85');
     ctx.fillStyle=veil;ctx.fillRect(0,0,W,H);

@@ -642,3 +642,5 @@ Revision144 (DESIGN ONLY): User reports fast mouse transitions snapping. Verifie
 User then requested bird removal: removed all bird scripts/CSS/assets/credits, WebGL bird atlas/quads and setBirds API, skyclick dispatch and HTML loads. Browser confirmed zero bird elements/scripts and no console errors. Production remains137.
 
 Revision145 (DESIGN ONLY): Reduce mouse-wave output amplitude10% (12→10.8 coefficient with unchanged tanh input). Propagation speed, retirement/smoothing, ambient melt and local drag unchanged. Production remains137.
+
+Revision146 (DESIGN ONLY): Snoopy height30→31px with aspect ratio preserved. Bottom anchored at previous seatY+0.9px, so added height grows upward. Production remains137.
