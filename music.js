@@ -18,8 +18,12 @@
     button.setAttribute('aria-label',`${playing?'Pause':'Play'} ${t.title} by ${t.artist}`);
     status.textContent='';icon.textContent=playing?'Ⅱ':'▶';notify();
   }
-  async function select(key){
-    const resume=!audio.paused&&!audio.ended;
+  async function select(key,autoplay=false){
+    const resume=autoplay||(!audio.paused&&!audio.ended);
+    if(autoplay&&key===current&&!audio.ended){
+      try{await audio.play();return true;}
+      catch{sync();status.textContent='· retry playback';return false;}
+    }
     const ticket=++request,t=tracks[key];audio.pause();current=key;
     const title=document.querySelector('.music-title');
     if(key==='sweet')title.innerHTML='To All the Dancers of the World,<br>a Round Form of Fantasy';
@@ -32,16 +36,15 @@
     try{await audio.play();return ticket===request;}
     catch{if(ticket===request){sync();status.textContent='· retry playback';}return false;}
   }
-  window.playPeakSong=()=>select('peak');
+  window.playPeakSong=()=>select('peak',true);
   window.playStardust=()=>select('stardust');
   window.playSweetTrip=()=>select('sweet');
   document.addEventListener('restoresweet',window.playSweetTrip);
-  window.playValleySong=()=>select('valley');
-  window.playLakeSong=()=>{document.dispatchEvent(new Event('lakeactivate'));return select('weird');};
+  window.playValleySong=()=>select('valley',true);
+  window.playLakeSong=()=>{document.dispatchEvent(new Event('lakeactivate'));return select('weird',true);};
   async function playClockSong(){
     if(!window.photoJourney.open('clock-reward'))return;
-    if(current==='daft'){document.dispatchEvent(new Event('clockreward'));return;}
-    if(await select('daft'))document.dispatchEvent(new Event('clockreward'));
+    if(await select('daft',true))document.dispatchEvent(new Event('clockreward'));
   }
   const clock=document.querySelector('#clock');
   document.addEventListener('clockwind',playClockSong);
