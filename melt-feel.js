@@ -53,7 +53,9 @@
       const terrain=this.weights(y),scale=Math.min(1,wax.unit/800);
       const patch=this.noise(x/48+11,y/95+28);
       const drips=7*scale*terrain*Math.pow(smooth(.32,.78,patch),2);
-      const hanging=kind==='text'?21.384*Math.pow(.5+.5*Math.sin(x/43+y/190),2):drips;
+      const textLobe=Math.pow(.5+.5*Math.sin(x/43+y/190),2);
+      // Increase height variation around the same mean descent.
+      const hanging=kind==='text'?21.384*(.375+1.15*(textLobe-.375)):drips;
       return [side*progress*edge,(Math.max(0,limit*Math.tanh((sag+run)/limit)*(kind==='text'?4.0392:1)-(kind==='text'?wax.unit*.06:0))+hanging)*progress*edge];
     }
     drift(x,y,m,time,kind){
